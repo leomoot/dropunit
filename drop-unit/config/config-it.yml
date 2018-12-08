@@ -1,0 +1,24 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 9080
+  adminConnectors:
+  - type: http
+    port: 9081
+
+logging:
+  level: INFO
+  loggers:
+    "net.lisanza":
+      level: DEBUG
+      additive: false
+      appenders:
+      - type: file
+        currentLogFilename: logs/dropunit-simulator.log
+        archivedLogFilenamePattern: logs/dropunit-simulator-%d.log.gz
+        archivedFileCount: 5
+        timeZone: UTC
+      - type: console
+        target: stderr
+    “net.lisanza.dropunit.simulator.logging":
+      level: DEBUG
