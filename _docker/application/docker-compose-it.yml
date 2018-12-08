@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  dropunit-simulator:
+    build: ../containers/dropunit-simulator
+    image: dropunit-simulator
+    container_name: dropunit-simulator
+    volumes:
+      - ../../drop-unit:/application
+    ports:
+    - "9080:9080"
+    - "9081:9081"
+    networks:
+      static-network:
+        ipv4_address: 172.20.0.11
+
+  application-engine:
+    build: ../containers/engine-under-test
+    image: engine-under-test
+    container_name: engine-under-test
+    volumes:
+      - ../../engine-under-test:/application
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    networks:
+      static-network:
+        ipv4_address: 172.20.0.5
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
