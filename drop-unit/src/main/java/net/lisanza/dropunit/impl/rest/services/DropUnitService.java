@@ -1,12 +1,11 @@
-package net.lisanza.dropunit.simulator.rest.services;
+package net.lisanza.dropunit.impl.rest.services;
 
-import net.lisanza.dropunit.simulator.rest.DropUnitDto;
+import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

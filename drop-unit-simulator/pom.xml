@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.lisanza.dropunit</groupId>
-	<artifactId>drop-unit</artifactId>
+	<artifactId>drop-unit-simulator</artifactId>
 	<version>0.0.0-SNAPSHOT</version>
 
-	<name>DropUnit</name>
+	<name>DropUnit Simulator Service</name>
 
 	<properties>
         <commons.io.version>2.6</commons.io.version>
@@ -26,10 +26,15 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
 		</dependency>
+		<dependency>
+			<groupId>net.lisanza.dropunit</groupId>
+			<artifactId>drop-unit</artifactId>
+			<version>0.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>dropunit</finalName>
+		<finalName>dropunit-simulator</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -39,6 +44,31 @@
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer">
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>net.lisanza.dropunit.simulator.App</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

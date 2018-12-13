@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.simulator.mappers;
+package net.lisanza.dropunit.impl.mappers;
 
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.JerseyViolationException;

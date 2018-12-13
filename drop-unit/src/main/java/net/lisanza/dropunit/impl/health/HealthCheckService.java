@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.simulator.health;
+package net.lisanza.dropunit.impl.health;
 
 import com.codahale.metrics.health.HealthCheck;
 

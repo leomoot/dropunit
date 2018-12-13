@@ -1,9 +1,9 @@
-package net.lisanza.dropunit.simulator.rest.controlers;
+package net.lisanza.dropunit.impl.rest.controlers;
 
-import net.lisanza.dropunit.simulator.rest.DropUnitDto;
-import net.lisanza.dropunit.simulator.rest.constants.RequestMappings;
-import net.lisanza.dropunit.simulator.rest.DropUnitCount;
-import net.lisanza.dropunit.simulator.rest.services.DropUnitService;
+import net.lisanza.dropunit.impl.rest.DropUnitDto;
+import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
+import net.lisanza.dropunit.impl.rest.DropUnitCount;
+import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

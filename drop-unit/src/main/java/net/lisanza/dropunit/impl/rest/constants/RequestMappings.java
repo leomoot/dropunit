@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.simulator.rest.constants;
+package net.lisanza.dropunit.impl.rest.constants;
 
 public final class RequestMappings {
 

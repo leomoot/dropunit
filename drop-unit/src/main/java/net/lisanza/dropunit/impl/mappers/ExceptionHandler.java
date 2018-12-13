@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.simulator.mappers;
+package net.lisanza.dropunit.impl.mappers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

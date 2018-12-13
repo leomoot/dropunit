@@ -6,7 +6,7 @@ services:
     image: dropunit-simulator
     container_name: dropunit-simulator
     volumes:
-      - ../../drop-unit:/application
+      - ../../drop-unit-simulator:/application
     ports:
     - "9080:9080"
     - "9081:9081"

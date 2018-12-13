@@ -1,30 +1,21 @@
-package net.lisanza.dropunit.simulator;
+package net.lisanza.dropunit.impl;
 
 import io.dropwizard.Application;
+import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
-import net.lisanza.dropunit.simulator.config.yml.AppConfiguration;
-import net.lisanza.dropunit.simulator.rest.controlers.DropRegistrationController;
-import net.lisanza.dropunit.simulator.health.HealthCheckService;
-import net.lisanza.dropunit.simulator.mappers.ExceptionHandler;
-import net.lisanza.dropunit.simulator.mappers.ValidationHandler;
-import net.lisanza.dropunit.simulator.rest.controlers.DropUnitController;
-import net.lisanza.dropunit.simulator.rest.DropUnitCount;
-import net.lisanza.dropunit.simulator.rest.services.DropUnitService;
+import net.lisanza.dropunit.impl.health.HealthCheckService;
+import net.lisanza.dropunit.impl.mappers.ExceptionHandler;
+import net.lisanza.dropunit.impl.mappers.ValidationHandler;
+import net.lisanza.dropunit.impl.rest.DropUnitCount;
+import net.lisanza.dropunit.impl.rest.controlers.DropRegistrationController;
+import net.lisanza.dropunit.impl.rest.controlers.DropUnitController;
+import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.glassfish.jersey.logging.LoggingFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class App extends Application<AppConfiguration> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
-
-    public static void main(String[] args) throws Exception {
-        // Start the application
-        new App().run(args);
-    }
+public class DropUnitApplication<TypeOfConfiguration extends Configuration> extends Application<TypeOfConfiguration> {
 
     @Override
-    public void run(AppConfiguration configuration, Environment environment) {
+    public void run(TypeOfConfiguration configuration, Environment environment) {
 
         // Registration of the handlers / mappings
         environment.jersey().register(new ExceptionHandler());

@@ -1,8 +1,5 @@
-package net.lisanza.dropunit.simulator.rest;
+package net.lisanza.dropunit.impl.rest;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 

@@ -27,11 +27,26 @@ The following diagram depicts the usage of dropunit.
 Dropunit is a name composed of DropWizard that ius used and JUnit that invokes tests.
 
 The project consistst of three modules: 
-1) dropunit (the simulator), 
-2) integrationtests and,
-3) 'engine under test'.
- 
-# DEVELOPEMENT ENVIRONMENT
+1) drop-unit (the package implementing dropunit), 
+2) drop-unit (the simulator where you register the drops), 
+3) engine-under-test (the rest proxy to be replaced with a real rest-service)and,
+4) integrationtests (the integration tests that register their own dropunits and performs the test on the 'engine-under-test').
+
+
+# DEVELOPMENT
+
+DropUnit is based on the registration of a DropUnitDto that has the following properties:
+- url: the URL-path for whcih this droppy will respond to
+- method: the HTTP-method to which must be responded
+- requestContentType: when provided the content-type of the request that needs to match
+- requestBody: when provided the body of the request that needs to match
+- responseCode: the response code to be returned when all request parameters are matched.
+- responseContentType: when provided the content-type of the response to be returned when all request parameters are matched.
+- responseBody: when provided the body of the response to be returned when all request parameters are matched.
+- responseDelay: when provided the delay before the response will be returned. Useful to simulate slow servers of connection timeouts.
+
+
+# DEVELOPMENT ENVIRONMENT
 
 ### Build the projects
 

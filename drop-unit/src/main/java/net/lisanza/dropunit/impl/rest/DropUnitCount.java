@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.simulator.rest;
+package net.lisanza.dropunit.impl.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

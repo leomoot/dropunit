@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.simulator.utils;
+package net.lisanza.dropunit.impl.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
