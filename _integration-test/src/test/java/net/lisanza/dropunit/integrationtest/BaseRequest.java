@@ -2,7 +2,7 @@ package net.lisanza.dropunit.integrationtest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.lisanza.dropunit.simulator.rest.DropUnitDto;
+import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;

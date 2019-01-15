@@ -1,6 +1,6 @@
 package net.lisanza.dropunit.integrationtest;
 
-import net.lisanza.dropunit.simulator.rest.DropUnitDto;
+import net.lisanza.dropunit.impl.rest.DropUnitDto;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

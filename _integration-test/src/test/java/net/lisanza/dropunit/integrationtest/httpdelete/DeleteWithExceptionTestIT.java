@@ -1,8 +1,8 @@
 package net.lisanza.dropunit.integrationtest.httpdelete;
 
+import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import net.lisanza.dropunit.integrationtest.BaseRequest;
 import net.lisanza.dropunit.integrationtest.DropFactory;
-import net.lisanza.dropunit.simulator.rest.DropUnitDto;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
