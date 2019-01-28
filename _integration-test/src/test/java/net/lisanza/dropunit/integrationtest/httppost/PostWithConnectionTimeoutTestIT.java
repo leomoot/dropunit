@@ -30,8 +30,8 @@ public class PostWithConnectionTimeoutTestIT extends BaseRequest {
     @Before
     public void setUp() throws Exception {
         dropUnit = DropFactory.createDropUnit("test-post",
-                "POST", MediaType.APPLICATION_XML_TYPE, REQUEST_FILE,
-                Response.Status.OK, MediaType.APPLICATION_XML_TYPE, RESPONSE_FILE,
+                "POST", MediaType.APPLICATION_XML, REQUEST_FILE,
+                Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE,
                 20000);
 
         HttpResponse delivery = executeDropDelivery(dropUnit);

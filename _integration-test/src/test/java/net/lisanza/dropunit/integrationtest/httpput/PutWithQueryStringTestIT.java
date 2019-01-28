@@ -27,8 +27,8 @@ public class PutWithQueryStringTestIT extends BaseRequest {
     @Before
     public void setUp() throws Exception {
         dropUnit = DropFactory.createDropUnit("test-put",
-                "PUT", MediaType.APPLICATION_XML_TYPE, REQUEST_FILE,
-                Response.Status.OK, MediaType.APPLICATION_XML_TYPE, RESPONSE_FILE);
+                "PUT", MediaType.APPLICATION_XML, REQUEST_FILE,
+                Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE);
 
         HttpResponse delivery = executeDropDelivery(dropUnit);
         assertEquals(200, delivery.getStatusLine().getStatusCode());

@@ -2,7 +2,6 @@ package net.lisanza.dropunit.integrationtest;
 
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +15,7 @@ public class DropFactory {
 
     public static DropUnitDto createDropUnit(String uri, String method,
                                              Response.Status responseCode,
-                                             MediaType responseContentType,
+                                             String responseContentType,
                                              String responseBodyFile)
             throws IOException {
         return createDropUnit(uri, method,
@@ -25,7 +24,7 @@ public class DropFactory {
 
     public static DropUnitDto createDropUnit(String uri, String method,
                                              Response.Status responseCode,
-                                             MediaType responseContentType,
+                                             String responseContentType,
                                              String responseBodyFile,
                                              int responseDelay)
             throws IOException {
@@ -35,10 +34,10 @@ public class DropFactory {
     }
 
     public static DropUnitDto createDropUnit(String uri, String method,
-                                             MediaType requestContentType,
+                                             String requestContentType,
                                              String requestBodyFile,
                                              Response.Status responseCode,
-                                             MediaType responseContentType,
+                                             String responseContentType,
                                              String responseBodyFile)
             throws IOException {
         return createDropUnit(uri, method,
@@ -47,10 +46,10 @@ public class DropFactory {
     }
 
     public static DropUnitDto createDropUnit(String uri, String method,
-                                             MediaType requestContentType,
+                                             String requestContentType,
                                              String requestBodyFile,
                                              Response.Status responseCode,
-                                             MediaType responseContentType,
+                                             String responseContentType,
                                              String responseBodyFile,
                                              int responseDelay)
             throws IOException {
@@ -58,13 +57,13 @@ public class DropFactory {
         dropUnitDto.setUrl(uri);
         dropUnitDto.setMethod(method);
         if (requestContentType != null) {
-            dropUnitDto.setRequestContentType(requestContentType.toString());
+            dropUnitDto.setRequestContentType(requestContentType);
         }
         if (requestBodyFile != null) {
             dropUnitDto.setRequestBody(readFromFile(requestBodyFile));
         }
         dropUnitDto.setResponseCode(responseCode.getStatusCode());
-        dropUnitDto.setResponseContentType(responseContentType.toString());
+        dropUnitDto.setResponseContentType(responseContentType);
         if (responseBodyFile != null) {
             dropUnitDto.setResponseBody(readFromFile(responseBodyFile));
         }

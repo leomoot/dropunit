@@ -27,7 +27,7 @@ public class GetWithExceptionTestIT extends BaseRequest {
     @Before
     public void setUp() throws Exception {
         dropUnit = DropFactory.createDropUnit("test-get-exception", "GET",
-                Response.Status.BAD_REQUEST, MediaType.APPLICATION_XML_TYPE, null);
+                Response.Status.BAD_REQUEST, MediaType.APPLICATION_XML, null);
 
         HttpResponse delivery = executeDropDelivery(dropUnit);
         assertEquals(200, delivery.getStatusLine().getStatusCode());

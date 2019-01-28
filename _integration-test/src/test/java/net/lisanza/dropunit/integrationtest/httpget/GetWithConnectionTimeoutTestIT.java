@@ -30,7 +30,7 @@ public class GetWithConnectionTimeoutTestIT extends BaseRequest {
     @Before
     public void setUp() throws Exception {
         dropUnit = DropFactory.createDropUnit("test-get", "GET",
-                Response.Status.OK, MediaType.APPLICATION_XML_TYPE, RESPONSE_FILE,
+                Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE,
                 20000);
 
         HttpResponse delivery = executeDropDelivery(dropUnit);

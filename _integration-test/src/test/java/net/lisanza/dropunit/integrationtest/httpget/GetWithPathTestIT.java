@@ -27,7 +27,7 @@ public class GetWithPathTestIT extends BaseRequest {
     @Before
     public void setUp() throws Exception {
         dropUnit = DropFactory.createDropUnit("test-get/with/path", "GET",
-                Response.Status.OK, MediaType.APPLICATION_XML_TYPE, RESPONSE_FILE);
+                Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE);
 
         HttpResponse delivery = executeDropDelivery(dropUnit);
         assertEquals(200, delivery.getStatusLine().getStatusCode());

@@ -28,8 +28,8 @@ public class PostWithExceptionTestIT extends BaseRequest {
     @Before
     public void setUp() throws Exception {
         dropUnit = DropFactory.createDropUnit("test-post-exception",
-                "POST", MediaType.APPLICATION_XML_TYPE, REQUEST_FILE,
-                Response.Status.BAD_REQUEST, MediaType.APPLICATION_XML_TYPE, null);
+                "POST", MediaType.APPLICATION_XML, REQUEST_FILE,
+                Response.Status.BAD_REQUEST, MediaType.APPLICATION_XML, null);
 
         HttpResponse delivery = executeDropDelivery(dropUnit);
         assertEquals(200, delivery.getStatusLine().getStatusCode());
