@@ -1,4 +1,9 @@
+#
+# config file used for integration test with docker
+#
 server:
   applicationConnectors:
   - type: http
     port: 8080
+
+proxyUrl: http://172.20.0.11:9080

@@ -23,9 +23,10 @@ import java.util.stream.Collectors;
 
 public class BaseRequest {
 
-    protected static final String ENDPOINT_HOST = "http://127.0.0.1:9080/";
-    protected static final String DROP_DELIVERY = ENDPOINT_HOST + "dropunit/delivery/";
-    protected static final String DROP_COUNT = ENDPOINT_HOST + "dropunit/getDropCount";
+    protected static final String ENDPOINT_HOST = "http://127.0.0.1:8080/";
+    protected static final String DROP_UNIT_HOST = "http://127.0.0.1:9080/";
+    protected static final String DROP_DELIVERY = DROP_UNIT_HOST + "dropunit/delivery/";
+    protected static final String DROP_COUNT = DROP_UNIT_HOST + "dropunit/getDropCount";
 
     protected static final ContentType XML = ContentType.XML;
     protected static final ContentType JSON = ContentType.JSON;

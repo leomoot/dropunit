@@ -1,0 +1,9 @@
+#
+# config file used for development (when aal started in IDEA)
+#
+server:
+  applicationConnectors:
+  - type: http
+    port: 8080
+
+proxyUrl: http://127.0.0.1:9080

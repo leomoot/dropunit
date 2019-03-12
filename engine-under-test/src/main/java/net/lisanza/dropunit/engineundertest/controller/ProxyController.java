@@ -34,9 +34,10 @@ public class ProxyController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyController.class);
 
-    private static final String PROXY_URL = "http://172.20.0.11:9080";
+    private String proxyUrl;
 
-    public ProxyController() {
+    public ProxyController(final String proxyUrl) {
+        this.proxyUrl = proxyUrl;
     }
 
     @GET
@@ -83,7 +84,7 @@ public class ProxyController {
         LOGGER.info("proxy uri       : '{}'", request.toString());
 
         try {
-            method.setURI(new URI(PROXY_URL + constructUrl(request)));
+            method.setURI(new URI(proxyUrl + constructUrl(request)));
             LOGGER.info("proxy method     : '{}'", method.toString());
             if (request.getHeader("Content-type") != null) {
                 LOGGER.info("proxy contenttype: '{}'", request.getHeader("Content-type"));

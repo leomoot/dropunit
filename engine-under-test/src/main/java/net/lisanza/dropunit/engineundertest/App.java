@@ -22,7 +22,7 @@ public class App extends Application<AppConfiguration> {
     public void run(AppConfiguration configuration, Environment environment) throws Exception {
 
         // Registration of the REST controllers
-        environment.jersey().register(new ProxyController());
+        environment.jersey().register(new ProxyController(configuration.getProxyUrl()));
 
         // Registration of the required Dropwizard health checks
         environment.healthChecks().register("HEALTH", new HealthCheck(){
