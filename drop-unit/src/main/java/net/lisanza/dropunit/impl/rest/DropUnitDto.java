@@ -1,34 +1,31 @@
 package net.lisanza.dropunit.impl.rest;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-@XmlRootElement(name = "DropUnit")
 public class DropUnitDto {
 
-    @XmlElement(name = "url")
+    @JsonProperty("url")
     private String url;
 
-    @XmlElement(name = "method")
+    @JsonProperty("method")
     private String method;
 
-    @XmlElement(name = "requestContentType")
+    @JsonProperty("requestContentType")
     private String requestContentType;
 
-    @XmlElement(name = "requestBody")
+    @JsonProperty("requestBody")
     private String requestBody;
 
-    @XmlElement(name = "responseCode")
+    @JsonProperty("responseCode")
     private int responseCode;
 
-    @XmlElement(name = "responseContentType")
+    @JsonProperty("responseContentType")
     private String responseContentType;
 
-    @XmlElement(name = "responseBody")
+    @JsonProperty("responseBody")
     private String responseBody;
 
-    @XmlElement(name = "responseDelay")
+    @JsonProperty("responseDelay")
     private int responseDelay;
 
     public String getUrl() {
