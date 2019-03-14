@@ -1,8 +1,8 @@
 package net.lisanza.dropunit.integrationtest.httpdelete;
 
+import net.lisanza.dropunit.client.DropFactory;
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import net.lisanza.dropunit.integrationtest.BaseRequest;
-import net.lisanza.dropunit.integrationtest.DropFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
@@ -29,24 +29,20 @@ public class DeleteWithPathTestIT extends BaseRequest {
         dropUnit = DropFactory.createDropUnit("test-delete", "DELETE",
                 Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE);
 
-        HttpResponse delivery = executeDropDelivery(dropUnit);
-        assertEquals(200, delivery.getStatusLine().getStatusCode());
-        String deliveryBody = EntityUtils.toString(delivery.getEntity(), "UTF-8");
-        assertNotNull(deliveryBody);
-        assertThat(deliveryBody, containsString("droppy registered"));
+        dropUnitClient.executeDropDelivery(dropUnit);
 
-        count = executeRetrieveCount("delete");
+        count = dropUnitClient.executeRetrieveCount("delete");
     }
 
     @Test
     public void shouldTestWithPath() throws Exception {
-        HttpResponse response = executeBasicHttpDelete(ENDPOINT_HOST + dropUnit.getUrl());
+        HttpResponse response = httpClient.executeBasicHttpDelete(dropUnit.getUrl());
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
-        assertThat(count + 1, is(executeRetrieveCount("delete")));
+        assertThat(count + 1, is(dropUnitClient.executeRetrieveCount("delete")));
     }
 }

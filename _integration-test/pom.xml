@@ -25,6 +25,11 @@
             <version>0.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>net.lisanza.dropunit</groupId>
+            <artifactId>drop-unit-client</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.databind.version}</version>

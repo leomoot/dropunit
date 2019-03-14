@@ -21,6 +21,7 @@
         <module>engine-under-test</module>
         <!-- Simulator -->
         <module>drop-unit</module>
+        <module>drop-unit-client</module>
         <module>drop-unit-simulator</module>
         <!-- Test projects -->
         <module>_integration-test</module>

@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.integrationtest;
+package net.lisanza.dropunit.client;
 
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
 

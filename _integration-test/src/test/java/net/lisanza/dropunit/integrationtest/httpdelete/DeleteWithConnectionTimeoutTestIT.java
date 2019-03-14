@@ -1,11 +1,9 @@
 package net.lisanza.dropunit.integrationtest.httpdelete;
 
+import net.lisanza.dropunit.client.DropFactory;
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import net.lisanza.dropunit.integrationtest.BaseRequest;
-import net.lisanza.dropunit.integrationtest.DropFactory;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,10 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -33,13 +28,9 @@ public class DeleteWithConnectionTimeoutTestIT extends BaseRequest {
                 Response.Status.GATEWAY_TIMEOUT, MediaType.APPLICATION_XML, RESPONSE_FILE,
                 20000);
 
-        HttpResponse delivery = executeDropDelivery(dropUnit);
-        assertEquals(200, delivery.getStatusLine().getStatusCode());
-        String deliveryBody = EntityUtils.toString(delivery.getEntity(), "UTF-8");
-        assertNotNull(deliveryBody);
-        assertThat(deliveryBody, containsString("droppy registered"));
+        dropUnitClient.executeDropDelivery(dropUnit);
 
-        count = executeRetrieveCount("delete");
+        count = dropUnitClient.executeRetrieveCount("delete");
     }
 
     @Test
@@ -50,13 +41,13 @@ public class DeleteWithConnectionTimeoutTestIT extends BaseRequest {
                 .setSocketTimeout(1000)
                 .build();
         try {
-            executeBasicHttpDelete(ENDPOINT_HOST + dropUnit.getUrl(),
+            httpClient.executeBasicHttpDelete(dropUnit.getUrl(),
                     requestConfig);
             assertTrue(false);
         } catch (SocketTimeoutException e) {
             assertTrue(true);
         }
 
-        assertThat(count + 1, is(executeRetrieveCount("delete")));
+        assertThat(count + 1, is(dropUnitClient.executeRetrieveCount("delete")));
     }
 }

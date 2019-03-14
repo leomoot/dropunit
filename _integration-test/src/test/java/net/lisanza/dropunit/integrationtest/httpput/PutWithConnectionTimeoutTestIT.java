@@ -1,11 +1,9 @@
 package net.lisanza.dropunit.integrationtest.httpput;
 
+import net.lisanza.dropunit.client.DropFactory;
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import net.lisanza.dropunit.integrationtest.BaseRequest;
-import net.lisanza.dropunit.integrationtest.DropFactory;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,10 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -35,13 +30,9 @@ public class PutWithConnectionTimeoutTestIT extends BaseRequest {
                 Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE,
                 20000);
 
-        HttpResponse delivery = executeDropDelivery(dropUnit);
-        assertEquals(200, delivery.getStatusLine().getStatusCode());
-        String deliveryBody = EntityUtils.toString(delivery.getEntity(), "UTF-8");
-        assertNotNull(deliveryBody);
-        assertThat(deliveryBody, containsString("droppy registered"));
+        dropUnitClient.executeDropDelivery(dropUnit);
 
-        count = executeRetrieveCount("put");
+        count = dropUnitClient.executeRetrieveCount("put");
     }
 
     @Test
@@ -52,14 +43,14 @@ public class PutWithConnectionTimeoutTestIT extends BaseRequest {
                 .setSocketTimeout(1000)
                 .build();
         try {
-            executeBasicHttpPut(ENDPOINT_HOST + dropUnit.getUrl(),
-                    REQUEST_FILE, XML,
+            httpClient.executeBasicHttpPut(dropUnit.getUrl(),
+                    REQUEST_FILE, MediaType.APPLICATION_XML,
                     requestConfig);
             assertTrue(false);
         } catch (SocketTimeoutException e) {
             assertTrue(true);
         }
 
-        assertThat(count + 1, is(executeRetrieveCount("put")));
+        assertThat(count + 1, is(dropUnitClient.executeRetrieveCount("put")));
     }
 }
