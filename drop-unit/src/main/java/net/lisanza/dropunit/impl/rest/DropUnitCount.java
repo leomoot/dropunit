@@ -8,20 +8,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "DropUnitCount")
 public class DropUnitCount {
 
-    @XmlElement(name = "get")
-    @JsonProperty(value = "get")
+    @XmlElement(name = "GET")
+    @JsonProperty(value = "GET")
     private int httpGet;
 
-    @XmlElement(name = "post")
-    @JsonProperty("post")
+    @XmlElement(name = "POST")
+    @JsonProperty("POST")
     private int httpPost;
 
-    @XmlElement(name = "put")
-    @JsonProperty(value = "put")
+    @XmlElement(name = "PUT")
+    @JsonProperty(value = "PUT")
     private int httpPut;
 
-    @XmlElement(name = "delete")
-    @JsonProperty(value = "delete")
+    @XmlElement(name = "DELETE")
+    @JsonProperty(value = "DELETE")
     private int httpDelete;
 
     public int getHttpGet() {
