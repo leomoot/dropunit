@@ -125,14 +125,7 @@ public class DropUnitController {
             throw new NotFoundException(msg);
         }
 
-        LOGGER.info("lookup - url       : {}", result.getUrl());
-        LOGGER.info("lookup - method    : {}", result.getMethod());
-        LOGGER.info("lookup - req-type  : {}", result.getRequestContentType());
-        LOGGER.info("lookup - req-body  : {}", result.getRequestBody());
-        LOGGER.info("lookup - resp-delay: {}", result.getResponseDelay());
-        LOGGER.info("lookup - resp-code : {}", result.getResponseCode());
-        LOGGER.info("lookup - resp-type : {}", result.getResponseContentType());
-        LOGGER.info("lookup - resp-body : {}", result.getResponseBody());
+        LOGGER.info("lookup -> {}", result);
         return result;
     }
 

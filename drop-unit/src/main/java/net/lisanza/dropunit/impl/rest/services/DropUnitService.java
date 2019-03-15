@@ -41,14 +41,7 @@ public class DropUnitService {
         if (!dropUnitDto.getUrl().startsWith("/")) {
             dropUnitDto.setUrl("/" + dropUnitDto.getUrl());
         }
-        LOGGER.debug("register {} - url       : {}", dropId, dropUnitDto.getUrl());
-        LOGGER.debug("register {} - method    : {}", dropId, dropUnitDto.getMethod());
-        LOGGER.debug("register {} - req-type  : {}", dropId, dropUnitDto.getRequestContentType());
-        LOGGER.debug("register {} - req-body  : {}", dropId, dropUnitDto.getRequestBody());
-        LOGGER.debug("register {} - resp-delay: {}", dropId, dropUnitDto.getResponseDelay());
-        LOGGER.debug("register {} - resp-code : {}", dropId, dropUnitDto.getResponseCode());
-        LOGGER.debug("register {} - resp-type : {}", dropId, dropUnitDto.getResponseContentType());
-        LOGGER.debug("register {} - resp-body : {}", dropId, dropUnitDto.getResponseBody());
+        LOGGER.debug("register {} - {}", dropId, dropUnitDto);
 
         registrations.put(md5(dropUnitDto), dropUnitDto);
         return "droppy registered";
@@ -60,15 +53,7 @@ public class DropUnitService {
             LOGGER.error(msg);
             throw new BadRequestException(msg);
         }
-
-        LOGGER.debug("lookup - url       : {}", dropUnitDto.getUrl());
-        LOGGER.debug("lookup - method    : {}", dropUnitDto.getMethod());
-        LOGGER.debug("lookup - req-type  : {}", dropUnitDto.getRequestContentType());
-        LOGGER.debug("lookup - req-body  : {}", dropUnitDto.getRequestBody());
-        LOGGER.debug("lookup - resp-delay: {}", dropUnitDto.getResponseDelay());
-        LOGGER.debug("lookup - resp-code : {}", dropUnitDto.getResponseCode());
-        LOGGER.debug("lookup - resp-type : {}", dropUnitDto.getResponseContentType());
-        LOGGER.debug("lookup - resp-body : {}", dropUnitDto.getResponseBody());
+        LOGGER.debug("lookup - {}", dropUnitDto);
 
         return registrations.get(md5(dropUnitDto));
     }

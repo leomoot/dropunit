@@ -91,4 +91,17 @@ public class DropUnitDto {
     public void setResponseDelay(int responseDelay) {
         this.responseDelay = responseDelay;
     }
+
+    @Override
+    public String toString() {
+        return "DropUnitDto =>\n" +
+                " url             = '" + url + "'\n" +
+                " method          = '" + method + "'\n" +
+                " req-ContentType = '" + requestContentType + "'\n" +
+                " req-Body        = '" + requestBody + "'\n" +
+                " resp-Code       = " + responseCode +
+                " resp-ContentType='" + responseContentType + "'\n" +
+                " resp-Body       ='" + responseBody + "'\n" +
+                " resp-Delay      =" + responseDelay + "'";
+    }
 }
