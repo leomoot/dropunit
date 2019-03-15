@@ -7,3 +7,20 @@ server:
     port: 8080
 
 proxyUrl: http://172.20.0.11:9080
+
+logging:
+  level: INFO
+  loggers:
+    "net.lisanza":
+      level: DEBUG
+      additive: false
+      appenders:
+        - type: file
+          currentLogFilename: logs/engine-under-test.log
+          archivedLogFilenamePattern: logs/engine-under-test-%d.log.gz
+          archivedFileCount: 5
+          timeZone: UTC
+        - type: console
+          target: stderr
+    “net.lisanza.dropunit.engineundertest.logging":
+      level: DEBUG
