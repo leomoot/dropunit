@@ -1,6 +1,7 @@
-package net.lisanza.dropunit.integrationtest;
+package net.lisanza.dropunit.integrationtest.md5;
 
 import net.lisanza.dropunit.client.ClientDropUnit;
+import net.lisanza.dropunit.integrationtest.BaseRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.util.EntityUtils;

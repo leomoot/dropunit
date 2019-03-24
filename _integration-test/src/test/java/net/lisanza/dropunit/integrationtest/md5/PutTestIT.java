@@ -1,6 +1,7 @@
-package net.lisanza.dropunit.integrationtest;
+package net.lisanza.dropunit.integrationtest.md5;
 
 import net.lisanza.dropunit.client.ClientDropUnit;
+import net.lisanza.dropunit.integrationtest.BaseRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.util.EntityUtils;
@@ -8,6 +9,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.net.SocketTimeoutException;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -17,18 +19,20 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class DeleteTestIT extends BaseRequest {
+public class PutTestIT extends BaseRequest {
 
+    private static final String REQUEST_FILE = "src/test/resources/xml/drop-request.xml";
     private static final String RESPONSE_FILE = "src/test/resources/xml/drop-response.xml";
 
     @Test
     public void shouldTestWithPath() throws Exception {
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
-                .withDelete("test-delete")
+                .withPut("test-put/with/path")
+                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
-        HttpResponse response = httpClient.executeBasicHttpDelete(dropUnit.getUrl());
+        HttpResponse response = httpClient.executeBasicHttpPut(dropUnit.getUrl(), REQUEST_FILE, MediaType.APPLICATION_XML);
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
@@ -41,11 +45,12 @@ public class DeleteTestIT extends BaseRequest {
     @Test
     public void shouldTestWithQueryString() throws Exception {
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
-                .withDelete("test-delete")
+                .withPut("test-put")
+                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
-        HttpResponse response = httpClient.executeBasicHttpDelete(dropUnit.getUrl());
+        HttpResponse response = httpClient.executeBasicHttpPut(dropUnit.getUrl(), REQUEST_FILE, MediaType.APPLICATION_XML);
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
@@ -58,11 +63,12 @@ public class DeleteTestIT extends BaseRequest {
     @Test
     public void shouldTestWithException() throws Exception {
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
-                .withDelete("test-delete-exception")
+                .withPut("test-put-exception")
+                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseBadRequest(MediaType.APPLICATION_XML, "")
                 .drop();
 
-        HttpResponse response = httpClient.executeBasicHttpDelete(dropUnit.getUrl());
+        HttpResponse response = httpClient.executeBasicHttpPut(dropUnit.getUrl(), REQUEST_FILE, MediaType.APPLICATION_XML);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
 
         dropUnit.assertCount(1);
@@ -71,8 +77,9 @@ public class DeleteTestIT extends BaseRequest {
     @Test
     public void shouldTestWithConnectionTimeout() throws Exception {
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
-                .withDelete("test-delete")
-                .withResponseBadGateway(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .withPut("test-put")
+                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .withResponseDelay(20000)
                 .drop();
 
@@ -82,7 +89,8 @@ public class DeleteTestIT extends BaseRequest {
                     .setConnectTimeout(1000)
                     .setSocketTimeout(1000)
                     .build();
-            httpClient.executeBasicHttpDelete(dropUnit.getUrl(),
+            httpClient.executeBasicHttpPut(dropUnit.getUrl(),
+                    REQUEST_FILE, MediaType.APPLICATION_XML,
                     requestConfig);
             fail("timeout not exceeded");
         } catch (SocketTimeoutException e) {
