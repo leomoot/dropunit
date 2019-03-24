@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PutTestIT extends BaseRequest {
 
@@ -90,7 +91,7 @@ public class PutTestIT extends BaseRequest {
             httpClient.executeBasicHttpPut(dropUnit.getUrl(),
                     REQUEST_FILE, MediaType.APPLICATION_XML,
                     requestConfig);
-            assertTrue(false);
+            fail("timeout not exceeded");
         } catch (SocketTimeoutException e) {
             assertTrue(true);
         }
