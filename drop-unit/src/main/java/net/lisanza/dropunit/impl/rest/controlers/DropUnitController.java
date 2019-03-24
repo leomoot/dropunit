@@ -21,6 +21,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static net.lisanza.dropunit.impl.rest.services.DigestUtil.digestRequestBody;
+
 @Produces(MediaType.APPLICATION_XML)
 @Path(RequestMappings.ROOT_SERVICE)
 public class DropUnitController {
@@ -70,13 +72,14 @@ public class DropUnitController {
         // request validation
         DropUnitEndpoint endpoint;
         if ((request.getQueryString() == null) || request.getQueryString().isEmpty()) {
-            endpoint = lookup(createDropUnit(request.getPathInfo(), method, content));
+            endpoint = lookupEndpoint(createDropUnit(request.getPathInfo(), method, content));
         } else {
-            endpoint = lookup(createDropUnit(request.getPathInfo() + "?" + request.getQueryString(), method, content));
+            endpoint = lookupEndpoint(createDropUnit(request.getPathInfo() + "?" + request.getQueryString(), method, content));
         }
         endpoint.incr();
         DropUnitDto result = endpoint.getDropUnitDto();
         validateRequestContentType(result, request);
+        validateRequestContent(result, content);
         // Response build up
         waitToRespond(result);
         Response.ResponseBuilder responseBuilder = buildResponse(result);
@@ -106,8 +109,26 @@ public class DropUnitController {
         if ((request.getHeader("Content-type") != null) &&
                 (dropUnitDto.getRequestBodyInfo().getRequestContentType() != null) &&
                 (!dropUnitDto.getRequestBodyInfo().getRequestContentType().equals(request.getHeader("Content-type")))) {
-            throw new NotSupportedException();
+            throw new NotSupportedException("validate: content and expected request-body are NOT equal");
         }
+    }
+
+    private void validateRequestContent(DropUnitDto dropUnitDto, String content) {
+        if (isNullOrEmpty(content) &&
+                ((dropUnitDto.getRequestBodyInfo() == null)
+                        || isNullOrEmpty(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
+            LOGGER.info("validate: content and expected request-body are 'empty'");
+            return;
+        }
+        if (digestRequestBody(content).equals(digestRequestBody(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
+            LOGGER.info("validate: content and expected request-body are equal");
+            return;
+        }
+        throw new NotSupportedException("validate: content and expected request-body are NOT equal");
+    }
+
+    private boolean isNullOrEmpty(String string) {
+        return (string == null) || string.isEmpty();
     }
 
     private void waitToRespond(DropUnitDto dropUnitDto) {
@@ -120,11 +141,11 @@ public class DropUnitController {
         }
     }
 
-    private DropUnitEndpoint lookup(DropUnitDto dropUnitDto) {
+    private DropUnitEndpoint lookupEndpoint(DropUnitDto dropUnitDto) {
         DropUnitEndpoint result = dropUnitService.lookupEndpoint(dropUnitDto);
         if (result == null) {
             String msg = String.format("'drop unit '%s' registration is missing!", dropUnitDto.getUrl());
-            LOGGER.error(msg);
+            LOGGER.warn(msg);
             throw new NotFoundException(msg);
         }
 
