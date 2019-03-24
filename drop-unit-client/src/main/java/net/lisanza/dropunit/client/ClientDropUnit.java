@@ -2,11 +2,14 @@ package net.lisanza.dropunit.client;
 
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import net.lisanza.dropunit.impl.rest.DropUnitRequestDto;
+import net.lisanza.dropunit.impl.rest.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.DropUnitResponseDto;
 
 import javax.naming.CannotProceedException;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientDropUnit extends BaseDropUnitClient {
 
@@ -158,6 +161,25 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return withResponseBadGateway(contentType, readFromFile(filename));
     }
 
+    public ClientDropUnit withRequestPattern(String contentType, String pattern)
+            throws CannotProceedException {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(pattern);
+        return withRequestPatterns(contentType, list);
+    }
+
+    public ClientDropUnit withRequestPatterns(String contentType, List<String> patterns)
+            throws CannotProceedException {
+        if (this.dropUnitDto == null) {
+            throw new CannotProceedException("withEndpoint is not called before");
+        }
+        DropUnitRequestPatternsDto requestDto = new DropUnitRequestPatternsDto();
+        requestDto.setRequestContentType(contentType);
+        requestDto.setPatterns(patterns);
+        this.dropUnitDto.setRequestBodyPatterns(requestDto);
+        return this;
+    }
+
     public ClientDropUnit withResponseDelay(int responseDelay)
             throws Exception {
         if (this.dropUnitDto == null) {
@@ -173,7 +195,12 @@ public class ClientDropUnit extends BaseDropUnitClient {
     public ClientDropUnit drop()
             throws IOException {
         id = executeEndpointDelivery(dropUnitDto);
-        executeRequestDelivery(id, dropUnitDto);
+        if (dropUnitDto.getResponseBodyInfo() != null) {
+            executeRequestDelivery(id, dropUnitDto.getRequestBodyInfo());
+        }
+        if (dropUnitDto.getRequestBodyPatterns() != null) {
+            executeRequestDelivery(id, dropUnitDto.getRequestBodyPatterns());
+        }
         executeResponseDelivery(id, dropUnitDto);
         count = executeRetrieveCount(id);
         return this;

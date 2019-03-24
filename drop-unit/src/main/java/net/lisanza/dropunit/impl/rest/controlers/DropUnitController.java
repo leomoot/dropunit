@@ -2,6 +2,7 @@ package net.lisanza.dropunit.impl.rest.controlers;
 
 import net.lisanza.dropunit.impl.rest.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
+import net.lisanza.dropunit.impl.rest.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
@@ -106,25 +107,49 @@ public class DropUnitController {
     }
 
     private void validateRequestContentType(DropUnitDto dropUnitDto, HttpServletRequest request) {
-        if ((request.getHeader("Content-type") != null) &&
-                (dropUnitDto.getRequestBodyInfo().getRequestContentType() != null) &&
-                (!dropUnitDto.getRequestBodyInfo().getRequestContentType().equals(request.getHeader("Content-type")))) {
-            throw new NotSupportedException("validate: content and expected request-body are NOT equal");
+        if (dropUnitDto.getRequestBodyInfo() != null) {
+            if ((request.getHeader("Content-type") != null) &&
+                    (dropUnitDto.getRequestBodyInfo().getRequestContentType() != null) &&
+                    (!dropUnitDto.getRequestBodyInfo().getRequestContentType().equals(request.getHeader("Content-type")))) {
+                throw new NotSupportedException("validate: content and expected request-body are NOT equal");
+            }
+        } else if (dropUnitDto.getRequestBodyPatterns() != null) {
+            if ((request.getHeader("Content-type") != null) &&
+                    (dropUnitDto.getRequestBodyPatterns().getRequestContentType() != null) &&
+                    (!dropUnitDto.getRequestBodyPatterns().getRequestContentType().equals(request.getHeader("Content-type")))) {
+                throw new NotSupportedException("validate: content and expected request-body are NOT equal");
+            }
         }
     }
 
     private void validateRequestContent(DropUnitDto dropUnitDto, String content) {
-        if (isNullOrEmpty(content) &&
-                ((dropUnitDto.getRequestBodyInfo() == null)
-                        || isNullOrEmpty(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
-            LOGGER.info("validate: content and expected request-body are 'empty'");
-            return;
+        if (dropUnitDto.getRequestBodyPatterns() == null) {
+            if (isNullOrEmpty(content) &&
+                    ((dropUnitDto.getRequestBodyInfo() == null)
+                            || isNullOrEmpty(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
+                LOGGER.info("validate: content and expected request-body are 'empty'");
+                return;
+            }
+            if (digestRequestBody(content).equals(digestRequestBody(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
+                LOGGER.info("validate: content and expected request-body are equal");
+                return;
+            }
+        } else if (dropUnitDto.getRequestBodyInfo() == null) {
+            if (containsAllPatterns(dropUnitDto.getRequestBodyPatterns(), content)) {
+                LOGGER.info("validate: content and matches patterns");
+                return;
+            }
         }
-        if (digestRequestBody(content).equals(digestRequestBody(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
-            LOGGER.info("validate: content and expected request-body are equal");
-            return;
+        throw new NotSupportedException("validate: content and expected request-body are NOT matching");
+    }
+
+    private boolean containsAllPatterns(DropUnitRequestPatternsDto requestPatternsDto, String content) {
+        for (String pattern : requestPatternsDto.getPatterns()) {
+            if (!content.contains(pattern)) {
+                return false;
+            }
         }
-        throw new NotSupportedException("validate: content and expected request-body are NOT equal");
+        return true;
     }
 
     private boolean isNullOrEmpty(String string) {

@@ -3,6 +3,8 @@ package net.lisanza.dropunit.impl.rest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.naming.CannotProceedException;
+
 public class DropUnitDto {
 
     @JsonProperty("url")
@@ -13,6 +15,9 @@ public class DropUnitDto {
 
     @JsonIgnore
     private DropUnitRequestDto requestBodyInfo;
+
+    @JsonIgnore
+    private DropUnitRequestPatternsDto requestBodyPatterns;
 
     @JsonIgnore
     private DropUnitResponseDto responseBodyInfo;
@@ -40,8 +45,24 @@ public class DropUnitDto {
         return requestBodyInfo;
     }
 
-    public void setRequestBodyInfo(DropUnitRequestDto requestBodyInfo) {
+    public void setRequestBodyInfo(DropUnitRequestDto requestBodyInfo)
+            throws CannotProceedException {
+        if (this.requestBodyPatterns != null) {
+            throw new CannotProceedException("request body patterns already set");
+        }
         this.requestBodyInfo = requestBodyInfo;
+    }
+
+    public DropUnitRequestPatternsDto getRequestBodyPatterns() {
+        return requestBodyPatterns;
+    }
+
+    public void setRequestBodyPatterns(DropUnitRequestPatternsDto requestBodyPatterns)
+            throws CannotProceedException {
+        if (this.requestBodyInfo != null) {
+            throw new CannotProceedException("request body info");
+        }
+        this.requestBodyPatterns = requestBodyPatterns;
     }
 
     public DropUnitResponseDto getResponseBodyInfo() {
@@ -67,7 +88,10 @@ public class DropUnitDto {
                 .append(" url       = '").append(url).append("'\n")
                 .append(" method    = '").append(method).append("'\n");
         if (responseBodyInfo != null) {
-            stringBuffer.append(" reqquest  = ").append(requestBodyInfo).append("'\n");
+            stringBuffer.append(" request   = ").append(requestBodyInfo).append("'\n");
+        }
+        if (requestBodyPatterns != null) {
+            stringBuffer.append(" request   = ").append(requestBodyPatterns).append("'\n");
         }
         if (responseBodyInfo != null) {
             stringBuffer.append(" response  = ").append(responseBodyInfo).append("'\n");

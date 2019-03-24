@@ -3,6 +3,8 @@ package net.lisanza.dropunit.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
+import net.lisanza.dropunit.impl.rest.DropUnitRequestDto;
+import net.lisanza.dropunit.impl.rest.DropUnitRequestPatternsDto;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
@@ -37,7 +39,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
         return idValue.asText();
     }
 
-    private HttpResponse invokeHttpPost(String deliveryEndpoint, DropUnitDto dropUnit)
+    private HttpResponse invokeHttpPost(String deliveryEndpoint, Object dropUnit)
             throws IOException {
         HttpClient client = getHttpClient(null);
         HttpPost httpPost = new HttpPost(deliveryEndpoint);
@@ -51,13 +53,25 @@ public class BaseDropUnitClient extends BaseHttpClient {
         return client.execute(httpPost);
     }
 
-    public void executeRequestDelivery(String id, DropUnitDto dropUnit)
+    public void executeRequestDelivery(String id, DropUnitRequestDto requestDto)
             throws IOException {
-        if (dropUnit.getRequestBodyInfo() != null) {
+        if (requestDto != null) {
             HttpResponse response = invokeHttpPut(baseUrl + DELIVERY_ENDPOINT_REQUEST_BODY
                             .replace("{dropId}", id),
-                    dropUnit.getRequestBodyInfo().getRequestContentType(),
-                    dropUnit.getRequestBodyInfo().getRequestBody());
+                    requestDto.getRequestContentType(),
+                    requestDto.getRequestBody());
+            assertStatus("request-delivery", response.getStatusLine());
+            JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
+            assertResult("request-delivery", obj);
+        }
+    }
+
+    public void executeRequestDelivery(String id, DropUnitRequestPatternsDto requestDto)
+            throws IOException {
+        if (requestDto != null) {
+            HttpResponse response = invokeHttpPost(baseUrl + DELIVERY_ENDPOINT_REQUEST_BODY
+                    .replace("{dropId}", id),
+                    requestDto);
             assertStatus("request-delivery", response.getStatusLine());
             JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
             assertResult("request-delivery", obj);

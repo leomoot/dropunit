@@ -6,6 +6,7 @@ import net.lisanza.dropunit.impl.rest.DropUnitEndpointCountDto;
 import net.lisanza.dropunit.impl.rest.DropUnitEndpointRegistrationDto;
 import net.lisanza.dropunit.impl.rest.DropUnitEndpointUpdateDto;
 import net.lisanza.dropunit.impl.rest.DropUnitRequestDto;
+import net.lisanza.dropunit.impl.rest.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.DropUnitResponseDto;
 import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
@@ -54,6 +55,26 @@ public class DropRegistrationController {
                     .withId(dropUnitService.register(dto));
         } catch (Exception e) {
             LOGGER.warn("Failure in registration of endpoint", e);
+        }
+        throw new InternalServerErrorException();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/delivery/endpoint/{dropId}/request-body")
+    public DropUnitEndpointUpdateDto registerRequestBody(@PathParam("dropId") String dropId,
+                                                         @Valid DropUnitRequestPatternsDto requestDto) {
+        try {
+            LOGGER.debug("Called registerRequestBody {}", dropId);
+            DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropId);
+            if (endpoint == null) {
+                return new DropUnitEndpointUpdateDto()
+                        .withResult("no registration");
+            }
+            endpoint.getDropUnitDto().setRequestBodyPatterns(requestDto);
+            return new DropUnitEndpointUpdateDto().withResult("OK");
+        } catch (Exception e) {
+            LOGGER.warn("Failure generating response registerDropUnitRequestBody", e);
         }
         throw new InternalServerErrorException();
     }
