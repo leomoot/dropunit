@@ -1,5 +1,6 @@
 package net.lisanza.dropunit.impl.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DropUnitDto {
@@ -10,20 +11,11 @@ public class DropUnitDto {
     @JsonProperty("method")
     private String method;
 
-    @JsonProperty("requestContentType")
-    private String requestContentType;
+    @JsonIgnore
+    private DropUnitRequestDto requestBodyInfo;
 
-    @JsonProperty("requestBody")
-    private String requestBody;
-
-    @JsonProperty("responseCode")
-    private int responseCode;
-
-    @JsonProperty("responseContentType")
-    private String responseContentType;
-
-    @JsonProperty("responseBody")
-    private String responseBody;
+    @JsonIgnore
+    private DropUnitResponseDto responseBodyInfo;
 
     @JsonProperty("responseDelay")
     private int responseDelay;
@@ -44,44 +36,20 @@ public class DropUnitDto {
         this.method = method;
     }
 
-    public String getRequestContentType() {
-        return requestContentType;
+    public DropUnitRequestDto getRequestBodyInfo() {
+        return requestBodyInfo;
     }
 
-    public void setRequestContentType(String requestContentType) {
-        this.requestContentType = requestContentType;
+    public void setRequestBodyInfo(DropUnitRequestDto requestBodyInfo) {
+        this.requestBodyInfo = requestBodyInfo;
     }
 
-    public String getRequestBody() {
-        return requestBody;
+    public DropUnitResponseDto getResponseBodyInfo() {
+        return responseBodyInfo;
     }
 
-    public void setRequestBody(String requestBody) {
-        this.requestBody = requestBody;
-    }
-
-    public int getResponseCode() {
-        return responseCode;
-    }
-
-    public void setResponseCode(int responseCode) {
-        this.responseCode = responseCode;
-    }
-
-    public String getResponseContentType() {
-        return responseContentType;
-    }
-
-    public void setResponseContentType(String responseContentType) {
-        this.responseContentType = responseContentType;
-    }
-
-    public String getResponseBody() {
-        return responseBody;
-    }
-
-    public void setResponseBody(String responseBody) {
-        this.responseBody = responseBody;
+    public void setResponseBodyInfo(DropUnitResponseDto responseBodyInfo) {
+        this.responseBodyInfo = responseBodyInfo;
     }
 
     public int getResponseDelay() {
@@ -94,14 +62,17 @@ public class DropUnitDto {
 
     @Override
     public String toString() {
-        return "DropUnitDto =>\n" +
-                " url             = '" + url + "'\n" +
-                " method          = '" + method + "'\n" +
-                " req-ContentType = '" + requestContentType + "'\n" +
-                " req-Body        = '" + requestBody + "'\n" +
-                " resp-Code       = " + responseCode +
-                " resp-ContentType='" + responseContentType + "'\n" +
-                " resp-Body       ='" + responseBody + "'\n" +
-                " resp-Delay      =" + responseDelay + "'";
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("DropUnitDto =>\n")
+                .append(" url       = '").append(url).append("'\n")
+                .append(" method    = '").append(method).append("'\n");
+        if (responseBodyInfo != null) {
+            stringBuffer.append(" reqquest  = ").append(requestBodyInfo).append("'\n");
+        }
+        if (responseBodyInfo != null) {
+            stringBuffer.append(" response  = ").append(responseBodyInfo).append("'\n");
+        }
+        stringBuffer.append(" resp-Delay= ").append(responseDelay).append("'");
+        return stringBuffer.toString();
     }
 }

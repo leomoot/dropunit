@@ -17,7 +17,7 @@ public class DropUnitService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DropUnitService.class);
 
-    private Hashtable<String, DropUnitDto> registrations = new Hashtable<>();
+    private Hashtable<String, DropUnitEndpoint> registrations = new Hashtable<>();
 
     public String dropAll() {
         registrations.clear();
@@ -26,13 +26,13 @@ public class DropUnitService {
 
     public List<DropUnitDto> getAll() {
         List<DropUnitDto> list = new ArrayList<>();
-        for (DropUnitDto droppy: registrations.values()) {
-            list.add(droppy);
+        for (DropUnitEndpoint droppy : registrations.values()) {
+            list.add(droppy.getDropUnitDto());
         }
         return list;
     }
 
-    public String register(String dropId, DropUnitDto dropUnitDto) {
+    public String register(DropUnitDto dropUnitDto) {
         if (dropUnitDto == null) {
             String msg = "'drop unit' is missing!";
             LOGGER.error(msg);
@@ -41,33 +41,45 @@ public class DropUnitService {
         if (!dropUnitDto.getUrl().startsWith("/")) {
             dropUnitDto.setUrl("/" + dropUnitDto.getUrl());
         }
+
+        String dropId = digestEndpointId(dropUnitDto);
         LOGGER.debug("register {} - {}", dropId, dropUnitDto);
 
-        registrations.put(md5(dropUnitDto), dropUnitDto);
-        return "droppy registered";
+        registrations.put(dropId, new DropUnitEndpoint()
+                .withId(dropId)
+                .withDropUnitDto(dropUnitDto));
+        return dropId;
     }
 
-    public DropUnitDto lookup(DropUnitDto dropUnitDto) {
+    public DropUnitEndpoint lookupEndpoint(DropUnitDto dropUnitDto) {
         if (dropUnitDto == null) {
             String msg = "'drop unit' is missing!";
             LOGGER.error(msg);
             throw new BadRequestException(msg);
         }
-        LOGGER.debug("lookup - {}", dropUnitDto);
 
-        return registrations.get(md5(dropUnitDto));
+        String dropId = digestEndpointId(dropUnitDto);
+        LOGGER.debug("lookupEndpoint {} - {}", dropId, dropUnitDto);
+        return lookupEndpoint(dropId);
     }
 
-    public String md5(DropUnitDto dropUnitDto)
+    public DropUnitEndpoint lookupEndpoint(String dropId) {
+        DropUnitEndpoint endpoint = registrations.get(dropId);
+        if (endpoint == null) {
+            String msg = "'drop unit' is missing!";
+            LOGGER.error(msg);
+            throw new BadRequestException(msg);
+        }
+        return endpoint;
+    }
+
+    private String digestEndpointId(DropUnitDto dropUnitDto)
             throws InternalServerErrorException {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();
             md.update(dropUnitDto.getUrl().getBytes());
             md.update(dropUnitDto.getMethod().getBytes());
-            if (dropUnitDto.getRequestBody() != null) {
-                md.update(dropUnitDto.getRequestBody().getBytes());
-            }
             byte[] digest = md.digest();
             String md5 = DatatypeConverter.printHexBinary(digest).toUpperCase();
             LOGGER.info("md5 : {}", md5);

@@ -110,7 +110,11 @@ public class BaseHttpClient {
     }
 
     public String readFromFile(String fileName) throws IOException {
-        try (InputStream inputStream = new FileInputStream(new File(fileName))) {
+        return readFromFile(new File(fileName));
+    }
+
+    public String readFromFile(File file) throws IOException {
+        try (InputStream inputStream = new FileInputStream(file)) {
             String result = new BufferedReader(new InputStreamReader(inputStream))
                     .lines().collect(Collectors.joining("\n"));
             return result;

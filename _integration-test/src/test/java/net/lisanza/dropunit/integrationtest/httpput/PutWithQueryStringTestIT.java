@@ -1,16 +1,14 @@
 package net.lisanza.dropunit.integrationtest.httpput;
 
-import net.lisanza.dropunit.client.ClientDropUnitDto;
+import net.lisanza.dropunit.client.ClientDropUnit;
 import net.lisanza.dropunit.integrationtest.BaseRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -22,9 +20,11 @@ public class PutWithQueryStringTestIT extends BaseRequest {
 
     @Test
     public void shouldTestWithQueryString() throws Exception {
-        ClientDropUnitDto dropUnit = dropUnitClient.drop("test-put",
-                "PUT", MediaType.APPLICATION_XML, REQUEST_FILE,
-                Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE);
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+                .withPut("test-put")
+                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .drop();
 
         HttpResponse response = httpClient.executeBasicHttpPut(dropUnit.getUrl(), REQUEST_FILE, MediaType.APPLICATION_XML);
         assertEquals(200, response.getStatusLine().getStatusCode());
@@ -33,6 +33,6 @@ public class PutWithQueryStringTestIT extends BaseRequest {
         assertNotNull(body);
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
-        assertThat(dropUnit.getCount() + 1, is(dropUnitClient.executeRetrieveCount(dropUnit)));
+        dropUnit.assertCount(1);
     }
 }

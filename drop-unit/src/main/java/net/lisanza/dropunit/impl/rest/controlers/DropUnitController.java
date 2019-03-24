@@ -1,8 +1,9 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
+import net.lisanza.dropunit.impl.rest.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
-import net.lisanza.dropunit.impl.rest.DropUnitCount;
+import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class DropUnitController {
     @Path("{any: .*}")
     public Response dropUnitGet(@Context HttpServletRequest request) {
         dropUnitCount.incrHttpGet();
-        return dropUnit( request, "GET", "");
+        return dropUnit(request, "GET", "");
     }
 
     @POST
@@ -67,12 +68,14 @@ public class DropUnitController {
 
     public Response dropUnit(HttpServletRequest request, String method, String content) {
         // request validation
-        DropUnitDto result;
+        DropUnitEndpoint endpoint;
         if ((request.getQueryString() == null) || request.getQueryString().isEmpty()) {
-            result = lookup(createDropUnit(request.getPathInfo(), method, content));
+            endpoint = lookup(createDropUnit(request.getPathInfo(), method, content));
         } else {
-            result = lookup(createDropUnit(request.getPathInfo() + "?" + request.getQueryString(), method, content));
+            endpoint = lookup(createDropUnit(request.getPathInfo() + "?" + request.getQueryString(), method, content));
         }
+        endpoint.incr();
+        DropUnitDto result = endpoint.getDropUnitDto();
         validateRequestContentType(result, request);
         // Response build up
         waitToRespond(result);
@@ -83,26 +86,26 @@ public class DropUnitController {
     }
 
     private Response.ResponseBuilder buildResponse(DropUnitDto dropUnitDto) {
-        LOGGER.info("response code: {}", dropUnitDto.getResponseCode());
-        return Response.status(Response.Status.fromStatusCode(dropUnitDto.getResponseCode()));
+        LOGGER.info("response code: {}", dropUnitDto.getResponseBodyInfo().getResponseCode());
+        return Response.status(Response.Status.fromStatusCode(dropUnitDto.getResponseBodyInfo().getResponseCode()));
     }
 
     private void addContentType(DropUnitDto dropUnitDto, Response.ResponseBuilder responseBuilder) {
-        if (dropUnitDto.getResponseContentType() == null) {
-            responseBuilder.header("Content-type", dropUnitDto.getResponseContentType());
+        if (dropUnitDto.getResponseBodyInfo().getResponseContentType() == null) {
+            responseBuilder.header("Content-type", dropUnitDto.getResponseBodyInfo().getResponseContentType());
         }
     }
 
     private void addContent(DropUnitDto dropUnitDto, Response.ResponseBuilder responseBuilder) {
-        if (dropUnitDto.getResponseBody() != null) {
-            responseBuilder.entity(dropUnitDto.getResponseBody());
+        if (dropUnitDto.getResponseBodyInfo().getResponseBody() != null) {
+            responseBuilder.entity(dropUnitDto.getResponseBodyInfo().getResponseBody());
         }
     }
 
     private void validateRequestContentType(DropUnitDto dropUnitDto, HttpServletRequest request) {
         if ((request.getHeader("Content-type") != null) &&
-                (dropUnitDto.getRequestContentType() != null) &&
-                (!dropUnitDto.getRequestContentType().equals(request.getHeader("Content-type")))) {
+                (dropUnitDto.getRequestBodyInfo().getRequestContentType() != null) &&
+                (!dropUnitDto.getRequestBodyInfo().getRequestContentType().equals(request.getHeader("Content-type")))) {
             throw new NotSupportedException();
         }
     }
@@ -117,15 +120,15 @@ public class DropUnitController {
         }
     }
 
-    private DropUnitDto lookup(DropUnitDto dropUnitDto) {
-        DropUnitDto result = dropUnitService.lookup(dropUnitDto);
+    private DropUnitEndpoint lookup(DropUnitDto dropUnitDto) {
+        DropUnitEndpoint result = dropUnitService.lookupEndpoint(dropUnitDto);
         if (result == null) {
             String msg = String.format("'drop unit '%s' registration is missing!", dropUnitDto.getUrl());
             LOGGER.error(msg);
             throw new NotFoundException(msg);
         }
 
-        LOGGER.info("lookup -> {}", result);
+        LOGGER.info("lookupEndpoint -> {}", result);
         return result;
     }
 
@@ -133,7 +136,6 @@ public class DropUnitController {
         DropUnitDto dropUnitDto = new DropUnitDto();
         dropUnitDto.setUrl(uri);
         dropUnitDto.setMethod(method);
-        dropUnitDto.setRequestBody(requestBody);
         return dropUnitDto;
     }
 }

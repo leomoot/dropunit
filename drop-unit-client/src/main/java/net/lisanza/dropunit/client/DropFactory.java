@@ -14,38 +14,6 @@ import java.util.stream.Collectors;
 public class DropFactory {
 
     public static DropUnitDto createDropUnit(String uri, String method,
-                                             Response.Status responseCode,
-                                             String responseContentType,
-                                             String responseBodyFile)
-            throws IOException {
-        return createDropUnit(uri, method,
-                responseCode, responseContentType, responseBodyFile, 0);
-    }
-
-    public static DropUnitDto createDropUnit(String uri, String method,
-                                             Response.Status responseCode,
-                                             String responseContentType,
-                                             String responseBodyFile,
-                                             int responseDelay)
-            throws IOException {
-        return createDropUnit(uri, method,
-                null, null,
-                responseCode, responseContentType, responseBodyFile, responseDelay);
-    }
-
-    public static DropUnitDto createDropUnit(String uri, String method,
-                                             String requestContentType,
-                                             String requestBodyFile,
-                                             Response.Status responseCode,
-                                             String responseContentType,
-                                             String responseBodyFile)
-            throws IOException {
-        return createDropUnit(uri, method,
-                requestContentType, requestBodyFile,
-                responseCode, responseContentType, responseBodyFile, 0);
-    }
-
-    public static DropUnitDto createDropUnit(String uri, String method,
                                              String requestContentType,
                                              String requestBodyFile,
                                              Response.Status responseCode,
@@ -57,15 +25,15 @@ public class DropFactory {
         dropUnitDto.setUrl(uri);
         dropUnitDto.setMethod(method);
         if (requestContentType != null) {
-            dropUnitDto.setRequestContentType(requestContentType);
+            dropUnitDto.getRequestBodyInfo().setRequestContentType(requestContentType);
         }
         if (requestBodyFile != null) {
-            dropUnitDto.setRequestBody(readFromFile(requestBodyFile));
+            dropUnitDto.getRequestBodyInfo().setRequestBody(readFromFile(requestBodyFile));
         }
-        dropUnitDto.setResponseCode(responseCode.getStatusCode());
-        dropUnitDto.setResponseContentType(responseContentType);
+        dropUnitDto.getResponseBodyInfo().setResponseCode(responseCode.getStatusCode());
+        dropUnitDto.getResponseBodyInfo().setResponseContentType(responseContentType);
         if (responseBodyFile != null) {
-            dropUnitDto.setResponseBody(readFromFile(responseBodyFile));
+            dropUnitDto.getResponseBodyInfo().setResponseBody(readFromFile(responseBodyFile));
         }
         dropUnitDto.setResponseDelay(responseDelay);
         return dropUnitDto;

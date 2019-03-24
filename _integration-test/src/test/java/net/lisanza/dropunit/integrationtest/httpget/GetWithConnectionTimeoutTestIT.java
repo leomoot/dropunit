@@ -1,16 +1,13 @@
 package net.lisanza.dropunit.integrationtest.httpget;
 
-import net.lisanza.dropunit.client.ClientDropUnitDto;
+import net.lisanza.dropunit.client.ClientDropUnit;
 import net.lisanza.dropunit.integrationtest.BaseRequest;
 import org.apache.http.client.config.RequestConfig;
 import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class GetWithConnectionTimeoutTestIT extends BaseRequest {
@@ -19,9 +16,11 @@ public class GetWithConnectionTimeoutTestIT extends BaseRequest {
 
     @Test
     public void shouldTestWithConnectionTimeout() throws Exception {
-        ClientDropUnitDto dropUnit = dropUnitClient.drop("test-get", "GET",
-                Response.Status.OK, MediaType.APPLICATION_XML, RESPONSE_FILE,
-                20000);
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+                .withGet("test-get")
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .withResponseDelay(20000)
+                .drop();
 
         try {
             RequestConfig requestConfig = RequestConfig.custom()
@@ -35,6 +34,6 @@ public class GetWithConnectionTimeoutTestIT extends BaseRequest {
             assertTrue(true);
         }
 
-        assertThat(dropUnit.getCount() + 1, is(dropUnitClient.executeRetrieveCount(dropUnit)));
+        dropUnit.assertCount(1);
     }
 }
