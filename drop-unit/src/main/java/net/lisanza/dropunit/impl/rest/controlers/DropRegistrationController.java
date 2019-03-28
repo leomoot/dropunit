@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.POST;
@@ -153,6 +154,20 @@ public class DropRegistrationController {
         try {
             LOGGER.debug("Called getDropCount");
             DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropUnitId);
+            return new DropUnitEndpointCountDto()
+                    .withCount(endpoint.getCount());
+        } catch (Exception e) {
+            LOGGER.warn("Failure generating response getDropCount", e);
+        }
+        throw new InternalServerErrorException();
+    }
+
+    @DELETE
+    @Path("/delivery/endpoint/{dropUnitId}")
+    public DropUnitEndpointCountDto deleteEndpoint(@PathParam("dropUnitId") String dropUnitId) {
+        try {
+            LOGGER.debug("Called getDropCount");
+            DropUnitEndpoint endpoint = dropUnitService.deregister(dropUnitId);
             return new DropUnitEndpointCountDto()
                     .withCount(endpoint.getCount());
         } catch (Exception e) {

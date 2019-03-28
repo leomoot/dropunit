@@ -7,12 +7,8 @@ import io.dropwizard.setup.Environment;
 import net.lisanza.dropunit.engineundertest.config.yml.AppConfiguration;
 import net.lisanza.dropunit.engineundertest.controller.ProxyController;
 import org.glassfish.jersey.logging.LoggingFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class App extends Application<AppConfiguration> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws Exception {
         // Start the application

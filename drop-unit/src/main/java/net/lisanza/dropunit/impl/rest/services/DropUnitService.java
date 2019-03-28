@@ -50,6 +50,15 @@ public class DropUnitService {
         return dropId;
     }
 
+    public DropUnitEndpoint deregister(String dropId) {
+        DropUnitEndpoint endpoint = lookupEndpoint(dropId);
+        if (endpoint != null) {
+            registrations.remove(dropId);
+        }
+        return endpoint;
+    }
+
+
     public DropUnitEndpoint lookupEndpoint(DropUnitDto dropUnitDto) {
         if (dropUnitDto == null) {
             LOGGER.warn("'drop unit' is missing!");

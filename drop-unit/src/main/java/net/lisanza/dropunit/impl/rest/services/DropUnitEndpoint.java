@@ -27,7 +27,7 @@ public class DropUnitEndpoint {
         return dropUnitDto;
     }
 
-    public void setDropUnitDto(DropUnitDto id) {
+    public void setDropUnitDto(DropUnitDto dropUnitDto) {
         this.dropUnitDto = dropUnitDto;
     }
 

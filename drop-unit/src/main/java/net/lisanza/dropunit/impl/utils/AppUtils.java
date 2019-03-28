@@ -33,8 +33,7 @@ public class AppUtils {
         DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(new StringReader(xmlStr)));
-            return doc;
+            return builder.parse(new InputSource(new StringReader(xmlStr)));
         } catch (Exception e) {
             LOGGER.error(String.format("xmlStringToDocument(%s) : %s", xmlStr, e.getMessage()));
         }

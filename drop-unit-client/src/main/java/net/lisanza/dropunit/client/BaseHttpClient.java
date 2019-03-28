@@ -26,80 +26,100 @@ public class BaseHttpClient {
         this.baseUrl = baseUrl;
     }
 
-    public HttpResponse executeBasicHttpPost(String endpoint,
-                                             String requestData,
-                                             String contentType)
+    public HttpResponse invokeHttpPost(String endpoint,
+                                       String contentType,
+                                       File requestDataFile)
             throws IOException {
-        return executeBasicHttpPost(endpoint, requestData, contentType, null);
+        return invokeHttpPost(endpoint, contentType, requestDataFile, null);
     }
 
-    public HttpResponse executeBasicHttpPost(String endpoint,
-                                             String requestData,
-                                             String contentType,
-                                             RequestConfig requestConfig)
+    public HttpResponse invokeHttpPost(String endpoint,
+                                       String contentType,
+                                       File requestDataFile,
+                                       RequestConfig requestConfig)
+            throws IOException {
+        return invokeHttpPost(endpoint, contentType, readFromFile(requestDataFile), requestConfig);
+    }
+
+    public HttpResponse invokeHttpPost(String endpoint,
+                                       String contentType,
+                                       String requestData)
+            throws IOException {
+        return invokeHttpPost(endpoint, contentType, requestData, null);
+    }
+
+    public HttpResponse invokeHttpPost(String endpoint,
+                                       String contentType,
+                                       String requestData,
+                                       RequestConfig requestConfig)
             throws IOException {
         org.apache.http.client.HttpClient client = getHttpClient(requestConfig);
         HttpPost httpPost = new HttpPost(baseUrl + endpoint);
 
-        String bodyRequest = "";
-        if (requestData != null) {
-            bodyRequest = readFromFile(requestData);
-        }
-
-        StringEntity entity = new StringEntity(bodyRequest, "UTF-8");
+        StringEntity entity = new StringEntity(requestData, "UTF-8");
         entity.setContentType(contentType);
         httpPost.setEntity(entity);
 
         return client.execute(httpPost);
     }
 
-    public HttpResponse executeBasicHttpPut(String endpoint,
-                                            String requestData,
-                                            String contentType)
+    public HttpResponse invokeHttpPut(String endpoint,
+                                      String contentType,
+                                      File requestDataFile)
             throws IOException {
-        return executeBasicHttpPut(endpoint, requestData, contentType, null);
+        return invokeHttpPut(endpoint, contentType, requestDataFile, null);
     }
 
-    public HttpResponse executeBasicHttpPut(String endpoint,
-                                            String requestData,
-                                            String contentType,
-                                            RequestConfig requestConfig)
+    public HttpResponse invokeHttpPut(String endpoint,
+                                      String contentType,
+                                      File requestDataFile,
+                                      RequestConfig requestConfig)
+            throws IOException {
+        return invokeHttpPut(endpoint, contentType, readFromFile(requestDataFile), requestConfig);
+    }
+
+    public HttpResponse invokeHttpPut(String endpoint,
+                                      String contentType,
+                                      String requestData)
+            throws IOException {
+        return invokeHttpPut(endpoint, contentType, requestData, null);
+    }
+
+    public HttpResponse invokeHttpPut(String endpoint,
+                                      String contentType,
+                                      String requestData,
+                                      RequestConfig requestConfig)
             throws IOException {
         org.apache.http.client.HttpClient client = getHttpClient(requestConfig);
         HttpPut httpPut = new HttpPut(baseUrl + endpoint);
 
-        String bodyRequest = "";
-        if (requestData != null) {
-            bodyRequest = readFromFile(requestData);
-        }
-
-        StringEntity entity = new StringEntity(bodyRequest, "UTF-8");
+        StringEntity entity = new StringEntity(requestData, "UTF-8");
         entity.setContentType(contentType);
         httpPut.setEntity(entity);
 
         return client.execute(httpPut);
     }
 
-    public HttpResponse executeBasicHttpDelete(String endpoint)
+    public HttpResponse invokeHttpDelete(String endpoint)
             throws IOException {
-        return executeBasicHttpDelete(endpoint, null);
+        return invokeHttpDelete(endpoint, null);
     }
 
-    public HttpResponse executeBasicHttpDelete(String endpoint,
-                                               RequestConfig requestConfig)
+    public HttpResponse invokeHttpDelete(String endpoint,
+                                         RequestConfig requestConfig)
             throws IOException {
         org.apache.http.client.HttpClient client = getHttpClient(requestConfig);
         HttpDelete httpDelete = new HttpDelete(baseUrl + endpoint);
         return client.execute(httpDelete);
     }
 
-    public HttpResponse executeBasicHttpGet(String endpoint)
+    public HttpResponse invokeHttpGet(String endpoint)
             throws IOException {
-        return executeBasicHttpGet(endpoint, null);
+        return invokeHttpGet(endpoint, null);
     }
 
-    public HttpResponse executeBasicHttpGet(String endpoint,
-                                            RequestConfig requestConfig) throws IOException {
+    public HttpResponse invokeHttpGet(String endpoint,
+                                      RequestConfig requestConfig) throws IOException {
         HttpClient client = getHttpClient(requestConfig);
         HttpGet request = new HttpGet(baseUrl + endpoint);
         return client.execute(request);
@@ -115,9 +135,8 @@ public class BaseHttpClient {
 
     public String readFromFile(File file) throws IOException {
         try (InputStream inputStream = new FileInputStream(file)) {
-            String result = new BufferedReader(new InputStreamReader(inputStream))
+            return new BufferedReader(new InputStreamReader(inputStream))
                     .lines().collect(Collectors.joining("\n"));
-            return result;
         }
     }
 }

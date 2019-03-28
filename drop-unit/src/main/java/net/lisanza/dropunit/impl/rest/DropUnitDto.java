@@ -83,20 +83,20 @@ public class DropUnitDto {
 
     @Override
     public String toString() {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("DropUnitDto =>\n")
+        StringBuilder builder = new StringBuilder();
+        builder.append("DropUnitDto =>\n")
                 .append(" url       = '").append(url).append("'\n")
                 .append(" method    = '").append(method).append("'\n");
         if (responseBodyInfo != null) {
-            stringBuffer.append(" request   = ").append(requestBodyInfo).append("'\n");
+            builder.append(" request   = ").append(requestBodyInfo).append("'\n");
         }
         if (requestBodyPatterns != null) {
-            stringBuffer.append(" request   = ").append(requestBodyPatterns).append("'\n");
+            builder.append(" request   = ").append(requestBodyPatterns).append("'\n");
         }
         if (responseBodyInfo != null) {
-            stringBuffer.append(" response  = ").append(responseBodyInfo).append("'\n");
+            builder.append(" response  = ").append(responseBodyInfo).append("'\n");
         }
-        stringBuffer.append(" resp-Delay= ").append(responseDelay).append("'");
-        return stringBuffer.toString();
+        builder.append(" resp-Delay= ").append(responseDelay).append("'");
+        return builder.toString();
     }
 }

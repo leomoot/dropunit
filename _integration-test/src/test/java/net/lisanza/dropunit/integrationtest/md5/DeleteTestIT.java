@@ -24,72 +24,88 @@ public class DeleteTestIT extends BaseRequest {
 
     @Test
     public void shouldTestWithPath() throws Exception {
+
+        // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
                 .withDelete("test-delete")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
-        HttpResponse response = httpClient.executeBasicHttpDelete(dropUnit.getUrl());
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpDelete(dropUnit.getUrl());
 
+        // assert message from engine-under-test
+        assertEquals(200, response.getStatusLine().getStatusCode());
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
-        dropUnit.assertCount(1);
+        dropUnit.assertCountRecievedRequests(1);
     }
 
     @Test
     public void shouldTestWithQueryString() throws Exception {
+
+        // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
                 .withDelete("test-delete")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
-        HttpResponse response = httpClient.executeBasicHttpDelete(dropUnit.getUrl());
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpDelete(dropUnit.getUrl());
 
+        // assert message from engine-under-test
+        assertEquals(200, response.getStatusLine().getStatusCode());
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
-        dropUnit.assertCount(1);
+        dropUnit.assertCountRecievedRequests(1);
     }
 
     @Test
     public void shouldTestWithException() throws Exception {
+
+        // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
                 .withDelete("test-delete-exception")
                 .withResponseBadRequest(MediaType.APPLICATION_XML, "")
                 .drop();
 
-        HttpResponse response = httpClient.executeBasicHttpDelete(dropUnit.getUrl());
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpDelete(dropUnit.getUrl());
+
+        // assert message from engine-under-test
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
 
-        dropUnit.assertCount(1);
+        dropUnit.assertCountRecievedRequests(1);
     }
 
     @Test
     public void shouldTestWithConnectionTimeout() throws Exception {
+
+        // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
                 .withDelete("test-delete")
                 .withResponseBadGateway(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .withResponseDelay(20000)
                 .drop();
 
+        // invoke message on engine-under-test to use dropunit endpoint
+        // and assert message from engine-under-test
         try {
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectionRequestTimeout(1000)
-                    .setConnectTimeout(1000)
-                    .setSocketTimeout(1000)
-                    .build();
-            httpClient.executeBasicHttpDelete(dropUnit.getUrl(),
-                    requestConfig);
+            httpClient.invokeHttpDelete(dropUnit.getUrl(),
+                    RequestConfig.custom()
+                            .setConnectionRequestTimeout(1000)
+                            .setConnectTimeout(1000)
+                            .setSocketTimeout(1000)
+                            .build());
             fail("timeout not exceeded");
         } catch (SocketTimeoutException e) {
             assertTrue(true);
         }
 
-        dropUnit.assertCount(1);
+        dropUnit.assertCountRecievedRequests(1);
     }
 }

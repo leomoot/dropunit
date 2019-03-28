@@ -207,7 +207,7 @@ public class ClientDropUnit extends BaseDropUnitClient {
     }
 
 
-    public void assertCount(int count) {
+    public void assertCountRecievedRequests(int count) {
         try {
             if (count != executeRetrieveCount(id)) {
                 throw new AssertionError("incorrect request count for dropunit");

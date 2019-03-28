@@ -1,7 +1,6 @@
 package net.lisanza.dropunit.integrationtest;
 
 import net.lisanza.dropunit.client.BaseHttpClient;
-import net.lisanza.dropunit.client.DropUnitClient;
 
 public class BaseRequest {
 
@@ -10,6 +9,5 @@ public class BaseRequest {
 
 
     protected static final BaseHttpClient httpClient = new BaseHttpClient(ENDPOINT_HOST);
-    protected static final DropUnitClient dropUnitClient = new DropUnitClient(DROP_UNIT_HOST);
 
 }

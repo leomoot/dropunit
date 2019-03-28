@@ -2,8 +2,6 @@ package net.lisanza.dropunit.impl.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
 public abstract class AbstractDropUnitRequestDto {
 
     @JsonProperty("requestContentType")
