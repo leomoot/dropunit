@@ -68,7 +68,7 @@ public class DropUnitController {
 
     public Response dropUnit(HttpServletRequest request, String method, String content) {
         // request validation
-        net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint endpoint;
+        DropUnitEndpoint endpoint;
         if ((request.getQueryString() == null) || request.getQueryString().isEmpty()) {
             endpoint = lookupEndpoint(createDropUnitEndpoint(request.getPathInfo(), method));
         } else {
@@ -147,9 +147,9 @@ public class DropUnitController {
         }
     }
 
-    private net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint lookupEndpoint
-            (net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint dropUnitEndpoint) {
-        net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint result = dropUnitService.lookupEndpoint(dropUnitEndpoint);
+    private DropUnitEndpoint lookupEndpoint
+            (DropUnitEndpoint dropUnitEndpoint) {
+        DropUnitEndpoint result = dropUnitService.lookupEndpoint(dropUnitEndpoint);
         if (result == null) {
             String msg = String.format("'drop unit '%s' registration is missing!", dropUnitEndpoint.getUrl());
             LOGGER.warn(msg);
@@ -160,9 +160,9 @@ public class DropUnitController {
         return result;
     }
 
-    public net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint createDropUnitEndpoint(String uri, String
+    public DropUnitEndpoint createDropUnitEndpoint(String uri, String
             method) {
-        net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint dropUnitEndpoint = new net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint();
+        DropUnitEndpoint dropUnitEndpoint = new DropUnitEndpoint();
         dropUnitEndpoint.setUrl(uri);
         dropUnitEndpoint.setMethod(method);
         return dropUnitEndpoint;

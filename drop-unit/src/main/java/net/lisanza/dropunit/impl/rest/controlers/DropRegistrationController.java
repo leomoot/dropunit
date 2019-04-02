@@ -7,6 +7,7 @@ import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
+import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
 import net.lisanza.dropunit.impl.rest.services.DropUnitRequest;
 import net.lisanza.dropunit.impl.rest.services.DropUnitRequestPatterns;
 import net.lisanza.dropunit.impl.rest.services.DropUnitResponse;
@@ -52,7 +53,7 @@ public class DropRegistrationController {
             LOGGER.debug("Called registerEndpoint");
             return new DropUnitEndpointRegistrationDto()
                     .withResult("OK")
-                    .withId(dropUnitService.register(new net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint()
+                    .withId(dropUnitService.register(new DropUnitEndpoint()
                             .withUrl(dto.getUrl())
                             .withMethod(dto.getMethod())
                             .withDelay(dto.getResponseDelay())));
@@ -124,7 +125,7 @@ public class DropRegistrationController {
 
     @GET
     @Path("/getAllDrop")
-    public List<net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint> getAllDrop() {
+    public List<DropUnitEndpoint> getAllDrop() {
         try {
             LOGGER.debug("Called getAllDrop");
             return dropUnitService.getAll();
@@ -139,7 +140,7 @@ public class DropRegistrationController {
     public DropUnitEndpointCountDto getDropCount(@PathParam("dropUnitId") String dropUnitId) {
         try {
             LOGGER.debug("Called getDropCount");
-            net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropUnitId);
+            DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropUnitId);
             return new DropUnitEndpointCountDto()
                     .withCount(endpoint.getCount());
         } catch (Exception e) {
@@ -153,7 +154,7 @@ public class DropRegistrationController {
     public DropUnitEndpointCountDto deleteEndpoint(@PathParam("dropUnitId") String dropUnitId) {
         try {
             LOGGER.debug("Called getDropCount");
-            net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint endpoint = dropUnitService.deregister(dropUnitId);
+            DropUnitEndpoint endpoint = dropUnitService.deregister(dropUnitId);
             return new DropUnitEndpointCountDto()
                     .withCount(endpoint.getCount());
         } catch (Exception e) {
