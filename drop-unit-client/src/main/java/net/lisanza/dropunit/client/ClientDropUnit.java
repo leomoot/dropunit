@@ -1,9 +1,9 @@
 package net.lisanza.dropunit.client;
 
-import net.lisanza.dropunit.impl.rest.DropUnitDto;
-import net.lisanza.dropunit.impl.rest.DropUnitRequestDto;
-import net.lisanza.dropunit.impl.rest.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.DropUnitResponseDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 
 import javax.naming.CannotProceedException;
 import javax.ws.rs.core.Response;
@@ -17,7 +17,10 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     private int count;
 
-    private DropUnitDto dropUnitDto = null;
+    private DropUnitEndpointDto dropUnitEndpointDto = null;
+    private DropUnitRequestDto requestBodyInfo = null;
+    private DropUnitRequestPatternsDto requestPatterns = null;
+    private DropUnitResponseDto responseDto = null;
 
     // Constructor
 
@@ -40,19 +43,6 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
-    public DropUnitDto getDropUnitDto() {
-        return dropUnitDto;
-    }
-
-    public void setDropUnitDto(DropUnitDto dropUnitDto) {
-        this.dropUnitDto = dropUnitDto;
-    }
-
-    public ClientDropUnit withDropUnitDto(DropUnitDto dropUnitDto) {
-        this.dropUnitDto = dropUnitDto;
-        return this;
-    }
-
     public int getCount() {
         return count;
     }
@@ -68,12 +58,16 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     // Delegates
 
-    public String getUrl() {
-        return getDropUnitDto().getUrl();
+    public String getUrl()
+            throws CannotProceedException {
+        if (this.dropUnitEndpointDto == null) {
+            throw new CannotProceedException("withEndpoint is not called before");
+        }
+        return dropUnitEndpointDto.getUrl();
     }
 
     public String getResponseBody() {
-        return getDropUnitDto().getResponseBodyInfo().getResponseBody();
+        return this.responseDto.getResponseBody();
     }
 
     // Operations
@@ -95,21 +89,20 @@ public class ClientDropUnit extends BaseDropUnitClient {
     }
 
     public ClientDropUnit withEndpoint(String uri, String method) {
-        this.dropUnitDto = new DropUnitDto();
-        this.dropUnitDto.setUrl(uri);
-        this.dropUnitDto.setMethod(method);
+        this.dropUnitEndpointDto = new DropUnitEndpointDto();
+        this.dropUnitEndpointDto.setUrl(uri);
+        this.dropUnitEndpointDto.setMethod(method);
         return this;
     }
 
     public ClientDropUnit withRequestBody(String contentType, String body)
             throws CannotProceedException {
-        if (this.dropUnitDto == null) {
+        if (this.dropUnitEndpointDto == null) {
             throw new CannotProceedException("withEndpoint is not called before");
         }
-        DropUnitRequestDto dropUnitRequestDto = new DropUnitRequestDto();
-        dropUnitRequestDto.setRequestBody(contentType);
-        dropUnitRequestDto.setRequestBody(body);
-        this.dropUnitDto.setRequestBodyInfo(dropUnitRequestDto);
+        this.requestBodyInfo = new DropUnitRequestDto();
+        this.requestBodyInfo.setRequestContentType(contentType);
+        this.requestBodyInfo.setRequestBody(body);
         return this;
     }
 
@@ -120,14 +113,13 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     public ClientDropUnit withResponse(Response.Status status, String contentType, String body)
             throws CannotProceedException {
-        if (this.dropUnitDto == null) {
+        if (this.dropUnitEndpointDto == null) {
             throw new CannotProceedException("withEndpoint is not called before");
         }
-        DropUnitResponseDto dropUnitResponseDto = new DropUnitResponseDto();
-        dropUnitResponseDto.setResponseCode(status.getStatusCode());
-        dropUnitResponseDto.setResponseContentType(contentType);
-        dropUnitResponseDto.setResponseBody(body);
-        this.dropUnitDto.setResponseBodyInfo(dropUnitResponseDto);
+        this.responseDto = new DropUnitResponseDto();
+        this.responseDto.setResponseCode(status.getStatusCode());
+        this.responseDto.setResponseContentType(contentType);
+        this.responseDto.setResponseBody(body);
         return this;
     }
 
@@ -170,22 +162,21 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     public ClientDropUnit withRequestPatterns(String contentType, List<String> patterns)
             throws CannotProceedException {
-        if (this.dropUnitDto == null) {
+        if (this.dropUnitEndpointDto == null) {
             throw new CannotProceedException("withEndpoint is not called before");
         }
-        DropUnitRequestPatternsDto requestDto = new DropUnitRequestPatternsDto();
-        requestDto.setRequestContentType(contentType);
-        requestDto.setPatterns(patterns);
-        this.dropUnitDto.setRequestBodyPatterns(requestDto);
+        this.requestPatterns = new DropUnitRequestPatternsDto();
+        this.requestPatterns.setRequestContentType(contentType);
+        this.requestPatterns.setPatterns(patterns);
         return this;
     }
 
     public ClientDropUnit withResponseDelay(int responseDelay)
             throws Exception {
-        if (this.dropUnitDto == null) {
+        if (this.dropUnitEndpointDto == null) {
             throw new Exception("");
         }
-        this.dropUnitDto.setResponseDelay(responseDelay);
+        this.dropUnitEndpointDto.setResponseDelay(responseDelay);
         return this;
     }
 
@@ -194,14 +185,14 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     public ClientDropUnit drop()
             throws IOException {
-        id = executeEndpointDelivery(dropUnitDto);
-        if (dropUnitDto.getResponseBodyInfo() != null) {
-            executeRequestDelivery(id, dropUnitDto.getRequestBodyInfo());
+        id = executeEndpointDelivery(dropUnitEndpointDto);
+        if (requestBodyInfo != null) {
+            executeRequestDelivery(id, requestBodyInfo);
         }
-        if (dropUnitDto.getRequestBodyPatterns() != null) {
-            executeRequestDelivery(id, dropUnitDto.getRequestBodyPatterns());
+        if (this.requestPatterns != null) {
+            executeRequestDelivery(id, requestPatterns);
         }
-        executeResponseDelivery(id, dropUnitDto);
+        executeResponseDelivery(id, responseDto);
         count = executeRetrieveCount(id);
         return this;
     }
@@ -223,7 +214,7 @@ public class ClientDropUnit extends BaseDropUnitClient {
     public String toString() {
         return "ClientDropUnit =>\n" +
                 " id         = '" + id + "'\n" +
-                " url        = '" + dropUnitDto.getUrl() + "'\n" +
+                " url        = '" + dropUnitEndpointDto.getUrl() + "'\n" +
                 " count      = " + count + "\n";
     }
 }

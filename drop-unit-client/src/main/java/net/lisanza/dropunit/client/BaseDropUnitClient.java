@@ -2,9 +2,10 @@ package net.lisanza.dropunit.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.lisanza.dropunit.impl.rest.DropUnitDto;
-import net.lisanza.dropunit.impl.rest.DropUnitRequestDto;
-import net.lisanza.dropunit.impl.rest.DropUnitRequestPatternsDto;
+import net.lisanza.dropunit.impl.rest.DropUnitResponseDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 
@@ -28,7 +29,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
     private static final String RESPONSE_DELIVERY = "response-delivery";
     private static final String DROP_DELETION = "drop-deletion";
 
-    public String executeEndpointDelivery(DropUnitDto dropUnit)
+    public String executeEndpointDelivery(DropUnitEndpointDto dropUnit)
             throws IOException {
         HttpResponse response = invokeHttpPost(DELIVERY_ENDPOINT, dropUnit);
         assertStatus(DROP_DELIVERY, response.getStatusLine());
@@ -66,14 +67,14 @@ public class BaseDropUnitClient extends BaseHttpClient {
         }
     }
 
-    public void executeResponseDelivery(String id, DropUnitDto dropUnit)
+    public void executeResponseDelivery(String id, DropUnitResponseDto responseDto)
             throws IOException {
-        if (dropUnit.getResponseBodyInfo() != null) {
+        if (responseDto != null) {
             HttpResponse response = invokeHttpPut(DELIVERY_ENDPOINT_RESPONSE_BODY
                             .replace("{dropId}", id)
-                            .replace("{status}", dropUnit.getResponseBodyInfo().getResponseCode() + ""),
-                    dropUnit.getResponseBodyInfo().getResponseContentType(),
-                    dropUnit.getResponseBodyInfo().getResponseBody());
+                            .replace("{status}", responseDto.getResponseCode() + ""),
+                    responseDto.getResponseContentType(),
+                    responseDto.getResponseBody());
             assertStatus(RESPONSE_DELIVERY, response.getStatusLine());
             JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
             assertResult(RESPONSE_DELIVERY, obj);

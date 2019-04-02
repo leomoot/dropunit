@@ -1,14 +1,22 @@
 package net.lisanza.dropunit.impl.rest.services;
 
-import net.lisanza.dropunit.impl.rest.DropUnitDto;
-
 public class DropUnitEndpoint {
 
     private String id;
 
-    private DropUnitDto dropUnitDto;
+    private String url;
+
+    private String method;
+
+    private int delay;
 
     private int count;
+
+    private AbstractDropUnitRequest request;
+
+    private DropUnitResponse response;
+
+    // getters and setters
 
     public String getId() {
         return id;
@@ -18,22 +26,32 @@ public class DropUnitEndpoint {
         this.id = id;
     }
 
-    public DropUnitEndpoint withId(String id) {
-        this.id = id;
-        return this;
+    public String getUrl() {
+        return url;
     }
 
-    public DropUnitDto getDropUnitDto() {
-        return dropUnitDto;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public void setDropUnitDto(DropUnitDto dropUnitDto) {
-        this.dropUnitDto = dropUnitDto;
+    public String getMethod() {
+        return method;
     }
 
-    public DropUnitEndpoint withDropUnitDto(DropUnitDto dropUnitDto) {
-        this.dropUnitDto = dropUnitDto;
-        return this;
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public void incr() {
@@ -44,13 +62,61 @@ public class DropUnitEndpoint {
         return count;
     }
 
+    public AbstractDropUnitRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(AbstractDropUnitRequest request) {
+        this.request = request;
+    }
+
+    public DropUnitResponse getResponse() {
+        return response;
+    }
+
+    public void setResponse(DropUnitResponse response) {
+        this.response = response;
+    }
+
+    // with-builders
+
+    public DropUnitEndpoint withId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public DropUnitEndpoint withUrl(String url) {
+        this.url = url;
+        return this;
+    }
+    public DropUnitEndpoint withMethod(String method) {
+        this.method = method;
+        return this;
+    }
+
+    public DropUnitEndpoint withDelay(int delay) {
+        this.delay = delay;
+        return this;
+    }
+
+    public DropUnitEndpoint withRequest(AbstractDropUnitRequest request) {
+        this.request = request;
+        return this;
+    }
+
+    public DropUnitEndpoint withResponse(DropUnitResponse response) {
+        this.response = response;
+        return this;
+    }
+
+    //
 
     @Override
     public String toString() {
-        return "DropUnitDto =>\n" +
-                " id          = '" + id + "'\n" +
-                " url         = '" + dropUnitDto.getUrl() + "'\n" +
-                " count       = '" + count + "'";
+        return "DropUnitEndpoint => id = '" + id + "'\n" +
+                " url    = '" + url + "'\n" +
+                " method = '" + method + "'\n" +
+                " delay  = " + delay + "'\n" +
+                " count  = " + count;
     }
-
 }

@@ -1,9 +1,8 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
 import net.lisanza.dropunit.impl.rest.DropUnitCount;
-import net.lisanza.dropunit.impl.rest.DropUnitDto;
-import net.lisanza.dropunit.impl.rest.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
+import net.lisanza.dropunit.impl.rest.services.AbstractDropUnitRequest;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.slf4j.Logger;
@@ -21,8 +20,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import static net.lisanza.dropunit.impl.rest.services.DigestUtil.digestRequestBody;
 
 @Produces(MediaType.APPLICATION_XML)
 @Path(RequestMappings.ROOT_SERVICE)
@@ -71,105 +68,90 @@ public class DropUnitController {
 
     public Response dropUnit(HttpServletRequest request, String method, String content) {
         // request validation
-        DropUnitEndpoint endpoint;
+        net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint endpoint;
         if ((request.getQueryString() == null) || request.getQueryString().isEmpty()) {
-            endpoint = lookupEndpoint(createDropUnit(request.getPathInfo(), method, content));
+            endpoint = lookupEndpoint(createDropUnitEndpoint(request.getPathInfo(), method));
         } else {
-            endpoint = lookupEndpoint(createDropUnit(request.getPathInfo() + "?" + request.getQueryString(), method, content));
+            endpoint = lookupEndpoint(createDropUnitEndpoint(request.getPathInfo() + "?" + request.getQueryString(), method));
         }
         endpoint.incr();
-        DropUnitDto result = endpoint.getDropUnitDto();
-        validateRequestContentType(result, request);
-        validateRequestContent(result, content);
+        if (endpoint.getRequest() != null) {
+            validateRequestContentType(endpoint.getRequest(), request);
+            validateRequestContent(endpoint.getRequest(), content);
+        }
         // Response build up
-        waitToRespond(result);
-        Response.ResponseBuilder responseBuilder = buildResponse(result);
-        addContentType(result, responseBuilder);
-        addContent(result, responseBuilder);
+        waitToRespond(endpoint.getDelay());
+        Response.ResponseBuilder responseBuilder = buildResponse(endpoint);
+        addContentType(endpoint, responseBuilder);
+        addContent(endpoint, responseBuilder);
         return responseBuilder.build();
     }
 
-    private Response.ResponseBuilder buildResponse(DropUnitDto dropUnitDto) {
-        LOGGER.info("response code: {}", dropUnitDto.getResponseBodyInfo().getResponseCode());
-        return Response.status(Response.Status.fromStatusCode(dropUnitDto.getResponseBodyInfo().getResponseCode()));
+    private Response.ResponseBuilder buildResponse(DropUnitEndpoint dropUnitEndpoint) {
+        LOGGER.info("response code: {}", dropUnitEndpoint.getResponse().getCode());
+        return Response.status(Response.Status.fromStatusCode(dropUnitEndpoint.getResponse().getCode()));
     }
 
-    private void addContentType(DropUnitDto dropUnitDto, Response.ResponseBuilder responseBuilder) {
-        if (dropUnitDto.getResponseBodyInfo().getResponseContentType() == null) {
-            responseBuilder.header("Content-type", dropUnitDto.getResponseBodyInfo().getResponseContentType());
+    private void addContentType(DropUnitEndpoint dropUnitEndpoint, Response.ResponseBuilder responseBuilder) {
+        if (dropUnitEndpoint.getResponse().getContentType() == null) {
+            responseBuilder.header("Content-type", dropUnitEndpoint.getResponse().getContentType());
         }
     }
 
-    private void addContent(DropUnitDto dropUnitDto, Response.ResponseBuilder responseBuilder) {
-        if (dropUnitDto.getResponseBodyInfo().getResponseBody() != null) {
-            responseBuilder.entity(dropUnitDto.getResponseBodyInfo().getResponseBody());
+    private void addContent(DropUnitEndpoint dropUnitEndpoint, Response.ResponseBuilder responseBuilder) {
+        if (dropUnitEndpoint.getResponse().getBody() != null) {
+            responseBuilder.entity(dropUnitEndpoint.getResponse().getBody());
         }
     }
 
-    private void validateRequestContentType(DropUnitDto dropUnitDto, HttpServletRequest request) {
-        if (dropUnitDto.getRequestBodyInfo() != null) {
-            if ((request.getHeader("Content-type") != null) &&
-                    (dropUnitDto.getRequestBodyInfo().getRequestContentType() != null) &&
-                    (!dropUnitDto.getRequestBodyInfo().getRequestContentType().equals(request.getHeader("Content-type")))) {
-                throw new NotSupportedException("validate: content and expected request-body are NOT equal");
-            }
-        } else if (dropUnitDto.getRequestBodyPatterns() != null) {
-            if ((request.getHeader("Content-type") != null) &&
-                    (dropUnitDto.getRequestBodyPatterns().getRequestContentType() != null) &&
-                    (!dropUnitDto.getRequestBodyPatterns().getRequestContentType().equals(request.getHeader("Content-type")))) {
-                throw new NotSupportedException("validate: content and expected request-body are NOT equal");
-            }
+    protected void validateRequestContentType(AbstractDropUnitRequest dropUnitRequest, HttpServletRequest httpRequest) {
+        if (dropUnitRequest != null) {
+            validateRequestContentType(dropUnitRequest.getContentType(), httpRequest.getHeader("Content-type"));
         }
     }
 
-    private void validateRequestContent(DropUnitDto dropUnitDto, String content) {
-        if (dropUnitDto.getRequestBodyPatterns() == null) {
-            if (isNullOrEmpty(content) &&
-                    ((dropUnitDto.getRequestBodyInfo() == null)
-                            || isNullOrEmpty(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
-                LOGGER.info("validate: content and expected request-body are 'empty'");
-                return;
-            }
-            if (digestRequestBody(content).equals(digestRequestBody(dropUnitDto.getRequestBodyInfo().getRequestBody()))) {
-                LOGGER.info("validate: content and expected request-body are equal");
-                return;
-            }
-        } else if (dropUnitDto.getRequestBodyInfo() == null) {
-            if (containsAllPatterns(dropUnitDto.getRequestBodyPatterns(), content)) {
-                LOGGER.info("validate: content and matches patterns");
+    protected void validateRequestContentType(String endpointContentType, String requestContentType) {
+        if (isNullOrEmpty(endpointContentType)
+                && isNullOrEmpty(requestContentType)) {
+            return;
+        }
+        if (!isNullOrEmpty(endpointContentType)
+                && !isNullOrEmpty(requestContentType)
+                && (endpointContentType.equals(requestContentType))) {
+            return;
+        }
+        LOGGER.error("endpoint ({}) and ({}) content content-type are NOT equal", endpointContentType, requestContentType);
+        throw new NotSupportedException("validate content-type: endpoint (" + endpointContentType + ") and content (" + requestContentType + ") are NOT equal");
+    }
+
+    private void validateRequestContent(AbstractDropUnitRequest dropUnitRequest, String content) {
+        if (dropUnitRequest != null) {
+            if (dropUnitRequest.doesRequestMatch(content)) {
                 return;
             }
         }
         throw new NotSupportedException("validate: content and expected request-body are NOT matching");
     }
 
-    private boolean containsAllPatterns(DropUnitRequestPatternsDto requestPatternsDto, String content) {
-        for (String pattern : requestPatternsDto.getPatterns()) {
-            if (!content.contains(pattern)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private boolean isNullOrEmpty(String string) {
         return (string == null) || string.isEmpty();
     }
 
-    private void waitToRespond(DropUnitDto dropUnitDto) {
-        if (0 < dropUnitDto.getResponseDelay()) {
+    private void waitToRespond(int delay) {
+        if (0 < delay) {
             try {
-                Thread.sleep(dropUnitDto.getResponseDelay());
+                Thread.sleep(delay);
             } catch (InterruptedException e) {
-
+                // do nothing
             }
         }
     }
 
-    private DropUnitEndpoint lookupEndpoint(DropUnitDto dropUnitDto) {
-        DropUnitEndpoint result = dropUnitService.lookupEndpoint(dropUnitDto);
+    private net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint lookupEndpoint
+            (net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint dropUnitEndpoint) {
+        net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint result = dropUnitService.lookupEndpoint(dropUnitEndpoint);
         if (result == null) {
-            String msg = String.format("'drop unit '%s' registration is missing!", dropUnitDto.getUrl());
+            String msg = String.format("'drop unit '%s' registration is missing!", dropUnitEndpoint.getUrl());
             LOGGER.warn(msg);
             throw new NotFoundException(msg);
         }
@@ -178,10 +160,11 @@ public class DropUnitController {
         return result;
     }
 
-    public DropUnitDto createDropUnit(String uri, String method, String requestBody) {
-        DropUnitDto dropUnitDto = new DropUnitDto();
-        dropUnitDto.setUrl(uri);
-        dropUnitDto.setMethod(method);
-        return dropUnitDto;
+    public net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint createDropUnitEndpoint(String uri, String
+            method) {
+        net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint dropUnitEndpoint = new net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint();
+        dropUnitEndpoint.setUrl(uri);
+        dropUnitEndpoint.setMethod(method);
+        return dropUnitEndpoint;
     }
 }

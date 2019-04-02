@@ -1,6 +1,5 @@
 package net.lisanza.dropunit.impl.rest.services;
 
-import net.lisanza.dropunit.impl.rest.DropUnitDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,30 +22,28 @@ public class DropUnitService {
         return "droppy dropped";
     }
 
-    public List<DropUnitDto> getAll() {
-        List<DropUnitDto> list = new ArrayList<>();
+    public List<DropUnitEndpoint> getAll() {
+        List<DropUnitEndpoint> list = new ArrayList<>();
         for (DropUnitEndpoint droppy : registrations.values()) {
-            list.add(droppy.getDropUnitDto());
+            list.add(droppy);
         }
         return list;
     }
 
-    public String register(DropUnitDto dropUnitDto) {
-        if (dropUnitDto == null) {
+    public String register(DropUnitEndpoint endpoint) {
+        if (endpoint == null) {
             String msg = "'drop unit' is missing!";
             LOGGER.error(msg);
             throw new BadRequestException(msg);
         }
-        if (!dropUnitDto.getUrl().startsWith("/")) {
-            dropUnitDto.setUrl("/" + dropUnitDto.getUrl());
+        if (!endpoint.getUrl().startsWith("/")) {
+            endpoint.setUrl("/" + endpoint.getUrl());
         }
 
-        String dropId = digestEndpoint(dropUnitDto.getMethod(), dropUnitDto.getUrl());
-        LOGGER.debug("register {} - {}", dropId, dropUnitDto);
+        String dropId = digestEndpoint(endpoint.getMethod(), endpoint.getUrl());
+        LOGGER.debug("register {} - {}", dropId, endpoint);
 
-        registrations.put(dropId, new DropUnitEndpoint()
-                .withId(dropId)
-                .withDropUnitDto(dropUnitDto));
+        registrations.put(dropId, endpoint);
         return dropId;
     }
 
@@ -58,17 +55,34 @@ public class DropUnitService {
         return endpoint;
     }
 
+    public String registerRequest(String dropId, AbstractDropUnitRequest patterns) {
+        DropUnitEndpoint endpoint = lookupEndpoint(dropId);
+        if (endpoint == null) {
+            return "no registration found";
+        }
+        endpoint.setRequest(patterns);
+        return "OK";
+    }
 
-    public DropUnitEndpoint lookupEndpoint(DropUnitDto dropUnitDto) {
-        if (dropUnitDto == null) {
+    public String registerResponse(String dropId, DropUnitResponse response) {
+        DropUnitEndpoint endpoint = lookupEndpoint(dropId);
+        if (endpoint == null) {
+            return "no registration found";
+        }
+        endpoint.setResponse(response);
+        return "OK";
+    }
+
+    public DropUnitEndpoint lookupEndpoint(DropUnitEndpoint dto) {
+        if (dto == null) {
             LOGGER.warn("'drop unit' is missing!");
             throw new BadRequestException("'drop unit' is missing!");
         }
-        String dropId = digestEndpoint(dropUnitDto.getMethod(), dropUnitDto.getUrl());
+        String dropId = digestEndpoint(dto.getMethod(), dto.getUrl());
         DropUnitEndpoint endpoint = registrations.get(dropId);
         if (endpoint == null) {
-            LOGGER.warn("no endpoint registered for {}:{}", dropUnitDto.getMethod(), dropUnitDto.getUrl());
-            throw new NotFoundException("no endpoint registered for " + dropUnitDto.getMethod() + ":" + dropUnitDto.getUrl());
+            LOGGER.warn("no endpoint registered for {}:{}", dto.getMethod(), dto.getUrl());
+            throw new NotFoundException("no endpoint registered for " + dto.getMethod() + ":" + dto.getUrl());
         }
         return endpoint;
     }

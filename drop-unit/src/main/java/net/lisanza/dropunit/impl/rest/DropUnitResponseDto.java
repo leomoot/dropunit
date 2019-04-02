@@ -39,7 +39,7 @@ public class DropUnitResponseDto {
 
     @Override
     public String toString() {
-        return "DropUnitDto =>\n" +
+        return "DropUnitResponseDto =>\n" +
                 " resp-Code       = " + responseCode +
                 " resp-ContentType='" + responseContentType + "'\n" +
                 " resp-Body       ='" + responseBody + "'";

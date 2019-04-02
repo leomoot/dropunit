@@ -1,11 +1,22 @@
-package net.lisanza.dropunit.impl.rest;
+package net.lisanza.dropunit.impl.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DropUnitRequestDto extends AbstractDropUnitRequestDto {
+public class DropUnitRequestDto {
+
+    @JsonProperty("requestContentType")
+    protected String requestContentType;
 
     @JsonProperty("requestBody")
     private String requestBody;
+
+    public String getRequestContentType() {
+        return requestContentType;
+    }
+
+    public void setRequestContentType(String requestContentType) {
+        this.requestContentType = requestContentType;
+    }
 
     public String getRequestBody() {
         return requestBody;
@@ -17,7 +28,7 @@ public class DropUnitRequestDto extends AbstractDropUnitRequestDto {
 
     @Override
     public String toString() {
-        return "DropUnitDto =>\n" +
+        return "DropUnitRequestDto =>\n" +
                 " req-ContentType = '" + requestContentType + "'\n" +
                 " req-Body        = '" + requestBody + "'";
     }
