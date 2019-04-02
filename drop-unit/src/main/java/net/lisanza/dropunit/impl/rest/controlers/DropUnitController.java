@@ -1,8 +1,8 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
-import net.lisanza.dropunit.impl.rest.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
 import net.lisanza.dropunit.impl.rest.services.AbstractDropUnitRequest;
+import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.slf4j.Logger;

@@ -6,9 +6,9 @@ import io.dropwizard.setup.Environment;
 import net.lisanza.dropunit.impl.health.HealthCheckService;
 import net.lisanza.dropunit.impl.mappers.ExceptionHandler;
 import net.lisanza.dropunit.impl.mappers.ValidationHandler;
-import net.lisanza.dropunit.impl.rest.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.controlers.DropRegistrationController;
 import net.lisanza.dropunit.impl.rest.controlers.DropUnitController;
+import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.glassfish.jersey.logging.LoggingFeature;
 

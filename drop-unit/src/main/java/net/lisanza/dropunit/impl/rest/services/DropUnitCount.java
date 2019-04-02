@@ -1,4 +1,4 @@
-package net.lisanza.dropunit.impl.rest;
+package net.lisanza.dropunit.impl.rest.services;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

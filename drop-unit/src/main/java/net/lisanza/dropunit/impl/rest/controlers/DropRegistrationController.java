@@ -1,12 +1,12 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
-import net.lisanza.dropunit.impl.rest.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.DropUnitEndpointCountDto;
 import net.lisanza.dropunit.impl.rest.DropUnitEndpointRegistrationDto;
 import net.lisanza.dropunit.impl.rest.DropUnitEndpointUpdateDto;
 import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
+import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitRequest;
 import net.lisanza.dropunit.impl.rest.services.DropUnitRequestPatterns;
 import net.lisanza.dropunit.impl.rest.services.DropUnitResponse;

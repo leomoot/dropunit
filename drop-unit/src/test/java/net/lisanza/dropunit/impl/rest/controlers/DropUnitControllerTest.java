@@ -1,6 +1,6 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
-import net.lisanza.dropunit.impl.rest.DropUnitCount;
+import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.junit.Before;
 import org.junit.Test;
