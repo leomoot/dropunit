@@ -2,10 +2,10 @@ package net.lisanza.dropunit.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.lisanza.dropunit.impl.rest.DropUnitResponseDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitResponseDto;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 

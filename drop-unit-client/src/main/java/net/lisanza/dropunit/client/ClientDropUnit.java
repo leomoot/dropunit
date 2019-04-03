@@ -1,9 +1,9 @@
 package net.lisanza.dropunit.client;
 
-import net.lisanza.dropunit.impl.rest.DropUnitResponseDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitResponseDto;
 
 import javax.naming.CannotProceedException;
 import javax.ws.rs.core.Response;
