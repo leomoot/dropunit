@@ -1,10 +1,8 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
-import net.lisanza.dropunit.impl.rest.DropUnitEndpointCountDto;
-import net.lisanza.dropunit.impl.rest.DropUnitEndpointRegistrationDto;
-import net.lisanza.dropunit.impl.rest.DropUnitEndpointUpdateDto;
 import net.lisanza.dropunit.impl.rest.constants.RequestMappings;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitRegistrationResponseDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
@@ -48,10 +46,10 @@ public class DropRegistrationController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/delivery/endpoint")
-    public DropUnitEndpointRegistrationDto registerEndpoint(@Valid DropUnitEndpointDto dto) {
+    public DropUnitRegistrationResponseDto registerEndpoint(@Valid DropUnitEndpointDto dto) {
         try {
             LOGGER.debug("Called registerEndpoint");
-            return new DropUnitEndpointRegistrationDto()
+            return new DropUnitRegistrationResponseDto()
                     .withResult("OK")
                     .withId(dropUnitService.register(new DropUnitEndpoint()
                             .withUrl(dto.getUrl())
@@ -66,11 +64,12 @@ public class DropRegistrationController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/delivery/endpoint/{dropId}/request-body")
-    public DropUnitEndpointUpdateDto registerRequestPatterns(@PathParam("dropId") String dropId,
+    public DropUnitRegistrationResponseDto registerRequestPatterns(@PathParam("dropId") String dropId,
                                                              @Valid DropUnitRequestPatternsDto requestDto) {
         try {
             LOGGER.debug("Called registerRequestPatterns {}", dropId);
-            return new DropUnitEndpointUpdateDto()
+            return new DropUnitRegistrationResponseDto()
+                    .withId(dropId)
                     .withResult(dropUnitService.registerRequest(dropId, new DropUnitRequestPatterns()
                             .withPatterns(requestDto.getPatterns())
                             .withContentType(requestDto.getRequestContentType())));
@@ -82,12 +81,13 @@ public class DropRegistrationController {
 
     @PUT
     @Path("/delivery/endpoint/{dropId}/request-body")
-    public DropUnitEndpointUpdateDto registerRequestBody(@Context HttpServletRequest request,
+    public DropUnitRegistrationResponseDto registerRequestBody(@Context HttpServletRequest request,
                                                          @PathParam("dropId") String dropId,
                                                          String requestBody) {
         try {
             LOGGER.debug("Called registerRequestBody {}", dropId);
-            return new DropUnitEndpointUpdateDto()
+            return new DropUnitRegistrationResponseDto()
+                    .withId(dropId)
                     .withResult(dropUnitService.registerRequest(dropId, new DropUnitRequest()
                             .withRequestBody(requestBody)
                             .withContentType(request.getContentType())));
@@ -99,13 +99,14 @@ public class DropRegistrationController {
 
     @PUT
     @Path("/delivery/endpoint/{dropId}/response-body/{status}")
-    public DropUnitEndpointUpdateDto registerResponseBody(@Context HttpServletRequest request,
+    public DropUnitRegistrationResponseDto registerResponseBody(@Context HttpServletRequest request,
                                                           @PathParam("dropId") String dropId,
                                                           @PathParam("status") int status,
                                                           String responseBody) {
         try {
             LOGGER.debug("Called registerResponseBody {}", dropId);
-            return new DropUnitEndpointUpdateDto()
+            return new DropUnitRegistrationResponseDto()
+                    .withId(dropId)
                     .withResult(dropUnitService.registerResponse(dropId, new DropUnitResponse()
                             .withCode(status)
                             .withBody(responseBody)
@@ -137,11 +138,13 @@ public class DropRegistrationController {
 
     @GET
     @Path("/getDropCount/{dropUnitId}")
-    public DropUnitEndpointCountDto getDropCount(@PathParam("dropUnitId") String dropUnitId) {
+    public DropUnitRegistrationResponseDto getDropCount(@PathParam("dropUnitId") String dropId) {
         try {
             LOGGER.debug("Called getDropCount");
-            DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropUnitId);
-            return new DropUnitEndpointCountDto()
+            DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropId);
+            return new DropUnitRegistrationResponseDto()
+                    .withId(dropId)
+                    .withResult("OK")
                     .withCount(endpoint.getCount());
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
@@ -151,11 +154,13 @@ public class DropRegistrationController {
 
     @DELETE
     @Path("/delivery/endpoint/{dropUnitId}")
-    public DropUnitEndpointCountDto deleteEndpoint(@PathParam("dropUnitId") String dropUnitId) {
+    public DropUnitRegistrationResponseDto deleteEndpoint(@PathParam("dropUnitId") String dropId) {
         try {
             LOGGER.debug("Called getDropCount");
-            DropUnitEndpoint endpoint = dropUnitService.deregister(dropUnitId);
-            return new DropUnitEndpointCountDto()
+            DropUnitEndpoint endpoint = dropUnitService.deregister(dropId);
+            return new DropUnitRegistrationResponseDto()
+                    .withId(dropId)
+                    .withResult("deleted")
                     .withCount(endpoint.getCount());
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
