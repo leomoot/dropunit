@@ -26,7 +26,7 @@ public class GetTestIT extends BaseRequest {
     public void shouldTestWithPath() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withGet("test-get/with/path")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
@@ -48,7 +48,7 @@ public class GetTestIT extends BaseRequest {
     public void shouldTestWithQueryString() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withGet("test-get/with/path?and=variables")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
@@ -70,7 +70,7 @@ public class GetTestIT extends BaseRequest {
     public void shouldTestWithException() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withGet("test-get-exception")
                 .withResponseBadRequest(MediaType.APPLICATION_XML, "")
                 .drop();
@@ -89,7 +89,7 @@ public class GetTestIT extends BaseRequest {
     public void shouldTestWithConnectionTimeout() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withGet("test-get")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .withResponseDelay(20000)

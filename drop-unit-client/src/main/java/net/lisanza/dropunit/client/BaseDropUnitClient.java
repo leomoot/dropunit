@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.DROP_UNIT_SERVICE;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_CLEARALLDROPS;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_COUNT_DROPID;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID;
@@ -118,6 +119,12 @@ public class BaseDropUnitClient extends BaseHttpClient {
         assertStatus(DROP_DELETION, response.getStatusLine());
         JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
         assertResult(DROP_DELETION, obj);
+    }
+
+    public void executeEndpointDeletion()
+            throws IOException {
+        HttpResponse response = invokeHttpDelete(URI_CLEARALLDROPS);
+        assertStatus(DROP_DELETION, response.getStatusLine());
     }
 
     // private HTTP operations

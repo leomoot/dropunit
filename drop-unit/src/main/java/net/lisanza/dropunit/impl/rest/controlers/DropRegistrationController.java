@@ -126,7 +126,7 @@ public class DropRegistrationController {
         throw new InternalServerErrorException();
     }
 
-    @GET
+    @DELETE
     @Path(URI_CLEARALLDROPS)
     public String clearAllDrop() {
         LOGGER.debug("Called clearAllDrop");

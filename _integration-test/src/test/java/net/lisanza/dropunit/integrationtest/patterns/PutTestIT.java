@@ -28,7 +28,7 @@ public class PutTestIT extends BaseRequest {
     public void shouldTestWithPath() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put/with/path")
                 .withRequestPattern(MediaType.APPLICATION_XML, "<bag>droppy</bag>")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
@@ -51,7 +51,7 @@ public class PutTestIT extends BaseRequest {
     public void shouldTestWithQueryString() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put")
                 .withRequestPattern(MediaType.APPLICATION_XML, "<bag>droppy</bag>")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
@@ -74,7 +74,7 @@ public class PutTestIT extends BaseRequest {
     public void shouldTestWithException() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put-exception")
                 .withRequestPattern(MediaType.APPLICATION_XML, "<bag>droppy</bag>")
                 .withResponseBadRequest(MediaType.APPLICATION_XML, "")
@@ -94,7 +94,7 @@ public class PutTestIT extends BaseRequest {
     public void shouldTestWithConnectionTimeout() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put")
                 .withRequestPattern(MediaType.APPLICATION_XML, "<bag>droppy</bag>")
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)

@@ -105,6 +105,7 @@ public class DropUnitEndpoint {
         this.url = url;
         return this;
     }
+
     public DropUnitEndpoint withMethod(String method) {
         this.method = method;
         return this;

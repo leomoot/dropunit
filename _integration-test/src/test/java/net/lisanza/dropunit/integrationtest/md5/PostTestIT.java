@@ -28,7 +28,7 @@ public class PostTestIT extends BaseRequest {
     public void shouldTestWithPath() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post/with/path")
                 .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
@@ -52,7 +52,7 @@ public class PostTestIT extends BaseRequest {
     public void shouldTestWithQueryString() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post/with/path?and=variables")
                 .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
@@ -75,7 +75,7 @@ public class PostTestIT extends BaseRequest {
     public void shouldTestWithException() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post-exception")
                 .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseBadRequest(MediaType.APPLICATION_XML, "")
@@ -96,7 +96,7 @@ public class PostTestIT extends BaseRequest {
     public void shouldTestWithConnectionTimeout() throws Exception {
 
         // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post")
                 .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)

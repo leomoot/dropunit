@@ -186,6 +186,11 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     // Remote operations
 
+    public ClientDropUnit cleanup() throws IOException {
+        executeEndpointDeletion();
+        return this;
+    }
+
     public ClientDropUnit drop()
             throws IOException {
         id = executeEndpointDelivery(dropUnitEndpointDto);
