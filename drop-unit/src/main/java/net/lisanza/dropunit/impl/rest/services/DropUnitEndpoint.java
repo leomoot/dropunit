@@ -1,5 +1,8 @@
 package net.lisanza.dropunit.impl.rest.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DropUnitEndpoint {
 
     private String id;
@@ -15,6 +18,8 @@ public class DropUnitEndpoint {
     private AbstractDropUnitRequest request;
 
     private DropUnitResponse response;
+
+    private List<String> receivedList = new ArrayList<>();
 
     // getters and setters
 
@@ -76,6 +81,17 @@ public class DropUnitEndpoint {
 
     public void setResponse(DropUnitResponse response) {
         this.response = response;
+    }
+
+    public String getReceived(int i) {
+        if ((0 < i) && (i <= receivedList.size())) {
+            return receivedList.get(i - 1);
+        }
+        return "";
+    }
+
+    public void addReceived(String received) {
+        this.receivedList.add(received);
     }
 
     // with-builders

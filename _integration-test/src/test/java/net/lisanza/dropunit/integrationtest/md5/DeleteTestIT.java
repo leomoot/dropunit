@@ -41,6 +41,7 @@ public class DeleteTestIT extends BaseRequest {
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceived(1);
     }
 
     @Test
@@ -62,6 +63,7 @@ public class DeleteTestIT extends BaseRequest {
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceived(1);
     }
 
     @Test
@@ -80,6 +82,7 @@ public class DeleteTestIT extends BaseRequest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceived(1);
     }
 
     @Test
@@ -107,5 +110,6 @@ public class DeleteTestIT extends BaseRequest {
         }
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceived(1);
     }
 }

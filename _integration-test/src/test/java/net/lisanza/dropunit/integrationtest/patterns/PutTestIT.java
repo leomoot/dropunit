@@ -44,6 +44,7 @@ public class PutTestIT extends BaseRequest {
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceivedFromPatterns(1);
     }
 
     @Test
@@ -66,6 +67,7 @@ public class PutTestIT extends BaseRequest {
         assertThat(body, containsString(dropUnit.getResponseBody()));
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceivedFromPatterns(1);
     }
 
     @Test
@@ -85,6 +87,7 @@ public class PutTestIT extends BaseRequest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceivedFromPatterns(1);
     }
 
     @Test
@@ -114,5 +117,6 @@ public class PutTestIT extends BaseRequest {
         }
 
         dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceivedFromPatterns(1);
     }
 }

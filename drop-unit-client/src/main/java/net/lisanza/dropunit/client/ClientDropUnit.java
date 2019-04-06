@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 public class ClientDropUnit extends BaseDropUnitClient {
 
     private String id;
@@ -197,12 +201,44 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
-
     public void assertCountRecievedRequests(int count) {
         try {
             if (count != executeRetrieveCount(id)) {
                 throw new AssertionError("incorrect request count for dropunit");
             }
+        } catch (IOException e) {
+            throw new AssertionError("IO failure");
+        }
+    }
+
+    public void assertReceived(int number)
+            throws IOException {
+        if ((requestBodyInfo == null) || (requestBodyInfo.getRequestBody() == null)) {
+            assertReceived(number, "");
+        } else {
+            assertReceived(number, requestBodyInfo.getRequestBody());
+        }
+    }
+
+    public void assertReceivedFromPatterns(int number) {
+        try {
+            String requestBody = executeRetrieveReceived(id, number);
+            for (String pattern : requestPatterns.getPatterns()) {
+                assertTrue("", requestBody.contains(pattern));
+            }
+        } catch (IOException e) {
+            throw new AssertionError("IO failure");
+        }
+    }
+
+    public void assertReceivedFromFile(int number, String filename)
+            throws IOException {
+        assertReceived(number, readFromFile(filename));
+    }
+
+    public void assertReceived(int number, String toMatch) {
+        try {
+            assertThat(executeRetrieveReceived(id, number), is(toMatch));
         } catch (IOException e) {
             throw new AssertionError("IO failure");
         }

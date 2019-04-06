@@ -8,6 +8,7 @@ import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitResponseDto;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.apache.http.util.EntityUtils;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -22,7 +23,8 @@ public class BaseDropUnitClient extends BaseHttpClient {
     private static final String DELIVERY_ENDPOINT_DROPID = "dropunit/delivery/endpoint/{dropId}";
     private static final String DELIVERY_ENDPOINT_REQUEST_BODY = "dropunit/delivery/endpoint/{dropId}/request-body";
     private static final String DELIVERY_ENDPOINT_RESPONSE_BODY = "dropunit/delivery/endpoint/{dropId}/response-body/{status}";
-    private static final String URI_DROP_COUNT = "dropunit/getDropCount/";
+    private static final String DELIVERY_ENDPOINT_RECEIVED = "dropunit/recieved/{dropId}/{number}";
+    private static final String URI_DROP_COUNT = "dropunit/count/{dropId}";
 
     private static final String DROP_DELIVERY = "drop-delivery";
     private static final String REQUEST_DELIVERY = "request-delivery";
@@ -59,7 +61,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
             throws IOException {
         if (requestDto != null) {
             HttpResponse response = invokeHttpPost(DELIVERY_ENDPOINT_REQUEST_BODY
-                    .replace("{dropId}", id),
+                            .replace("{dropId}", id),
                     requestDto);
             assertStatus(REQUEST_DELIVERY, response.getStatusLine());
             JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
@@ -81,8 +83,9 @@ public class BaseDropUnitClient extends BaseHttpClient {
         }
     }
 
-    public int executeRetrieveCount(String dropUnitId) throws IOException {
-        HttpResponse response = invokeHttpGet(URI_DROP_COUNT + dropUnitId);
+    public int executeRetrieveCount(String dropId) throws IOException {
+        HttpResponse response = invokeHttpGet(URI_DROP_COUNT
+                .replace("{dropId}", dropId));
         if (response.getStatusLine().getStatusCode() != 200) {
             throw new AssertionError("incorrect response code");
         }
@@ -95,6 +98,16 @@ public class BaseDropUnitClient extends BaseHttpClient {
             throw new AssertionError("no count in response-body for drop-delivery");
         }
         return countValue.asInt();
+    }
+
+    public String executeRetrieveReceived(String dropId, int number) throws IOException {
+        HttpResponse response = invokeHttpGet(DELIVERY_ENDPOINT_RECEIVED
+                .replace("{dropId}", dropId)
+                .replace("{number}", number + ""));
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new AssertionError("incorrect response code");
+        }
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
     public void executeEndpointDeletion(String id)

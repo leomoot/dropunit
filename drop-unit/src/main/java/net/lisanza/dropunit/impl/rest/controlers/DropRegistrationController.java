@@ -65,7 +65,7 @@ public class DropRegistrationController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/delivery/endpoint/{dropId}/request-body")
     public DropUnitRegistrationResponseDto registerRequestPatterns(@PathParam("dropId") String dropId,
-                                                             @Valid DropUnitRequestPatternsDto requestDto) {
+                                                                   @Valid DropUnitRequestPatternsDto requestDto) {
         try {
             LOGGER.debug("Called registerRequestPatterns {}", dropId);
             return new DropUnitRegistrationResponseDto()
@@ -82,8 +82,8 @@ public class DropRegistrationController {
     @PUT
     @Path("/delivery/endpoint/{dropId}/request-body")
     public DropUnitRegistrationResponseDto registerRequestBody(@Context HttpServletRequest request,
-                                                         @PathParam("dropId") String dropId,
-                                                         String requestBody) {
+                                                               @PathParam("dropId") String dropId,
+                                                               String requestBody) {
         try {
             LOGGER.debug("Called registerRequestBody {}", dropId);
             return new DropUnitRegistrationResponseDto()
@@ -100,9 +100,9 @@ public class DropRegistrationController {
     @PUT
     @Path("/delivery/endpoint/{dropId}/response-body/{status}")
     public DropUnitRegistrationResponseDto registerResponseBody(@Context HttpServletRequest request,
-                                                          @PathParam("dropId") String dropId,
-                                                          @PathParam("status") int status,
-                                                          String responseBody) {
+                                                                @PathParam("dropId") String dropId,
+                                                                @PathParam("status") int status,
+                                                                String responseBody) {
         try {
             LOGGER.debug("Called registerResponseBody {}", dropId);
             return new DropUnitRegistrationResponseDto()
@@ -137,8 +137,8 @@ public class DropRegistrationController {
     }
 
     @GET
-    @Path("/getDropCount/{dropUnitId}")
-    public DropUnitRegistrationResponseDto getDropCount(@PathParam("dropUnitId") String dropId) {
+    @Path("/count/{dropId}")
+    public DropUnitRegistrationResponseDto getDropCount(@PathParam("dropId") String dropId) {
         try {
             LOGGER.debug("Called getDropCount");
             DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropId);
@@ -153,8 +153,8 @@ public class DropRegistrationController {
     }
 
     @DELETE
-    @Path("/delivery/endpoint/{dropUnitId}")
-    public DropUnitRegistrationResponseDto deleteEndpoint(@PathParam("dropUnitId") String dropId) {
+    @Path("/delivery/endpoint/{dropId}")
+    public DropUnitRegistrationResponseDto deleteEndpoint(@PathParam("dropId") String dropId) {
         try {
             LOGGER.debug("Called getDropCount");
             DropUnitEndpoint endpoint = dropUnitService.deregister(dropId);
@@ -162,6 +162,20 @@ public class DropRegistrationController {
                     .withId(dropId)
                     .withResult("deleted")
                     .withCount(endpoint.getCount());
+        } catch (Exception e) {
+            LOGGER.warn("Failure generating response getDropCount", e);
+        }
+        throw new InternalServerErrorException();
+    }
+
+    @GET
+    @Path("/recieved/{dropId}/{number}")
+    public String getRecieved(@PathParam("dropId") String dropId,
+                              @PathParam("number") int number) {
+        try {
+            LOGGER.debug("Called getDropCount");
+            DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropId);
+            return endpoint.getReceived(number);
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
         }

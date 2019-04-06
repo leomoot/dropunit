@@ -79,6 +79,8 @@ public class DropUnitController {
             validateRequestContentType(endpoint.getRequest(), request);
             validateRequestContent(endpoint.getRequest(), content);
         }
+        // request received
+        endpoint.addReceived(content);
         // Response build up
         waitToRespond(endpoint.getDelay());
         Response.ResponseBuilder responseBuilder = buildResponse(endpoint);
