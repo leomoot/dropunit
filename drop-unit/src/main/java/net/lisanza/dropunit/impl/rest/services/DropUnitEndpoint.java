@@ -1,7 +1,11 @@
 package net.lisanza.dropunit.impl.rest.services;
 
+import net.lisanza.dropunit.impl.rest.dto.DropUnitHeaderDto;
+
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 public class DropUnitEndpoint {
 
@@ -10,6 +14,8 @@ public class DropUnitEndpoint {
     private String url;
 
     private String method;
+
+    private Map<String, String> headers = new Hashtable<>();
 
     private int delay;
 
@@ -45,6 +51,14 @@ public class DropUnitEndpoint {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 
     public int getDelay() {
@@ -108,6 +122,13 @@ public class DropUnitEndpoint {
 
     public DropUnitEndpoint withMethod(String method) {
         this.method = method;
+        return this;
+    }
+
+    public DropUnitEndpoint withHeaders(List<DropUnitHeaderDto> headers) {
+        for (DropUnitHeaderDto header: headers) {
+            this.headers.put(header.getName(), header.getValue());
+        }
         return this;
     }
 

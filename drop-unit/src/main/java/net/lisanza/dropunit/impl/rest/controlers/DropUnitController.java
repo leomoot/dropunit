@@ -75,6 +75,7 @@ public class DropUnitController {
             endpoint = lookupEndpoint(createDropUnitEndpoint(request.getPathInfo() + "?" + request.getQueryString(), method));
         }
         endpoint.incr();
+        validateRequestHeaders(endpoint, request);
         if (endpoint.getRequest() != null) {
             validateRequestContentType(endpoint.getRequest(), request);
             validateRequestContent(endpoint.getRequest(), content);
@@ -112,6 +113,26 @@ public class DropUnitController {
         }
     }
 
+    protected void validateRequestHeaders(DropUnitEndpoint dropUnitEndpoint, HttpServletRequest httpRequest) {
+        for (String name : dropUnitEndpoint.getHeaders().keySet()) {
+            validateRequestHeader(name, dropUnitEndpoint.getHeaders().get(name), httpRequest.getHeader(name));
+        }
+    }
+
+    protected void validateRequestHeader(String name, String endpointValue, String requestValue) {
+        if (isNullOrEmpty(endpointValue)
+                && isNullOrEmpty(requestValue)) {
+            return;
+        }
+        if (!isNullOrEmpty(endpointValue)
+                && !isNullOrEmpty(requestValue)
+                && (endpointValue.equals(requestValue))) {
+            return;
+        }
+        LOGGER.error("validate header {}: endpoint ({}) and request ({}) are NOT equal", name, endpointValue, requestValue);
+        throw new NotSupportedException("validate header " + name + " : endpoint (" + endpointValue + ") and request (" + requestValue + ") are NOT equal");
+    }
+
     protected void validateRequestContentType(String endpointContentType, String requestContentType) {
         if (isNullOrEmpty(endpointContentType)
                 && isNullOrEmpty(requestContentType)) {
@@ -122,8 +143,8 @@ public class DropUnitController {
                 && (endpointContentType.equals(requestContentType))) {
             return;
         }
-        LOGGER.error("endpoint ({}) and ({}) content content-type are NOT equal", endpointContentType, requestContentType);
-        throw new NotSupportedException("validate content-type: endpoint (" + endpointContentType + ") and content (" + requestContentType + ") are NOT equal");
+        LOGGER.error("validate content-type: endpoint ({}) and request ({}) are NOT equal", endpointContentType, requestContentType);
+        throw new NotSupportedException("validate content-type: endpoint (" + endpointContentType + ") and request (" + requestContentType + ") are NOT equal");
     }
 
     private void validateRequestContent(AbstractDropUnitRequest dropUnitRequest, String content) {

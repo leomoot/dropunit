@@ -62,6 +62,7 @@ public class DropRegistrationController {
                     .withResult("OK")
                     .withId(dropUnitService.register(new DropUnitEndpoint()
                             .withUrl(dto.getUrl())
+                            .withHeaders(dto.getRequestHeaders())
                             .withMethod(dto.getMethod())
                             .withDelay(dto.getResponseDelay())));
         } catch (Exception e) {

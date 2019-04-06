@@ -1,6 +1,7 @@
 package net.lisanza.dropunit.client;
 
 import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
+import net.lisanza.dropunit.impl.rest.dto.DropUnitHeaderDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitResponseDto;
@@ -96,6 +97,11 @@ public class ClientDropUnit extends BaseDropUnitClient {
         this.dropUnitEndpointDto = new DropUnitEndpointDto();
         this.dropUnitEndpointDto.setUrl(uri);
         this.dropUnitEndpointDto.setMethod(method);
+        return this;
+    }
+
+    public ClientDropUnit withHeader(String name, String value) {
+        this.dropUnitEndpointDto.addRequestHeader(new DropUnitHeaderDto(name, value));
         return this;
     }
 
