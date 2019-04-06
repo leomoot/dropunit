@@ -184,7 +184,6 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
-
     // Remote operations
 
     public ClientDropUnit drop()
@@ -243,7 +242,6 @@ public class ClientDropUnit extends BaseDropUnitClient {
             throw new AssertionError("IO failure");
         }
     }
-
 
     // toString
     @Override

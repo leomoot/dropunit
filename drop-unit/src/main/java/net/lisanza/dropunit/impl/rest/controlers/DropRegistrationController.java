@@ -28,6 +28,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_CLEARALLDROPS;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_COUNT_DROPID;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_GETALLDROPS;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_RECIEVED_DROPID_NUMBER;
+
 @Produces(MediaType.APPLICATION_JSON) // we produce always JSON. We might read other media types.
 @Path(RequestMappings.DROP_UNIT_SERVICE)
 public class DropRegistrationController {
@@ -45,7 +54,7 @@ public class DropRegistrationController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/delivery/endpoint")
+    @Path(URI_DELIVERY_ENDPOINT)
     public DropUnitRegistrationResponseDto registerEndpoint(@Valid DropUnitEndpointDto dto) {
         try {
             LOGGER.debug("Called registerEndpoint");
@@ -63,7 +72,7 @@ public class DropRegistrationController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/delivery/endpoint/{dropId}/request-body")
+    @Path(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY)
     public DropUnitRegistrationResponseDto registerRequestPatterns(@PathParam("dropId") String dropId,
                                                                    @Valid DropUnitRequestPatternsDto requestDto) {
         try {
@@ -80,7 +89,7 @@ public class DropRegistrationController {
     }
 
     @PUT
-    @Path("/delivery/endpoint/{dropId}/request-body")
+    @Path(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY)
     public DropUnitRegistrationResponseDto registerRequestBody(@Context HttpServletRequest request,
                                                                @PathParam("dropId") String dropId,
                                                                String requestBody) {
@@ -98,7 +107,7 @@ public class DropRegistrationController {
     }
 
     @PUT
-    @Path("/delivery/endpoint/{dropId}/response-body/{status}")
+    @Path(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS)
     public DropUnitRegistrationResponseDto registerResponseBody(@Context HttpServletRequest request,
                                                                 @PathParam("dropId") String dropId,
                                                                 @PathParam("status") int status,
@@ -118,14 +127,14 @@ public class DropRegistrationController {
     }
 
     @GET
-    @Path("/clearAllDrop")
+    @Path(URI_CLEARALLDROPS)
     public String clearAllDrop() {
         LOGGER.debug("Called clearAllDrop");
         return dropUnitService.dropAll();
     }
 
     @GET
-    @Path("/getAllDrop")
+    @Path(URI_GETALLDROPS)
     public List<DropUnitEndpoint> getAllDrop() {
         try {
             LOGGER.debug("Called getAllDrop");
@@ -137,7 +146,7 @@ public class DropRegistrationController {
     }
 
     @GET
-    @Path("/count/{dropId}")
+    @Path(URI_COUNT_DROPID)
     public DropUnitRegistrationResponseDto getDropCount(@PathParam("dropId") String dropId) {
         try {
             LOGGER.debug("Called getDropCount");
@@ -153,7 +162,7 @@ public class DropRegistrationController {
     }
 
     @DELETE
-    @Path("/delivery/endpoint/{dropId}")
+    @Path(URI_DELIVERY_ENDPOINT_DROPID)
     public DropUnitRegistrationResponseDto deleteEndpoint(@PathParam("dropId") String dropId) {
         try {
             LOGGER.debug("Called getDropCount");
@@ -169,7 +178,7 @@ public class DropRegistrationController {
     }
 
     @GET
-    @Path("/recieved/{dropId}/{number}")
+    @Path(URI_RECIEVED_DROPID_NUMBER)
     public String getRecieved(@PathParam("dropId") String dropId,
                               @PathParam("number") int number) {
         try {

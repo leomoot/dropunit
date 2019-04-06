@@ -13,18 +13,19 @@ import org.apache.http.util.EntityUtils;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.DROP_UNIT_SERVICE;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_COUNT_DROPID;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_RECIEVED_DROPID_NUMBER;
+
 public class BaseDropUnitClient extends BaseHttpClient {
 
     public BaseDropUnitClient(String baseUrl) {
-        super(baseUrl);
+        super(baseUrl + DROP_UNIT_SERVICE);
     }
-
-    private static final String DELIVERY_ENDPOINT = "dropunit/delivery/endpoint";
-    private static final String DELIVERY_ENDPOINT_DROPID = "dropunit/delivery/endpoint/{dropId}";
-    private static final String DELIVERY_ENDPOINT_REQUEST_BODY = "dropunit/delivery/endpoint/{dropId}/request-body";
-    private static final String DELIVERY_ENDPOINT_RESPONSE_BODY = "dropunit/delivery/endpoint/{dropId}/response-body/{status}";
-    private static final String DELIVERY_ENDPOINT_RECEIVED = "dropunit/recieved/{dropId}/{number}";
-    private static final String URI_DROP_COUNT = "dropunit/count/{dropId}";
 
     private static final String DROP_DELIVERY = "drop-delivery";
     private static final String REQUEST_DELIVERY = "request-delivery";
@@ -33,7 +34,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
 
     public String executeEndpointDelivery(DropUnitEndpointDto dropUnit)
             throws IOException {
-        HttpResponse response = invokeHttpPost(DELIVERY_ENDPOINT, dropUnit);
+        HttpResponse response = invokeHttpPost(URI_DELIVERY_ENDPOINT, dropUnit);
         assertStatus(DROP_DELIVERY, response.getStatusLine());
         JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
         assertResult(DROP_DELIVERY, obj);
@@ -47,7 +48,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
     public void executeRequestDelivery(String id, DropUnitRequestDto requestDto)
             throws IOException {
         if (requestDto != null) {
-            HttpResponse response = invokeHttpPut(DELIVERY_ENDPOINT_REQUEST_BODY
+            HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY
                             .replace("{dropId}", id),
                     requestDto.getRequestContentType(),
                     requestDto.getRequestBody());
@@ -60,7 +61,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
     public void executeRequestDelivery(String id, DropUnitRequestPatternsDto requestDto)
             throws IOException {
         if (requestDto != null) {
-            HttpResponse response = invokeHttpPost(DELIVERY_ENDPOINT_REQUEST_BODY
+            HttpResponse response = invokeHttpPost(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY
                             .replace("{dropId}", id),
                     requestDto);
             assertStatus(REQUEST_DELIVERY, response.getStatusLine());
@@ -72,7 +73,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
     public void executeResponseDelivery(String id, DropUnitResponseDto responseDto)
             throws IOException {
         if (responseDto != null) {
-            HttpResponse response = invokeHttpPut(DELIVERY_ENDPOINT_RESPONSE_BODY
+            HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS
                             .replace("{dropId}", id)
                             .replace("{status}", responseDto.getResponseCode() + ""),
                     responseDto.getResponseContentType(),
@@ -84,7 +85,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
     }
 
     public int executeRetrieveCount(String dropId) throws IOException {
-        HttpResponse response = invokeHttpGet(URI_DROP_COUNT
+        HttpResponse response = invokeHttpGet(URI_COUNT_DROPID
                 .replace("{dropId}", dropId));
         if (response.getStatusLine().getStatusCode() != 200) {
             throw new AssertionError("incorrect response code");
@@ -101,7 +102,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
     }
 
     public String executeRetrieveReceived(String dropId, int number) throws IOException {
-        HttpResponse response = invokeHttpGet(DELIVERY_ENDPOINT_RECEIVED
+        HttpResponse response = invokeHttpGet(URI_RECIEVED_DROPID_NUMBER
                 .replace("{dropId}", dropId)
                 .replace("{number}", number + ""));
         if (response.getStatusLine().getStatusCode() != 200) {
@@ -112,7 +113,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
 
     public void executeEndpointDeletion(String id)
             throws IOException {
-        HttpResponse response = invokeHttpDelete(DELIVERY_ENDPOINT_DROPID
+        HttpResponse response = invokeHttpDelete(URI_DELIVERY_ENDPOINT_DROPID
                 .replace("{dropId}", id));
         assertStatus(DROP_DELETION, response.getStatusLine());
         JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
