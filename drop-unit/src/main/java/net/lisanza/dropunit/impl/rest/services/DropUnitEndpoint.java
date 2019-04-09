@@ -106,6 +106,7 @@ public class DropUnitEndpoint {
 
     public void addReceived(String received) {
         this.receivedList.add(received);
+        incr();
     }
 
     // with-builders

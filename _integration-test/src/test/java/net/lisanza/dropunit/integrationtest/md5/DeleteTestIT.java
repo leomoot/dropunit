@@ -42,6 +42,7 @@ public class DeleteTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceived(1);
+        dropUnit.assertNotFound(0);
     }
 
     @Test
@@ -64,6 +65,7 @@ public class DeleteTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceived(1);
+        dropUnit.assertNotFound(0);
     }
 
     @Test
@@ -83,6 +85,7 @@ public class DeleteTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceived(1);
+        dropUnit.assertNotFound(0);
     }
 
     @Test
@@ -111,5 +114,50 @@ public class DeleteTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceived(1);
+        dropUnit.assertNotFound(0);
+    }
+
+    @Test
+    public void shouldTestWithHeaders() throws Exception {
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
+                .withDelete("test-delete/with/path")
+                .withHeader("Connection", "keep-alive")
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .drop();
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpDelete(dropUnit.getUrl());
+
+        // assert message from engine-under-test
+        assertEquals(200, response.getStatusLine().getStatusCode());
+        String body = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertNotNull(body);
+        assertThat(body, containsString(dropUnit.getResponseBody()));
+
+        dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceived(1);
+        dropUnit.assertNotFound(0);
+    }
+
+    @Test
+    public void shouldFailWithHeaders() throws Exception {
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
+                .withDelete("test-delete/with/path")
+                .withHeader("Authorization", "<api-key>")
+                .withHeader("Connection", "keep-alive")
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .drop();
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpDelete(dropUnit.getUrl());
+
+        // assert message from engine-under-test
+        assertEquals(415, response.getStatusLine().getStatusCode());
+
+        dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceived(1);
+        dropUnit.assertNotFound(0);
     }
 }

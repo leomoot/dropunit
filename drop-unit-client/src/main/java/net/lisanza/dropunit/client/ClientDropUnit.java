@@ -254,6 +254,14 @@ public class ClientDropUnit extends BaseDropUnitClient {
         }
     }
 
+    public void assertNotFound(int number) {
+        try {
+            assertThat(executeRetrieveNotFound(), is(number));
+        } catch (IOException e) {
+            throw new AssertionError("IO failure");
+        }
+    }
+
     // toString
     @Override
     public String toString() {

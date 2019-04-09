@@ -14,6 +14,7 @@ public final class RequestMappings {
     public static final String URI_CLEARALLDROPS = "/clearAllDrops";
     public static final String URI_GETALLDROPS = "/getAllDrops";
     public static final String URI_GETALLNOTFOUNDS = "/getAllNotFounds";
+    public static final String URI_COUNT_NOTFOUND = "/count/notFound";
 
     // root Service
     public static final String ROOT_SERVICE = "/";

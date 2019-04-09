@@ -16,6 +16,7 @@ import java.io.IOException;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.DROP_UNIT_SERVICE;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_CLEARALLDROPS;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_COUNT_DROPID;
+import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_COUNT_NOTFOUND;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY;
@@ -110,6 +111,22 @@ public class BaseDropUnitClient extends BaseHttpClient {
             throw new AssertionError("incorrect response code");
         }
         return EntityUtils.toString(response.getEntity(), "UTF-8");
+    }
+
+    public int executeRetrieveNotFound() throws IOException {
+        HttpResponse response = invokeHttpGet(URI_COUNT_NOTFOUND);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new AssertionError("incorrect response code: retrieve not found");
+        }
+        JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
+        if (obj == null) {
+            throw new AssertionError("no response-body for drop-delivery");
+        }
+        JsonNode countValue = obj.get("count");
+        if (countValue == null) {
+            throw new AssertionError("no count in response-body for drop-delivery");
+        }
+        return countValue.asInt();
     }
 
     public void executeEndpointDeletion(String id)

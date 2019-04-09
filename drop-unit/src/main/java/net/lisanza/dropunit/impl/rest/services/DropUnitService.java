@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
-import java.util.List;
 
 import static net.lisanza.dropunit.impl.rest.services.DigestUtil.digestEndpoint;
 
@@ -16,18 +15,23 @@ public class DropUnitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropUnitService.class);
 
     private Hashtable<String, DropUnitEndpoint> registrations = new Hashtable<>();
+    private Hashtable<String, DropUnitEndpoint> notFounds = new Hashtable<>();
 
     public String dropAll() {
+        int registered = registrations.size();
+        int notfound = notFounds.size();
         registrations.clear();
-        return "droppy dropped";
+        notFounds.clear();
+        return "drop size " + registered + "->" + registrations.size()
+                + " not found " + notfound + "->" + notFounds.size();
     }
 
-    public List<DropUnitEndpoint> getAll() {
-        List<DropUnitEndpoint> list = new ArrayList<>();
-        for (DropUnitEndpoint droppy : registrations.values()) {
-            list.add(droppy);
-        }
-        return list;
+    public Collection<DropUnitEndpoint> getAllRegistrations() {
+        return registrations.values();
+    }
+
+    public Collection<DropUnitEndpoint> getAllNotFound() {
+        return notFounds.values();
     }
 
     public String register(DropUnitEndpoint endpoint) {
@@ -82,6 +86,7 @@ public class DropUnitService {
         DropUnitEndpoint endpoint = registrations.get(dropId);
         if (endpoint == null) {
             LOGGER.warn("no endpoint registered for {}:{}", dto.getMethod(), dto.getUrl());
+            notFounds.put(dto.getUrl(), dto);
             throw new NotFoundException("no endpoint registered for " + dto.getMethod() + ":" + dto.getUrl());
         }
         return endpoint;

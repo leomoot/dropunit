@@ -45,6 +45,7 @@ public class PutTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
+        dropUnit.assertNotFound(0);
     }
 
     @Test
@@ -68,6 +69,7 @@ public class PutTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
+        dropUnit.assertNotFound(0);
     }
 
     @Test
@@ -88,6 +90,7 @@ public class PutTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
+        dropUnit.assertNotFound(0);
     }
 
     @Test
@@ -118,5 +121,54 @@ public class PutTestIT extends BaseRequest {
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
+        dropUnit.assertNotFound(0);
+    }
+
+    @Test
+    public void shouldTestWithHeaders() throws Exception {
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
+                .withPut("test-put/with/path")
+                .withHeader("Connection", "keep-alive")
+                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .drop();
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpPut(dropUnit.getUrl(),
+                MediaType.APPLICATION_XML, new File(REQUEST_FILE));
+
+        // assert message from engine-under-test
+        assertEquals(200, response.getStatusLine().getStatusCode());
+        String body = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertNotNull(body);
+        assertThat(body, containsString(dropUnit.getResponseBody()));
+
+        dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
+        dropUnit.assertNotFound(0);
+    }
+
+    @Test
+    public void shouldFailWithHeaders() throws Exception {
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
+                .withPut("test-put/with/headers/path")
+                .withHeader("Authorization", "<api-key>")
+                .withHeader("Connection", "keep-alive")
+                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .drop();
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpPut(dropUnit.getUrl(),
+                MediaType.APPLICATION_XML, new File(REQUEST_FILE));
+
+        // assert message from engine-under-test
+        assertEquals(415, response.getStatusLine().getStatusCode());
+
+        dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
+        dropUnit.assertNotFound(0);
     }
 }
