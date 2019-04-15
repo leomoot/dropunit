@@ -212,13 +212,7 @@ public class ClientDropUnit extends BaseDropUnitClient {
     }
 
     public void assertCountRecievedRequests(int count) {
-        try {
-            if (count != executeRetrieveCount(id)) {
-                throw new AssertionError("incorrect request count for dropunit");
-            }
-        } catch (IOException e) {
-            throw new AssertionError("IO failure");
-        }
+        assertThat("incorrect request count for dropunit", executeRetrieveCount(id), is(count));
     }
 
     public void assertReceived(int number)
@@ -231,13 +225,9 @@ public class ClientDropUnit extends BaseDropUnitClient {
     }
 
     public void assertReceivedFromPatterns(int number) {
-        try {
-            String requestBody = executeRetrieveReceived(id, number);
-            for (String pattern : requestPatterns.getPatterns()) {
-                assertTrue("", requestBody.contains(pattern));
-            }
-        } catch (IOException e) {
-            throw new AssertionError("IO failure");
+        String requestBody = executeRetrieveReceived(id, number);
+        for (String pattern : requestPatterns.getPatterns()) {
+            assertTrue("", requestBody.contains(pattern));
         }
     }
 
@@ -247,19 +237,12 @@ public class ClientDropUnit extends BaseDropUnitClient {
     }
 
     public void assertReceived(int number, String toMatch) {
-        try {
-            assertThat(executeRetrieveReceived(id, number), is(toMatch));
-        } catch (IOException e) {
-            throw new AssertionError("IO failure");
-        }
+        assertThat(executeRetrieveReceived(id, number), is(toMatch));
+
     }
 
     public void assertNotFound(int number) {
-        try {
-            assertThat(executeRetrieveNotFound(), is(number));
-        } catch (IOException e) {
-            throw new AssertionError("IO failure");
-        }
+        assertThat(executeRetrieveNotFound(), is(number));
     }
 
     // toString

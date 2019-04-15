@@ -22,6 +22,9 @@ import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIV
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS;
 import static net.lisanza.dropunit.impl.rest.constants.RequestMappings.URI_RECIEVED_DROPID_NUMBER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class BaseDropUnitClient extends BaseHttpClient {
 
@@ -34,106 +37,118 @@ public class BaseDropUnitClient extends BaseHttpClient {
     private static final String RESPONSE_DELIVERY = "response-delivery";
     private static final String DROP_DELETION = "drop-deletion";
 
-    public String executeEndpointDelivery(DropUnitEndpointDto dropUnit)
-            throws IOException {
-        HttpResponse response = invokeHttpPost(URI_DELIVERY_ENDPOINT, dropUnit);
-        assertStatus(DROP_DELIVERY, response.getStatusLine());
-        JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
-        assertResult(DROP_DELIVERY, obj);
-        JsonNode idValue = obj.get("id");
-        if (idValue == null) {
-            throw new AssertionError("no id in response-body for drop-delivery");
-        }
-        return idValue.asText();
-    }
-
-    public void executeRequestDelivery(String id, DropUnitRequestDto requestDto)
-            throws IOException {
-        if (requestDto != null) {
-            HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY
-                            .replace("{dropId}", id),
-                    requestDto.getRequestContentType(),
-                    requestDto.getRequestBody());
-            assertStatus(REQUEST_DELIVERY, response.getStatusLine());
+    public String executeEndpointDelivery(DropUnitEndpointDto dropUnit) {
+        try {
+            HttpResponse response = invokeHttpPost(URI_DELIVERY_ENDPOINT, dropUnit);
+            assertOkStatus(DROP_DELIVERY, response.getStatusLine());
             JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
-            assertResult(REQUEST_DELIVERY, obj);
+            assertResult(DROP_DELIVERY, obj);
+            JsonNode idValue = obj.get("id");
+            assertNotNull("no id in response-body for drop-delivery", idValue);
+            return idValue.asText();
+        } catch (IOException e) {
+            fail("IO failure");
+        }
+        return null; // will never happen
+    }
+
+    public void executeRequestDelivery(String id, DropUnitRequestDto requestDto) {
+        try {
+            if (requestDto != null) {
+                HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY
+                                .replace("{dropId}", id),
+                        requestDto.getRequestContentType(),
+                        requestDto.getRequestBody());
+                assertOkStatus(REQUEST_DELIVERY, response.getStatusLine());
+                JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
+                assertResult(REQUEST_DELIVERY, obj);
+            }
+        } catch (IOException e) {
+            fail("IO failure");
         }
     }
 
-    public void executeRequestDelivery(String id, DropUnitRequestPatternsDto requestDto)
-            throws IOException {
-        if (requestDto != null) {
-            HttpResponse response = invokeHttpPost(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY
-                            .replace("{dropId}", id),
-                    requestDto);
-            assertStatus(REQUEST_DELIVERY, response.getStatusLine());
+    public void executeRequestDelivery(String id, DropUnitRequestPatternsDto requestDto) {
+        try {
+            if (requestDto != null) {
+                HttpResponse response = invokeHttpPost(URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY
+                                .replace("{dropId}", id),
+                        requestDto);
+                assertOkStatus(REQUEST_DELIVERY, response.getStatusLine());
+                JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
+                assertResult(REQUEST_DELIVERY, obj);
+            }
+        } catch (IOException e) {
+            fail("IO failure");
+        }
+    }
+
+    public void executeResponseDelivery(String id, DropUnitResponseDto responseDto) {
+        try {
+            if (responseDto != null) {
+                HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS
+                                .replace("{dropId}", id)
+                                .replace("{status}", responseDto.getResponseCode() + ""),
+                        responseDto.getResponseContentType(),
+                        responseDto.getResponseBody());
+                assertOkStatus(RESPONSE_DELIVERY, response.getStatusLine());
+                JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
+                assertResult(RESPONSE_DELIVERY, obj);
+            }
+        } catch (IOException e) {
+            fail("IO fasilure");
+        }
+    }
+
+    public int executeRetrieveCount(String dropId) {
+        try {
+            HttpResponse response = invokeHttpGet(URI_COUNT_DROPID
+                    .replace("{dropId}", dropId));
+            assertEquals("incorrect response code", 200, response.getStatusLine().getStatusCode());
             JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
-            assertResult(REQUEST_DELIVERY, obj);
+            assertNotNull("no response-body for drop-delivery", obj);
+            JsonNode countValue = obj.get("count");
+            assertNotNull("no count in response-body for drop-delivery", countValue);
+            return countValue.asInt();
+        } catch (IOException e) {
+            fail("IO fasilure");
         }
+        return -1; // will never happen
     }
 
-    public void executeResponseDelivery(String id, DropUnitResponseDto responseDto)
-            throws IOException {
-        if (responseDto != null) {
-            HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS
-                            .replace("{dropId}", id)
-                            .replace("{status}", responseDto.getResponseCode() + ""),
-                    responseDto.getResponseContentType(),
-                    responseDto.getResponseBody());
-            assertStatus(RESPONSE_DELIVERY, response.getStatusLine());
+    public String executeRetrieveReceived(String dropId, int number) {
+        try {
+            HttpResponse response = invokeHttpGet(URI_RECIEVED_DROPID_NUMBER
+                    .replace("{dropId}", dropId)
+                    .replace("{number}", number + ""));
+            assertEquals("incorrect response code", 200, response.getStatusLine().getStatusCode());
+            return EntityUtils.toString(response.getEntity(), "UTF-8");
+        } catch (IOException e) {
+            fail("IO fasilure");
+        }
+        return null; // will never happen
+    }
+
+    public int executeRetrieveNotFound() {
+        try {
+            HttpResponse response = invokeHttpGet(URI_COUNT_NOTFOUND);
+            assertOkStatus("retrieve not found", response.getStatusLine());
             JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
-            assertResult(RESPONSE_DELIVERY, obj);
+            assertNotNull("no response-body for drop-delivery", obj);
+            JsonNode countValue = obj.get("count");
+            assertNotNull("no count in response-body for drop-delivery", countValue);
+            return countValue.asInt();
+        } catch (IOException e) {
+            fail("IO fasilure");
         }
-    }
-
-    public int executeRetrieveCount(String dropId) throws IOException {
-        HttpResponse response = invokeHttpGet(URI_COUNT_DROPID
-                .replace("{dropId}", dropId));
-        if (response.getStatusLine().getStatusCode() != 200) {
-            throw new AssertionError("incorrect response code");
-        }
-        JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
-        if (obj == null) {
-            throw new AssertionError("no response-body for drop-delivery");
-        }
-        JsonNode countValue = obj.get("count");
-        if (countValue == null) {
-            throw new AssertionError("no count in response-body for drop-delivery");
-        }
-        return countValue.asInt();
-    }
-
-    public String executeRetrieveReceived(String dropId, int number) throws IOException {
-        HttpResponse response = invokeHttpGet(URI_RECIEVED_DROPID_NUMBER
-                .replace("{dropId}", dropId)
-                .replace("{number}", number + ""));
-        if (response.getStatusLine().getStatusCode() != 200) {
-            throw new AssertionError("incorrect response code");
-        }
-        return EntityUtils.toString(response.getEntity(), "UTF-8");
-    }
-
-    public int executeRetrieveNotFound() throws IOException {
-        HttpResponse response = invokeHttpGet(URI_COUNT_NOTFOUND);
-        if (response.getStatusLine().getStatusCode() != 200) {
-            throw new AssertionError("incorrect response code: retrieve not found");
-        }
-        JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
-        if (obj == null) {
-            throw new AssertionError("no response-body for drop-delivery");
-        }
-        JsonNode countValue = obj.get("count");
-        if (countValue == null) {
-            throw new AssertionError("no count in response-body for drop-delivery");
-        }
-        return countValue.asInt();
+        return -1; // will never happen
     }
 
     public void executeEndpointDeletion(String id)
             throws IOException {
         HttpResponse response = invokeHttpDelete(URI_DELIVERY_ENDPOINT_DROPID
                 .replace("{dropId}", id));
-        assertStatus(DROP_DELETION, response.getStatusLine());
+        assertOkStatus(DROP_DELETION, response.getStatusLine());
         JsonNode obj = new ObjectMapper().readTree(response.getEntity().getContent());
         assertResult(DROP_DELETION, obj);
     }
@@ -141,7 +156,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
     public void executeEndpointDeletion()
             throws IOException {
         HttpResponse response = invokeHttpDelete(URI_CLEARALLDROPS);
-        assertStatus(DROP_DELETION, response.getStatusLine());
+        assertOkStatus(DROP_DELETION, response.getStatusLine());
     }
 
     // private HTTP operations
@@ -155,21 +170,13 @@ public class BaseDropUnitClient extends BaseHttpClient {
     // asserts
 
     private void assertResult(String message, JsonNode obj) {
-        if (obj == null) {
-            throw new AssertionError("no response-body for " + message);
-        }
+        assertNotNull("no response-body for " + message, obj);
         JsonNode resultValue = obj.get("result");
-        if (resultValue == null) {
-            throw new AssertionError("no result in response-body for " + message);
-        }
-        if (!resultValue.asText().equals("OK")) {
-            throw new AssertionError("failure for " + message);
-        }
+        assertNotNull("no result in response-body for " + message, resultValue);
+        assertEquals("failure for " + message, "OK", resultValue.textValue());
     }
 
-    private void assertStatus(String message, StatusLine status) {
-        if (200 != status.getStatusCode()) {
-            throw new AssertionError("incorrect response code in " + message);
-        }
+    private void assertOkStatus(String message, StatusLine status) {
+        assertEquals("incorrect response code in " + message, 200, status.getStatusCode());
     }
 }
