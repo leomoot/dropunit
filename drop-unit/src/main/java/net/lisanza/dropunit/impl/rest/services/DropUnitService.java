@@ -1,5 +1,7 @@
 package net.lisanza.dropunit.impl.rest.services;
 
+import net.lisanza.dropunit.impl.rest.services.data.EndpointNotFound;
+import net.lisanza.dropunit.impl.rest.services.data.ReceivedRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,28 +12,28 @@ import java.util.Hashtable;
 
 import static net.lisanza.dropunit.impl.rest.services.DigestUtil.digestEndpoint;
 
-public class DropUnitService {
+public  class DropUnitService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DropUnitService.class);
 
     private Hashtable<String, DropUnitEndpoint> registrations = new Hashtable<>();
-    private Hashtable<String, DropUnitEndpoint> notFounds = new Hashtable<>();
+    private Hashtable<String, EndpointNotFound> notFound = new Hashtable<>();
 
     public String dropAll() {
         int registered = registrations.size();
-        int notfound = notFounds.size();
+        int notfound = notFound.size();
         registrations.clear();
-        notFounds.clear();
-        return "drop size " + registered + "->" + registrations.size()
-                + " not found " + notfound + "->" + notFounds.size();
+        notFound.clear();
+        return "drop size " + registered + "-> after: " + registrations.size()
+                + " not found " + notfound + "-> after: " + notFound.size();
     }
 
     public Collection<DropUnitEndpoint> getAllRegistrations() {
         return registrations.values();
     }
 
-    public Collection<DropUnitEndpoint> getAllNotFound() {
-        return notFounds.values();
+    public Collection<EndpointNotFound> getAllNotFound() {
+        return notFound.values();
     }
 
     public String register(DropUnitEndpoint endpoint) {
@@ -83,13 +85,7 @@ public class DropUnitService {
             throw new BadRequestException("'drop unit' is missing!");
         }
         String dropId = digestEndpoint(dto.getMethod(), dto.getUrl());
-        DropUnitEndpoint endpoint = registrations.get(dropId);
-        if (endpoint == null) {
-            LOGGER.warn("no endpoint registered for {}:{}", dto.getMethod(), dto.getUrl());
-            notFounds.put(dto.getUrl(), dto);
-            throw new NotFoundException("no endpoint registered for " + dto.getMethod() + ":" + dto.getUrl());
-        }
-        return endpoint;
+        return registrations.get(dropId);
     }
 
     public DropUnitEndpoint lookupEndpoint(String dropId) {
@@ -103,5 +99,24 @@ public class DropUnitService {
             throw new NotFoundException("no endpoint registered for " + dropId);
         }
         return endpoint;
+    }
+
+    public void registerNotFound(String url, ReceivedRequest notFoundRequest) {
+        if (url == null) {
+            LOGGER.warn("'url' is missing!");
+            throw new BadRequestException("'url' is missing!");
+        }
+        if (notFoundRequest == null) {
+            LOGGER.warn("'request' is missing!");
+            throw new BadRequestException("'request' is missing!");
+        }
+        EndpointNotFound notFoundEndpoint = notFound.get(url);
+        if (notFoundEndpoint == null) {
+            notFound.put(url, new EndpointNotFound()
+                    .withUrl(url)
+                    .withReceivedRequests(notFoundRequest));
+        } else {
+            notFoundEndpoint.addReceivedRequests(notFoundRequest);
+        }
     }
 }

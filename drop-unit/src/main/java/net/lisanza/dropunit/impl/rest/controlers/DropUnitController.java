@@ -5,10 +5,12 @@ import net.lisanza.dropunit.impl.rest.services.AbstractDropUnitRequest;
 import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
+import net.lisanza.dropunit.impl.rest.services.data.ReceivedRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -20,6 +22,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Enumeration;
+import java.util.Map;
 
 @Produces(MediaType.APPLICATION_XML)
 @Path(RequestMappings.ROOT_SERVICE)
@@ -67,20 +71,42 @@ public class DropUnitController {
     }
 
     public Response dropUnit(HttpServletRequest request, String method, String content) {
+        ReceivedRequest receivedRequest = new ReceivedRequest()
+                .withMethod(method)
+                .withReceived(content);
+        Enumeration<String> headerNames = request.getHeaderNames();
+        String name;
+        while (headerNames.hasMoreElements()) {
+            name = headerNames.nextElement();
+            receivedRequest.addHeader(name, request.getHeader(name));
+        }
+        return  dropUnit(request.getPathInfo(), request.getQueryString(), receivedRequest);
+    }
+
+    public Response dropUnit(String pathInfo, String queryString, ReceivedRequest receivedRequest) {
+        if (receivedRequest == null) {
+            LOGGER.warn("'received request' is missing!");
+            throw new BadRequestException("'received request' is missing!");
+        }
         // request validation
-        DropUnitEndpoint endpoint;
-        if ((request.getQueryString() == null) || request.getQueryString().isEmpty()) {
-            endpoint = lookupEndpoint(createDropUnitEndpoint(request.getPathInfo(), method));
-        } else {
-            endpoint = lookupEndpoint(createDropUnitEndpoint(request.getPathInfo() + "?" + request.getQueryString(), method));
+        StringBuffer url = new StringBuffer(pathInfo);
+        if ((queryString != null) && !queryString.isEmpty()) {
+            url.append('?').append(queryString);
+        }
+        DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(createDropUnitEndpoint(url.toString(), receivedRequest.getMethod()));
+        if (endpoint == null) {
+            String msg = String.format("'drop unit '%s' registration is missing!", url);
+            LOGGER.warn(msg);
+            dropUnitService.registerNotFound(url.toString(), receivedRequest);
+            throw new NotFoundException(msg);
         }
         // request received
-        endpoint.addReceived(content);
+        endpoint.addReceived(receivedRequest);
         // validate
-        validateRequestHeaders(endpoint, request);
+        validateRequestHeaders(endpoint, receivedRequest.getHeaders());
         if (endpoint.getRequest() != null) {
-            validateRequestContentType(endpoint.getRequest(), request);
-            validateRequestContent(endpoint.getRequest(), content);
+            validateRequestContentType(endpoint.getRequest().getContentType(), receivedRequest.getContentType());
+            validateRequestContent(endpoint.getRequest(), receivedRequest.getBody());
         }
         // Response build up
         waitToRespond(endpoint.getDelay());
@@ -107,15 +133,9 @@ public class DropUnitController {
         }
     }
 
-    protected void validateRequestContentType(AbstractDropUnitRequest dropUnitRequest, HttpServletRequest httpRequest) {
-        if (dropUnitRequest != null) {
-            validateRequestContentType(dropUnitRequest.getContentType(), httpRequest.getHeader("Content-type"));
-        }
-    }
-
-    protected void validateRequestHeaders(DropUnitEndpoint dropUnitEndpoint, HttpServletRequest httpRequest) {
+    protected void validateRequestHeaders(DropUnitEndpoint dropUnitEndpoint, Map<String, String> requestHeaders) {
         for (String name : dropUnitEndpoint.getHeaders().keySet()) {
-            validateRequestHeader(name, dropUnitEndpoint.getHeaders().get(name), httpRequest.getHeader(name));
+            validateRequestHeader(name, dropUnitEndpoint.getHeaders().get(name), requestHeaders.get(name));
         }
     }
 
@@ -170,21 +190,7 @@ public class DropUnitController {
         }
     }
 
-    private DropUnitEndpoint lookupEndpoint
-            (DropUnitEndpoint dropUnitEndpoint) {
-        DropUnitEndpoint result = dropUnitService.lookupEndpoint(dropUnitEndpoint);
-        if (result == null) {
-            String msg = String.format("'drop unit '%s' registration is missing!", dropUnitEndpoint.getUrl());
-            LOGGER.warn(msg);
-            throw new NotFoundException(msg);
-        }
-
-        LOGGER.info("lookupEndpoint -> {}", result);
-        return result;
-    }
-
-    public DropUnitEndpoint createDropUnitEndpoint(String uri, String
-            method) {
+    public DropUnitEndpoint createDropUnitEndpoint(String uri, String method) {
         DropUnitEndpoint dropUnitEndpoint = new DropUnitEndpoint();
         dropUnitEndpoint.setUrl(uri);
         dropUnitEndpoint.setMethod(method);

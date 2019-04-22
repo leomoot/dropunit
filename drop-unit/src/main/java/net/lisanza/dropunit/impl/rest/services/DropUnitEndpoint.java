@@ -1,6 +1,7 @@
 package net.lisanza.dropunit.impl.rest.services;
 
 import net.lisanza.dropunit.impl.rest.dto.DropUnitHeaderDto;
+import net.lisanza.dropunit.impl.rest.services.data.ReceivedRequest;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -25,7 +26,7 @@ public class DropUnitEndpoint {
 
     private DropUnitResponse response;
 
-    private List<String> receivedList = new ArrayList<>();
+    private List<ReceivedRequest> receivedList = new ArrayList<>();
 
     // getters and setters
 
@@ -97,14 +98,14 @@ public class DropUnitEndpoint {
         this.response = response;
     }
 
-    public String getReceived(int i) {
+    public ReceivedRequest getReceived(int i) {
         if ((0 < i) && (i <= receivedList.size())) {
             return receivedList.get(i - 1);
         }
-        return "";
+        return null;
     }
 
-    public void addReceived(String received) {
+    public void addReceived(ReceivedRequest received) {
         this.receivedList.add(received);
         incr();
     }

@@ -162,11 +162,10 @@ public class DropRegistrationController {
 
     @GET
     @Path(URI_COUNT_NOTFOUND)
-    public DropUnitRegistrationResponseDto getCountNotFound(@PathParam("dropId") String dropId) {
+    public DropUnitRegistrationResponseDto getCountNotFound() {
         try {
             LOGGER.debug("Called getCountNotFound");
             return new DropUnitRegistrationResponseDto()
-                    .withId(dropId)
                     .withResult("OK")
                     .withCount(dropUnitService.getAllNotFound().size());
         } catch (Exception e) {
@@ -214,7 +213,7 @@ public class DropRegistrationController {
         try {
             LOGGER.debug("Called getDropCount");
             DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropId);
-            return endpoint.getReceived(number);
+            return endpoint.getReceived(number).getBody();
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
         }
