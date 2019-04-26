@@ -12,20 +12,16 @@ import java.util.Hashtable;
 
 import static net.lisanza.dropunit.impl.rest.services.DigestUtil.digestEndpoint;
 
-public  class DropUnitService {
+public class DropUnitService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DropUnitService.class);
 
+    private Hashtable<String, DropUnitEndpoint> defaults = new Hashtable<>();
     private Hashtable<String, DropUnitEndpoint> registrations = new Hashtable<>();
     private Hashtable<String, EndpointNotFound> notFound = new Hashtable<>();
 
-    public String dropAll() {
-        int registered = registrations.size();
-        int notfound = notFound.size();
-        registrations.clear();
-        notFound.clear();
-        return "drop size " + registered + "-> after: " + registrations.size()
-                + " not found " + notfound + "-> after: " + notFound.size();
+    public Collection<DropUnitEndpoint> getAllDefaults() {
+        return defaults.values();
     }
 
     public Collection<DropUnitEndpoint> getAllRegistrations() {
@@ -36,7 +32,30 @@ public  class DropUnitService {
         return notFound.values();
     }
 
+    public String dropAll() {
+        int defaultCount = defaults.size();
+        int registrationsCount = registrations.size();
+        int notFoundCount = notFound.size();
+        registrations.clear();
+        notFound.clear();
+        registrations.putAll(defaults);
+        return "endpoints: defaults " + defaultCount
+                + " registrations " + registrationsCount
+                + " not found " + notFoundCount
+                + "-> after: defaults " + defaultCount
+                + " registrations " + registrations.size()
+                + " not found " + notFound.size();
+    }
+
+    public String registerDefault(DropUnitEndpoint endpoint) {
+        return register(endpoint, defaults);
+    }
+
     public String register(DropUnitEndpoint endpoint) {
+        return register(endpoint, registrations);
+    }
+
+    public String register(DropUnitEndpoint endpoint, Hashtable<String, DropUnitEndpoint> hashtable) {
         if (endpoint == null) {
             String msg = "'drop unit' is missing!";
             LOGGER.error(msg);
@@ -47,9 +66,12 @@ public  class DropUnitService {
         }
 
         String dropId = digestEndpoint(endpoint.getMethod(), endpoint.getUrl());
+        if ((endpoint.getId() == null) || endpoint.getId().isEmpty()) {
+            endpoint.setId(dropId);
+        }
         LOGGER.debug("register {} - {}", dropId, endpoint);
 
-        registrations.put(dropId, endpoint);
+        hashtable.put(dropId, endpoint);
         return dropId;
     }
 

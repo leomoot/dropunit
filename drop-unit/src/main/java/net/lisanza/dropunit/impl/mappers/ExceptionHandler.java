@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotAcceptableException;
+import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.NotSupportedException;
@@ -18,11 +20,9 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(final Exception exception) {
-
         // Initial status to internal server error
         Status status = Response.Status.INTERNAL_SERVER_ERROR;
-        String body = exception.getMessage();
-
+        // Add more specific value
         if (exception instanceof NotSupportedException) {
             status = Status.UNSUPPORTED_MEDIA_TYPE;
         } else if (exception instanceof ForbiddenException) {
@@ -35,10 +35,14 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
             status = Response.Status.SERVICE_UNAVAILABLE;
         } else if (exception instanceof NotAuthorizedException) {
             status = Response.Status.UNAUTHORIZED;
+        } else if (exception instanceof NotAcceptableException) {
+            status = Status.NOT_ACCEPTABLE;
+        } else if (exception instanceof NotAllowedException) {
+            status = Status.METHOD_NOT_ALLOWED;
         }
 
-        String message = String.format("%s exception \"%s\"", status.getReasonPhrase(), exception.getMessage());
-        LOGGER.error(message, exception);
+        String body = String.format("response: %d %s >> exception \"%s\"", status.getStatusCode(), status.getReasonPhrase(), exception.getMessage());
+        LOGGER.error(body, exception);
         return Response.status(status).entity(body).build();
     }
 }

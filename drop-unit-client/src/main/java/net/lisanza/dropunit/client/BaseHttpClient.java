@@ -10,13 +10,10 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
+
+import static net.lisanza.dropunit.impl.utils.FileUtils.readFromFile;
 
 public class BaseHttpClient {
 
@@ -127,16 +124,5 @@ public class BaseHttpClient {
 
     protected HttpClient getHttpClient(RequestConfig requestConfig) {
         return HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
-    }
-
-    public String readFromFile(String fileName) throws IOException {
-        return readFromFile(new File(fileName));
-    }
-
-    public String readFromFile(File file) throws IOException {
-        try (InputStream inputStream = new FileInputStream(file)) {
-            return new BufferedReader(new InputStreamReader(inputStream))
-                    .lines().collect(Collectors.joining("\n"));
-        }
     }
 }

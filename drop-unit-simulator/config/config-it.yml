@@ -22,3 +22,30 @@ logging:
         target: stderr
     “net.lisanza.dropunit.simulator.logging":
       level: DEBUG
+
+endpoints:
+  - path: "/default/path/one"
+    method: "GET"
+    responseCode: 200
+    responseContentType: "application/xml"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-one.xml"
+  - path: "/default/path/one?parameter=value"
+    method: "GET"
+    responseCode: 200
+    responseContentType: "application/xml"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-one.xml"
+  - path: "/default/path/two"
+    method: "GET"
+    responseCode: 200
+    responseContentType: "application/xml"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-two.xml"
+  - path: "/default/path/three"
+    method: "GET"
+    responseCode: 200
+    responseContentType: "application/json"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-three.json"
+  - path: "/default/path/four"
+    method: "GET"
+    responseCode: 404
+    responseContentType: "application/json"
+    responseBodyFileName: ""
