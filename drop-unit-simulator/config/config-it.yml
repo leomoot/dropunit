@@ -49,3 +49,13 @@ endpoints:
     responseCode: 404
     responseContentType: "application/json"
     responseBodyFileName: ""
+  - path: "/default/path/five"
+    method: "POST"
+    request:
+      contentType: "application/xml"
+      patterns:
+        - "<xyz>"
+        - "</xyz>"
+    responseCode: 200
+    responseContentType: "application/xml"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-one.xml"

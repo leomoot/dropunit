@@ -55,31 +55,26 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
         for (EndpointDocument endpointDocument : config.getEndpoints()) {
             configEndpoint(endpointDocument, dropUnitService);
         }
+        dropUnitService.dropAll();
     }
 
     private void configEndpoint(EndpointDocument endpointDocument,
                                 DropUnitService dropUnitService) {
         try {
-            if ((endpointDocument.getResponseBodyFileName() == null) || endpointDocument.getResponseBodyFileName().isEmpty()) {
-                dropUnitService.registerDefault(new DropUnitEndpoint()
-                        .withUrl(endpointDocument.getPath())
-                        .withMethod(endpointDocument.getMethod())
-                        .withResponse(new DropUnitResponse()
-                                .withCode(endpointDocument.getResponseCode())
-                                .withContentType(endpointDocument.getResponseContentType())
-                                .withBody("")
-                        ));
-            } else {
-                dropUnitService.registerDefault(new DropUnitEndpoint()
-                        .withUrl(endpointDocument.getPath())
-                        .withMethod(endpointDocument.getMethod())
-                        .withResponse(new DropUnitResponse()
-                                .withCode(endpointDocument.getResponseCode())
-                                .withContentType(endpointDocument.getResponseContentType())
-                                .withBody(readFromFile(endpointDocument.getResponseBodyFileName()))
-                        ));
+            DropUnitResponse response = new DropUnitResponse()
+                    .withCode(endpointDocument.getResponseCode())
+                    .withContentType(endpointDocument.getResponseContentType())
+                    .withBody("");
+            if ((endpointDocument.getResponseBodyFileName() != null) && !endpointDocument.getResponseBodyFileName().isEmpty()) {
+                response.withBody(readFromFile(endpointDocument.getResponseBodyFileName()));
             }
-            dropUnitService.dropAll();
+            LOGGER.debug("response: {}", response);
+            dropUnitService.registerDefault(new DropUnitEndpoint()
+                    .withUrl(endpointDocument.getPath())
+                    .withMethod(endpointDocument.getMethod())
+                    .withRequest(endpointDocument.getRequest())
+                    .withResponse(response));
+            LOGGER.debug("response: {}", response);
         } catch (NullPointerException e) {
             LOGGER.error("Cannot load endpoint: {} / {}: {}",
                     endpointDocument.getPath(), endpointDocument.getMethod(), e.getMessage());
@@ -88,6 +83,7 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
             LOGGER.error("Cannot read endpoint {} / {} response body filename: {}",
                     endpointDocument.getPath(), endpointDocument.getMethod(),
                     endpointDocument.getResponseBodyFileName());
+            LOGGER.warn("", e);
             return;
         }
         LOGGER.info("Loaded endpoint: {}", endpointDocument.toString());

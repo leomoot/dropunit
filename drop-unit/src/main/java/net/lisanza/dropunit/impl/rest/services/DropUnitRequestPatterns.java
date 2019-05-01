@@ -39,7 +39,7 @@ public class DropUnitRequestPatterns extends AbstractDropUnitRequest {
             stringBuilder.append("''");
         } else {
             for (String patterns : patterns) {
-                stringBuilder.append("'").append(patterns).append("'");
+                stringBuilder.append("'").append(patterns).append("' ");
             }
         }
         return stringBuilder.toString();

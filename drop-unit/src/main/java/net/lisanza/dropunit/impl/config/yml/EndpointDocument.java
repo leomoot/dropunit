@@ -1,6 +1,7 @@
 package net.lisanza.dropunit.impl.config.yml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.lisanza.dropunit.impl.rest.services.DropUnitRequestPatterns;
 
 import javax.validation.constraints.NotNull;
 
@@ -11,6 +12,8 @@ public class EndpointDocument {
 
     @NotNull
     private String method;
+
+    private DropUnitRequestPatterns request;
 
     @NotNull
     private int responseCode;
@@ -34,6 +37,16 @@ public class EndpointDocument {
     @JsonProperty
     public String getMethod() {
         return method;
+    }
+
+    @JsonProperty
+    public DropUnitRequestPatterns getRequest() {
+        return request;
+    }
+
+    @JsonProperty
+    public void setRequest(DropUnitRequestPatterns request) {
+        this.request = request;
     }
 
     @JsonProperty
@@ -63,6 +76,9 @@ public class EndpointDocument {
 
     @JsonProperty
     public String getResponseBodyFileName() {
+        if ((responseBodyFileName == null) || responseBodyFileName.isEmpty()) {
+            return null;
+        }
         if ((System.getenv("PREFIX") == null) || System.getenv("PREFIX").isEmpty()) {
             return responseBodyFileName;
         } else {
