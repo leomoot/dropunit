@@ -164,10 +164,9 @@ public class PutTestIT extends BaseRequest {
                 MediaType.APPLICATION_XML, new File(REQUEST_FILE));
 
         // assert message from engine-under-test
-        assertEquals(415, response.getStatusLine().getStatusCode());
+        assertEquals(404, response.getStatusLine().getStatusCode());
 
-        dropUnit.assertCountRecievedRequests(1);
-        dropUnit.assertReceivedFromPatterns(1);
-        dropUnit.assertNotFound(0);
+        dropUnit.assertCountRecievedRequests(0);
+        dropUnit.assertNotFound(1);
     }
 }

@@ -54,8 +54,18 @@ endpoints:
     request:
       contentType: "application/xml"
       patterns:
+        - "<abc>"
+        - "</abc>"
+    responseCode: 200
+    responseContentType: "application/xml"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-one.xml"
+  - path: "/default/path/five"
+    method: "POST"
+    request:
+      contentType: "application/xml"
+      patterns:
         - "<xyz>"
         - "</xyz>"
     responseCode: 200
     responseContentType: "application/xml"
-    responseBodyFileName: "src/main/resources/endpoints/response-body-one.xml"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-two.xml"

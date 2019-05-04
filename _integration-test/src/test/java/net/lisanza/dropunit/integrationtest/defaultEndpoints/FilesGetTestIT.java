@@ -6,8 +6,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-import javax.ws.rs.core.MediaType;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -109,46 +107,6 @@ public class FilesGetTestIT extends BaseRequest {
 
         // assert message from engine-under-test
         assertEquals(404, response.getStatusLine().getStatusCode());
-
-        dropUnit.assertNotFound(0);
-    }
-
-    @Test
-    public void shouldTestDefaultConfigurationEndpointWithPatterns() throws Exception {
-        String requestBody = "<xyz></xyz>";
-        // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
-                .withPost("default/path/five");
-
-        // invoke message on engine-under-test to use dropunit endpoint
-        HttpResponse response = httpClient.invokeHttpPost("default/path/five",
-                MediaType.APPLICATION_XML, requestBody);
-
-        // assert message from engine-under-test
-        assertEquals(200, response.getStatusLine().getStatusCode());
-        String body = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertNotNull(body);
-        assertThat(body, containsString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
-        assertThat(body, containsString("<pallet>"));
-        assertThat(body, containsString("<bag>droppy one</bag>"));
-        assertThat(body, containsString("</pallet>"));
-
-        dropUnit.assertNotFound(0);
-    }
-
-    @Test
-    public void shouldFailDefaultConfigurationEndpointWithPatterns() throws Exception {
-        String requestBody = "<xyz>";
-        // setup dropunit endpoint
-        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST)
-                .withPost("default/path/five");
-
-        // invoke message on engine-under-test to use dropunit endpoint
-        HttpResponse response = httpClient.invokeHttpPost("default/path/five",
-                MediaType.APPLICATION_XML, requestBody);
-
-        // assert message from engine-under-test
-        assertEquals(415, response.getStatusLine().getStatusCode());
 
         dropUnit.assertNotFound(0);
     }

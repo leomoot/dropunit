@@ -12,17 +12,18 @@ public class DigestUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DigestUtil.class);
 
-    private static final String DIGEST_METHOD_URL = "md5(url/method): ";
-    private static final String DIGEST_BODY = "md5(url/method): ";
+    private static final String DIGEST_METHOD_URL = "md5(url/method/request): ";
+    private static final String DIGEST_BODY = "md5(body): ";
     private static final String DIGEST_FAILED = "failed!";
 
-    public static String digestEndpoint(String method, String url)
+    public static String digestEndpoint(String method, String url, String requestInfo)
             throws InternalServerErrorException {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();
             md.update(method.getBytes());
             md.update(url.getBytes());
+            md.update(requestInfo.getBytes());
             byte[] digest = md.digest();
             String md5 = DatatypeConverter.printHexBinary(digest).toUpperCase();
             LOGGER.debug("{}{} -> {}:{}", DIGEST_METHOD_URL, md5, method, url);

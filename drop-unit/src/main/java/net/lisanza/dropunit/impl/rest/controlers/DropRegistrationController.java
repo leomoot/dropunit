@@ -19,6 +19,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -177,46 +178,73 @@ public class DropRegistrationController {
     @GET
     @Path(URI_COUNT_DROPID)
     public DropUnitRegistrationResponseDto getDropCount(@PathParam("dropId") String dropId) {
+        boolean found = false;
         try {
             LOGGER.debug("Called getDropCount");
             DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropId);
-            return new DropUnitRegistrationResponseDto()
+            if (endpoint != null) {
+                found = true;
+                return new DropUnitRegistrationResponseDto()
                     .withId(dropId)
                     .withResult("OK")
                     .withCount(endpoint.getCount());
+            }
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
         }
-        throw new InternalServerErrorException();
+        if (found) {
+            throw new NotFoundException("could not find endpoint:" + dropId);
+        } else {
+            throw new InternalServerErrorException();
+        }
     }
 
     @DELETE
     @Path(URI_DELIVERY_ENDPOINT_DROPID)
     public DropUnitRegistrationResponseDto deleteEndpoint(@PathParam("dropId") String dropId) {
+        boolean found = false;
         try {
             LOGGER.debug("Called getDropCount");
             DropUnitEndpoint endpoint = dropUnitService.deregister(dropId);
-            return new DropUnitRegistrationResponseDto()
-                    .withId(dropId)
-                    .withResult("deleted")
-                    .withCount(endpoint.getCount());
+            if (endpoint != null) {
+                found = true;
+                return new DropUnitRegistrationResponseDto()
+                        .withId(dropId)
+                        .withResult("deleted")
+                        .withCount(endpoint.getCount());
+            }
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
         }
-        throw new InternalServerErrorException();
+        if (found) {
+            throw new NotFoundException("could not find endpoint:" + dropId);
+        } else {
+            throw new InternalServerErrorException();
+        }
     }
 
     @GET
     @Path(URI_RECIEVED_DROPID_NUMBER)
     public String getRecieved(@PathParam("dropId") String dropId,
                               @PathParam("number") int number) {
+        boolean found = false;
         try {
             LOGGER.debug("Called getDropCount");
             DropUnitEndpoint endpoint = dropUnitService.lookupEndpoint(dropId);
-            return endpoint.getReceived(number).getBody();
+            if (endpoint != null) {
+                found = true;
+                if ((0 < number)
+                    && (number <= endpoint.getReceivedSize())) {
+                    return endpoint.getReceived(number).getBody();
+                }
+            }
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
         }
-        throw new InternalServerErrorException();
+        if (found) {
+            throw new NotFoundException("could not find endpoint:" + dropId);
+        } else {
+            throw new InternalServerErrorException();
+        }
     }
 }

@@ -1,7 +1,5 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
-import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
-import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,14 +7,13 @@ import javax.ws.rs.core.MediaType;
 
 import static org.junit.Assert.fail;
 
+public class EndpointValidatorTest {
 
-public class DropUnitControllerTest {
-
-    private DropUnitController subject;
+    private EndpointValidator subject;
 
     @Before
     public void setUp() throws Exception {
-        subject = new DropUnitController(new DropUnitService(), new DropUnitCount());
+        subject = new EndpointValidator();
     }
 
     @Test

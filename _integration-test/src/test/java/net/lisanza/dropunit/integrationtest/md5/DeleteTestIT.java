@@ -154,10 +154,9 @@ public class DeleteTestIT extends BaseRequest {
         HttpResponse response = httpClient.invokeHttpDelete(dropUnit.getUrl());
 
         // assert message from engine-under-test
-        assertEquals(415, response.getStatusLine().getStatusCode());
+        assertEquals(404, response.getStatusLine().getStatusCode());
 
-        dropUnit.assertCountRecievedRequests(1);
-        dropUnit.assertReceived(1);
-        dropUnit.assertNotFound(0);
+        dropUnit.assertCountRecievedRequests(0);
+        dropUnit.assertNotFound(1);
     }
 }

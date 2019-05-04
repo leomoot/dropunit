@@ -98,6 +98,10 @@ public class DropUnitEndpoint {
         this.response = response;
     }
 
+    public int getReceivedSize() {
+        return receivedList.size();
+    }
+
     public ReceivedRequest getReceived(int i) {
         if ((0 < i) && (i <= receivedList.size())) {
             return receivedList.get(i - 1);
@@ -149,7 +153,17 @@ public class DropUnitEndpoint {
         return this;
     }
 
-    //
+    // toString
+
+    public String requestInfoString() {
+        return "DropUnitEndpoint{" +
+                "id='" + id + '\'' +
+                ", url='" + url + '\'' +
+                ", method='" + method + '\'' +
+                ", headers=" + headers +
+                ", request=" + request +
+                '}';
+    }
 
     @Override
     public String toString() {
