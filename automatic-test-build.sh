@@ -13,6 +13,7 @@ do
 done
 
 mvn test -Dtest=*IT -DfailIfNoTests=false
+mvn test -Dtest=*ITslow -DfailIfNoTests=false
 
 docker-compose -f ./_docker/application/docker-compose-it.yml stop
 

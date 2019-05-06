@@ -69,3 +69,9 @@ endpoints:
     responseCode: 200
     responseContentType: "application/xml"
     responseBodyFileName: "src/main/resources/endpoints/response-body-two.xml"
+  - path: "/default/path/six"
+    method: "GET"
+    delay: 20000 # ms
+    responseCode: 200
+    responseContentType: "application/xml"
+    responseBodyFileName: "src/main/resources/endpoints/response-body-one.xml"

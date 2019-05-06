@@ -72,6 +72,7 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
             dropUnitService.registerDefault(new DropUnitEndpoint()
                     .withUrl(endpointDocument.getPath())
                     .withMethod(endpointDocument.getMethod())
+                    .withDelay(endpointDocument.getDelay())
                     .withRequest(endpointDocument.getRequest())
                     .withResponse(response));
             LOGGER.debug("response: {}", response);

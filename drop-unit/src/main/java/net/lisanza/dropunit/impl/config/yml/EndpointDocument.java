@@ -13,6 +13,8 @@ public class EndpointDocument {
     @NotNull
     private String method;
 
+    private int delay;
+
     private DropUnitRequestPatterns request;
 
     @NotNull
@@ -37,6 +39,16 @@ public class EndpointDocument {
     @JsonProperty
     public String getMethod() {
         return method;
+    }
+
+    @JsonProperty
+    public int getDelay() {
+        return delay;
+    }
+
+    @JsonProperty
+    public void setDelay(int delay) {
+        this.delay = delay;
     }
 
     @JsonProperty
@@ -95,6 +107,7 @@ public class EndpointDocument {
     public String toString() {
         return "{ path='" + path + '\'' +
                 ", method='" + method + '\'' +
+                ", delay='" + delay + '\'' +
                 ", responseCode=" + responseCode +
                 ", responseContentType='" + responseContentType + '\'' +
                 ", responseBodyFileName='" + responseBodyFileName + '\'' +
