@@ -7,6 +7,7 @@ import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitResponseDto;
 
 import javax.naming.CannotProceedException;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,19 +80,19 @@ public class ClientDropUnit extends BaseDropUnitClient {
     // Operations
 
     public ClientDropUnit withGet(String uri) {
-        return withEndpoint(uri, "GET");
+        return withEndpoint(uri, HttpMethod.GET);
     }
 
     public ClientDropUnit withPost(String uri) {
-        return withEndpoint(uri, "POST");
+        return withEndpoint(uri, HttpMethod.POST);
     }
 
     public ClientDropUnit withPut(String uri) {
-        return withEndpoint(uri, "PUT");
+        return withEndpoint(uri, HttpMethod.PUT);
     }
 
     public ClientDropUnit withDelete(String uri) {
-        return withEndpoint(uri, "DELETE");
+        return withEndpoint(uri, HttpMethod.DELETE);
     }
 
     public ClientDropUnit withEndpoint(String uri, String method) {
