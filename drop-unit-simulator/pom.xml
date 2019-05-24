@@ -2,34 +2,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>net.lisanza.dropunit</groupId>
+		<artifactId>dropunit-parent</artifactId>
+		<version>0.0.0-SNAPSHOT</version>
+	</parent>
+
 	<groupId>net.lisanza.dropunit</groupId>
 	<artifactId>drop-unit-simulator</artifactId>
-	<version>0.0.0-SNAPSHOT</version>
-
-	<name>DropUnit Simulator Service</name>
-
-	<properties>
-        <commons.io.version>2.6</commons.io.version>
-		<dropwizard.version>1.3.8</dropwizard.version>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+	<name>DropUnit Simulator Example</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>io.dropwizard</groupId>
-			<artifactId>dropwizard-core</artifactId>
-			<version>${dropwizard.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
-		</dependency>
-		<dependency>
 			<groupId>net.lisanza.dropunit</groupId>
 			<artifactId>drop-unit</artifactId>
-			<version>0.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
