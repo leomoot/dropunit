@@ -16,6 +16,13 @@
         <url>http://www.lisanza.net/</url>
     </organization>
 
+    <scm>
+        <connection>scm:git:git@github.com:hhazewinkel/dropunit.git</connection>
+        <developerConnection>scm:git:git@github.com:hhazewinkel/dropunit.git</developerConnection>
+        <url>https://github.com/hhazewinkel/dropunit</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <modules>
         <!-- engine-under-test -->
         <module>engine-under-test</module>
