@@ -22,10 +22,6 @@
             <artifactId>drop-unit</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.lisanza.dropunit</groupId>
-            <artifactId>drop-unit-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>test</scope>

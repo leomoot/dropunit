@@ -21,12 +21,12 @@
     </scm>
 
     <modules>
+        <!-- dropunit package -->
+        <module>drop-unit</module>
+        <!-- Simulator -->
+        <module>drop-unit-simulator</module>
         <!-- engine-under-test -->
         <module>engine-under-test</module>
-        <!-- Simulator -->
-        <module>drop-unit</module>
-        <module>drop-unit-client</module>
-        <module>drop-unit-simulator</module>
         <!-- Test projects -->
         <module>_integration-test</module>
     </modules>
@@ -104,12 +104,6 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-library</artifactId>
-                <version>${hamcrest.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>

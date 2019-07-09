@@ -43,13 +43,12 @@ This multi-module project is composed of the following modules:
 1) _docker provides, the setup with docker-compose;
 2) _integration-test, where all the jUnit based integration tests are implemented;
 3) drop-unit, the common module for client and server (simulator);
-4) drop-unit-client, the client with which the dropunit-simulator can be configured as 
-   well verified/asserted;
-5) drop-unit-simulator, the base for the simlator;
-6) engine-under-test, the rest proxy to be replaced with a real rest-service.
+4) drop-unit-simulator, the base for the simlator;
+5) engine-under-test, the rest proxy to be replaced with a real rest-service.
 
 In short, if you use this project you would need the modules _docker (1), 
-_integration-test (2), drop-unit-simulator (5), and engine-under-test (6).
+_integration-test (2), drop-unit-simulator (4), and engine-under-test (5).
+The module dropunit will then be a dependency in your project.
 
 
 # DROPUNIT DEVELOPMENT ENVIRONMENT
