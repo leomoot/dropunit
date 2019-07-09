@@ -1,52 +1,60 @@
 # DROPUNIT
 
-Drop unit is a simulator that can be configured remotely in order to support integration tests. 
-As one would like to perform integration tests for a specific component in your infrastructure
-it is mostly common to 'place' it in the final infrastructure while all the dependent services 
-are the 'real' components. Dropunit is a simulator that you can configure on how to respond
-from your integration tests allowing you to invoke operations on the 'engine under test'. 
-The 'engine under test' must then be configured that it performs its own remote backend calls 
-on the drop unit. 
+Drop unit is composed of DropWizard providing a simulator server and JUnit invoking tests.
+Combined with Rocker containers it is to be used to perform integration-testing for services
+that depend on other services. Dropunit provides a simulator for dependent services that can
+be configured remotely or by configuration in order to react in a defined way on an incoming
+request.
+As such, Dropunit is there to support integration-testing with which it simulates dependent
+services for a component (engine) under development that on its turn can be tested as a 
+real-life environment. In order to realise even a more real-life environment Docker is used to
+create the 'servers' with a network connecting the components. Docker is not mandatory to
+use Dropunit, but is just an option. The following diagram depicts the usage and setup of
+dropunit.
 
-The following diagram depicts the usage of dropunit.
 ```
-  +------------------+                                           +----------+
-  | integration-test |                                           | dropunit | 
-  |                  |                                           |          |
-  | @Before          |                                           |          |   
-  |  setup    =======|============== deliver drop unit =========>| register |   
-  |                  |                                           |          |   
-  |                  |          +-----------------+              |          |   
-  |                  |          |engine under test|              |          |   
-  |@Test             |          |                 |              |          |
-  |  invoke request =|== req ==>| operation ======|== backend ==>| simulate |   
-  |  test response   |          |                 |   req        |          |
-  +------------------+          +-----------------+              +----------+ 
+  +---------------+                                       +----------+
+  | integration-  |                                       |          |
+  | test          |                                       | dropunit |
+  |               |                                       |          |
+  | @Before       |                                       |          |   
+  |  setup    ====|========== deliver drop unit =========>| register |<== configfile
+  |               |                                       |          |
+  |               |          +-------------+              |          |
+  |               |          |engine under |              |          |
+  |@Test          |          |development  |              |          |
+  |  invoke       |          |             |              |          |
+  |  request &   =|== req ==>| operation ==|== backend ==>| simulate |
+  |  test         |          |             |   req        |          |
+  |  response     |          |             |              |          |
+  +---------------+          +-------------+              +----------+
 ```
 
-Dropunit is a name composed of DropWizard that ius used and JUnit that invokes tests.
+Dropunit consistst of three components (from left to right):
+1) integration-test are JUnit based tests that first configures the dropunit that
+   is followed by the requests targetted to the engine-under-development,
+2) engine-under-development the component that is to be tested,
+3) dropunit which is the simulator for any dependent services for the 
+   engine-under-development.
 
-The project consistst of three modules: 
-1) drop-unit (the package implementing dropunit), 
-2) drop-unit (the simulator where you register the drops), 
-3) engine-under-test (the rest proxy to be replaced with a real rest-service)and,
-4) integrationtests (the integration tests that register their own dropunits and performs the test on the 'engine-under-test').
+In this project it is implemented as multi-module project that serves part as the
+development environment and example how you can use dropunit in your development.
+This multi-module project is composed of the following modules: 
+1) _docker provides, the setup with docker-compose;
+2) _integration-test, where all the jUnit based integration tests are implemented;
+3) drop-unit, the common module for client and server (simulator);
+4) drop-unit-client, the client with which the dropunit-simulator can be configured as 
+   well verified/asserted;
+5) drop-unit-simulator, the base for the simlator;
+6) engine-under-test, the rest proxy to be replaced with a real rest-service.
+
+In short, if you use this project you would need the modules _docker (1), 
+_integration-test (2), drop-unit-simulator (5), and engine-under-test (6).
 
 
-# DEVELOPMENT
+# DROPUNIT DEVELOPMENT ENVIRONMENT
 
-DropUnit is based on the registration of a DropUnitDto that has the following properties:
-- url: the URL-path for whcih this droppy will respond to
-- method: the HTTP-method to which must be responded
-- requestContentType: when provided the content-type of the request that needs to match
-- requestBody: when provided the body of the request that needs to match
-- responseCode: the response code to be returned when all request parameters are matched.
-- responseContentType: when provided the content-type of the response to be returned when all request parameters are matched.
-- responseBody: when provided the body of the response to be returned when all request parameters are matched.
-- responseDelay: when provided the delay before the response will be returned. Useful to simulate slow servers of connection timeouts.
-
-
-# DEVELOPMENT ENVIRONMENT
+This section explains how to use the project for its own development purposes. 
 
 ### Build the projects
 
@@ -67,3 +75,9 @@ Wait until all dockers and applications have started.
 
     $ docker-compose -f _docker/application/docker-compose-it.yml stop
 
+
+Given that this project is also setup as a possible example your own development
+you can use the same structure and logic.
+
+
+/* Copyright 2019 Harrie Hazewinkel. All rights reserved. */
