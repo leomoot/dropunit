@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.net.SocketTimeoutException;
 
+import static net.lisanza.dropunit.impl.utils.FileUtils.readFromFile;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +42,7 @@ public class PutTestIT extends BaseRequest {
         assertEquals(200, response.getStatusLine().getStatusCode());
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
-        assertThat(body, containsString(dropUnit.getResponseBody()));
+        assertThat(body, containsString(readFromFile(RESPONSE_FILE)));
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
@@ -65,7 +66,7 @@ public class PutTestIT extends BaseRequest {
         assertEquals(200, response.getStatusLine().getStatusCode());
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
-        assertThat(body, containsString(dropUnit.getResponseBody()));
+        assertThat(body, containsString(readFromFile(RESPONSE_FILE)));
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
@@ -142,7 +143,7 @@ public class PutTestIT extends BaseRequest {
         assertEquals(200, response.getStatusLine().getStatusCode());
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
-        assertThat(body, containsString(dropUnit.getResponseBody()));
+        assertThat(body, containsString(readFromFile(RESPONSE_FILE)));
 
         dropUnit.assertCountRecievedRequests(1);
         dropUnit.assertReceivedFromFile(1, REQUEST_FILE);
