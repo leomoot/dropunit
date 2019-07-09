@@ -11,6 +11,11 @@
     <artifactId>engine-under-test</artifactId>
     <name>DropUnit Engine under test example</name>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.skip>true</sonar.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>

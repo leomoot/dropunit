@@ -10,7 +10,11 @@
     <groupId>net.lisanza.dropunit</groupId>
     <artifactId>integration-test</artifactId>
     <name>DropUnit Integration Test</name>
-    <packaging>jar</packaging>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.skip>true</sonar.skip>
+    </properties>
 
     <dependencies>
         <dependency>

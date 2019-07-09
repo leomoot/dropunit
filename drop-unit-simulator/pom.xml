@@ -11,6 +11,11 @@
 	<artifactId>drop-unit-simulator</artifactId>
 	<name>DropUnit Simulator Example</name>
 
+	<properties>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<sonar.skip>true</sonar.skip>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>net.lisanza.dropunit</groupId>
