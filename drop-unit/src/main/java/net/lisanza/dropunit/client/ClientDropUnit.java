@@ -31,40 +31,32 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     // Constructor
 
+    /**
+     * The ClientDropUnit constructor
+     * @param baseUrl The url where the dropunit simulator is reached.
+     *                For instance, "http://127.0.0.1:9080/"
+     */
     public ClientDropUnit(final String baseUrl) {
         super(baseUrl);
     }
 
     // Getters & Setters
 
+    /**
+     * Retrieves the internal Id of the dropunit with which one can collect data.
+     * @return The Id of the dropunit in the simulator.
+     */
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public ClientDropUnit withId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public ClientDropUnit withCount(int count) {
-        this.count = count;
-        return this;
-    }
-
     // Delegates
 
+    /**
+     * Get the uri path (url) of this dropunit where uri is the
+     * url-path that the drop is accessible.
+     * @return The uri path of this dropunit
+     */
     public String getUrl()
             throws CannotProceedException {
         if (this.dropUnitEndpointDto == null) {
@@ -73,28 +65,50 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return dropUnitEndpointDto.getUrl();
     }
 
-    public String getResponseBody() {
-        return this.responseDto.getResponseBody();
-    }
-
     // Operations
 
+    /**
+     * Assign GET method for the dropunit with specific URL.
+     * @param uri The url path relative to the server
+     * @return The client-drop-unit.
+     */
     public ClientDropUnit withGet(String uri) {
         return withEndpoint(uri, HttpMethod.GET);
     }
 
+    /**
+     * Assign POST method for the dropunit with specific URL.
+     * @param uri The url path relative to the server
+     * @return The client-drop-unit.
+     */
     public ClientDropUnit withPost(String uri) {
         return withEndpoint(uri, HttpMethod.POST);
     }
 
+    /**
+     * Assign PUT method for the dropunit with specific URL.
+     * @param uri The url path relative to the server
+     * @return The client-drop-unit.
+     */
     public ClientDropUnit withPut(String uri) {
         return withEndpoint(uri, HttpMethod.PUT);
     }
 
+    /**
+     * Assign DELETE method for the dropunit with specific URL.
+     * @param uri The url path relative to the server
+     * @return The client-drop-unit.
+     */
     public ClientDropUnit withDelete(String uri) {
         return withEndpoint(uri, HttpMethod.DELETE);
     }
 
+    /**
+     * Assign method for the dropunit with specific URL.
+     * @param uri The url path relative to the server
+     * @param method The method of the HTTP operation
+     * @return The client-drop-unit.
+     */
     public ClientDropUnit withEndpoint(String uri, String method) {
         this.dropUnitEndpointDto = new DropUnitEndpointDto();
         this.dropUnitEndpointDto.setUrl(uri);
@@ -102,11 +116,24 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
+    /**
+     * When HTTP request is invoked the simluator must match this HTTP header.
+     * @param name The header key
+     * @param value The header value
+     * @return The client-drop-unit.
+     */
     public ClientDropUnit withHeader(String name, String value) {
         this.dropUnitEndpointDto.addRequestHeader(new DropUnitHeaderDto(name, value));
         return this;
     }
 
+    /**
+     * When HTTP request is invoked the simulator must respond with this content-type and HTTP-body.
+     * @param contentType The content-type of the body
+     * @param body The HTTP-body
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     */
     public ClientDropUnit withRequestBody(String contentType, String body)
             throws CannotProceedException {
         if (this.dropUnitEndpointDto == null) {
@@ -118,11 +145,27 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
+    /**
+     * When HTTP request is invoked the simulator must respond with this content-type and HTTP-body.
+     * @param contentType The content-type of the body
+     * @param filename The HTTP-body
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     * @throws IOException
+     */
     public ClientDropUnit withRequestBodyFromFile(String contentType, String filename)
             throws CannotProceedException, IOException {
         return withRequestBody(contentType, readFromFile(filename));
     }
 
+    /**
+     * When HTTP request is invoked the simulator must respond with this response-code, content-type and HTTP-body.
+     * @param status The status to respond with
+     * @param contentType The content-type
+     * @param body The HTTP response body
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     */
     public ClientDropUnit withResponse(Response.Status status, String contentType, String body)
             throws CannotProceedException {
         if (this.dropUnitEndpointDto == null) {
@@ -135,36 +178,85 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
+    /**
+     *
+     * @param contentType
+     * @param body
+     * @return The client-drop-unit.
+     * @throws Exception
+     */
     public ClientDropUnit withResponseOk(String contentType, String body)
             throws Exception {
         return withResponse(Response.Status.OK, contentType, body);
     }
 
+    /**
+     *
+     * @param contentType
+     * @param filename
+     * @return The client-drop-unit.
+     * @throws Exception
+     */
     public ClientDropUnit withResponseOkFromFile(String contentType, String filename)
             throws Exception {
         return withResponseOk(contentType, readFromFile(filename));
     }
 
+    /**
+     *
+     * @param contentType
+     * @param body
+     * @return The client-drop-unit.
+     * @throws Exception
+     */
     public ClientDropUnit withResponseBadRequest(String contentType, String body)
             throws Exception {
         return withResponse(Response.Status.BAD_REQUEST, contentType, body);
     }
 
+    /**
+     *
+     * @param contentType
+     * @param filename
+     * @return The client-drop-unit.
+     * @throws Exception
+     */
     public ClientDropUnit withResponseBadRequestFromFile(String contentType, String filename)
             throws Exception {
         return withResponseBadRequest(contentType, readFromFile(filename));
     }
 
+    /**
+     *
+     * @param contentType
+     * @param body
+     * @return The client-drop-unit.
+     * @throws Exception
+     */
     public ClientDropUnit withResponseBadGateway(String contentType, String body)
             throws Exception {
         return withResponse(Response.Status.GATEWAY_TIMEOUT, contentType, body);
     }
 
+    /**
+     *
+     * @param contentType
+     * @param filename
+     * @return The client-drop-unit.
+     * @throws Exception
+     */
     public ClientDropUnit withResponseBadGatewayFromFile(String contentType, String filename)
             throws Exception {
         return withResponseBadGateway(contentType, readFromFile(filename));
     }
 
+    /**
+     *
+     * @param contentType
+     * @param pattern
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     */
     public ClientDropUnit withRequestPattern(String contentType, String pattern)
             throws CannotProceedException {
         ArrayList<String> list = new ArrayList<>();
@@ -172,6 +264,13 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return withRequestPatterns(contentType, list);
     }
 
+    /**
+     *
+     * @param contentType
+     * @param patterns
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     */
     public ClientDropUnit withRequestPatterns(String contentType, List<String> patterns)
             throws CannotProceedException {
         if (this.dropUnitEndpointDto == null) {
@@ -183,6 +282,12 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
+    /**
+     *
+     * @param responseDelay
+     * @return The client-drop-unit.
+     * @throws Exception
+     */
     public ClientDropUnit withResponseDelay(int responseDelay)
             throws Exception {
         if (this.dropUnitEndpointDto == null) {
@@ -194,11 +299,21 @@ public class ClientDropUnit extends BaseDropUnitClient {
 
     // Remote operations
 
+    /**
+     *
+     * @return The client-drop-unit.
+     * @throws IOException
+     */
     public ClientDropUnit cleanup() throws IOException {
         executeEndpointDeletion();
         return this;
     }
 
+    /**
+     *
+     * @return The client-drop-unit.
+     * @throws IOException
+     */
     public ClientDropUnit drop()
             throws IOException {
         id = executeEndpointDelivery(dropUnitEndpointDto);
@@ -213,12 +328,19 @@ public class ClientDropUnit extends BaseDropUnitClient {
         return this;
     }
 
+    /**
+     * Assert the amount of requests that match this drop unit
+     * @param count The expected number of requests
+     */
     public void assertCountRecievedRequests(int count) {
         assertThat("incorrect request count for dropunit", executeRetrieveCount(id), is(count));
     }
 
-    public void assertReceived(int number)
-            throws IOException {
+    /**
+     * Assert the amount of requests that match this drop unit
+     * @param number The expected number of requests
+     */
+    public void assertReceived(int number) {
         if ((requestBodyInfo == null) || (requestBodyInfo.getRequestBody() == null)) {
             assertReceived(number, "");
         } else {
@@ -226,6 +348,10 @@ public class ClientDropUnit extends BaseDropUnitClient {
         }
     }
 
+    /**
+     *
+     * @param number
+     */
     public void assertReceivedFromPatterns(int number) {
         String requestBody = executeRetrieveReceived(id, number);
         for (String pattern : requestPatterns.getPatterns()) {
@@ -233,16 +359,31 @@ public class ClientDropUnit extends BaseDropUnitClient {
         }
     }
 
+    /**
+     *
+     * @param number
+     * @param filename
+     * @throws IOException
+     */
     public void assertReceivedFromFile(int number, String filename)
             throws IOException {
         assertReceived(number, readFromFile(filename));
     }
 
+    /**
+     * Assert the amount of requests that match
+     * @param number
+     * @param toMatch
+     */
     public void assertReceived(int number, String toMatch) {
         assertThat(executeRetrieveReceived(id, number), is(toMatch));
 
     }
 
+    /**
+     *
+     * @param number
+     */
     public void assertNotFound(int number) {
         assertThat(executeRetrieveNotFound(), is(number));
     }
