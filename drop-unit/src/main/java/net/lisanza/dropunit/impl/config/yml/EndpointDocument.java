@@ -7,22 +7,43 @@ import javax.validation.constraints.NotNull;
 
 public class EndpointDocument {
 
+    /**
+     * The URL path for which this endpoint.
+     */
     @NotNull
     private String path;
 
+    /**
+     * The HTTP method to which this endpoint will react.
+     */
     @NotNull
     private String method;
 
+    /**
+     * The delay in lillis beofre the response is returned.
+     */
     private int delay;
 
+    /**
+     * Patterns that must be matched in the request.
+     */
     private DropUnitRequestPatterns request;
 
+    /**
+     * The HTTP response code with which this endpoint will react.
+     */
     @NotNull
     private int responseCode;
 
+    /**
+     * The content-type with which this endpoint will react in the response.
+     */
     @NotNull
     private String responseContentType;
 
+    /**
+     * The response body with which this endpoint will react.
+     */
     @NotNull
     private String responseBodyFileName;
 
