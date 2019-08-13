@@ -23,7 +23,7 @@ public class DigestUtil {
             md.reset();
             md.update(method.getBytes());
             md.update(url.getBytes());
-            md.update(requestInfo.getBytes());
+            md.update(requestInfo.replaceAll("\\s+","").getBytes());
             byte[] digest = md.digest();
             String md5 = DatatypeConverter.printHexBinary(digest).toUpperCase();
             LOGGER.debug("{}{} -> {}:{}", DIGEST_METHOD_URL, md5, method, url);
@@ -39,7 +39,7 @@ public class DigestUtil {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();
-            md.update(body.getBytes());
+            md.update(body.replaceAll("\\s+","").getBytes());
             byte[] digest = md.digest();
             String md5 = DatatypeConverter.printHexBinary(digest).toUpperCase();
             LOGGER.debug("{}{}", DIGEST_BODY, md5);

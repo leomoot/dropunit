@@ -28,6 +28,10 @@ public class DropUnitEndpoint {
 
     private List<ReceivedRequest> receivedList = new ArrayList<>();
 
+    private String requestBody;
+
+    private List<String> requestPattern;
+
     // getters and setters
 
     public String getId() {
@@ -98,6 +102,22 @@ public class DropUnitEndpoint {
         this.response = response;
     }
 
+    public String getRequestBody() {
+        return requestBody;
+    }
+
+    public void setRequestBody(String requestBody) {
+        this.requestBody = requestBody;
+    }
+
+    public List<String> getRequestPattern() {
+        return requestPattern;
+    }
+
+    public void setRequestPattern(List<String> requestPattern) {
+        this.requestPattern = requestPattern;
+    }
+
     public int getReceivedSize() {
         return receivedList.size();
     }
@@ -153,6 +173,16 @@ public class DropUnitEndpoint {
         return this;
     }
 
+    public DropUnitEndpoint withRequestBody(String requestBody) {
+        this.requestBody = requestBody;
+        return this;
+    }
+
+    public DropUnitEndpoint withRequestPattern(List<String> requestPattern) {
+        this.requestPattern = requestPattern;
+        return this;
+    }
+
     // toString
 
     public String requestInfoString() {
@@ -162,6 +192,8 @@ public class DropUnitEndpoint {
                 ", method='" + method + '\'' +
                 ", headers=" + headers +
                 ", request=" + request +
+                ", requestBody=" + requestBody +
+                ", requestPattern=" + requestPattern +
                 '}';
     }
 

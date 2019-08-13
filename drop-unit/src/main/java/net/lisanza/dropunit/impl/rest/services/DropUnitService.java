@@ -72,7 +72,7 @@ public class DropUnitService {
 
         String dropId = digestEndpoint(endpoint.getMethod(),
                 endpoint.getUrl(),
-                (endpoint.getRequest() != null) ? endpoint.getRequest().toString() : "");
+                (endpoint.getRequestBody() != null) ? endpoint.getRequestBody() : ((endpoint.getRequestPattern() != null) ? endpoint.getRequestPattern().toString():""));
         if ((endpoint.getId() == null) || endpoint.getId().isEmpty()) {
             endpoint.setId(dropId);
         }

@@ -67,6 +67,8 @@ public class DropRegistrationController {
                             .withUrl(dto.getUrl())
                             .withHeaders(dto.getRequestHeaders())
                             .withMethod(dto.getMethod())
+                            .withRequestBody(dto.getRequest())
+                            .withRequestPattern(dto.getRequestPattern())
                             .withDelay(dto.getResponseDelay())));
         } catch (Exception e) {
             LOGGER.warn("Failure in registration of endpoint", e);
@@ -185,9 +187,9 @@ public class DropRegistrationController {
             if (endpoint != null) {
                 found = true;
                 return new DropUnitRegistrationResponseDto()
-                    .withId(dropId)
-                    .withResult("OK")
-                    .withCount(endpoint.getCount());
+                        .withId(dropId)
+                        .withResult("OK")
+                        .withCount(endpoint.getCount());
             }
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
@@ -234,7 +236,7 @@ public class DropRegistrationController {
             if (endpoint != null) {
                 found = true;
                 if ((0 < number)
-                    && (number <= endpoint.getReceivedSize())) {
+                        && (number <= endpoint.getReceivedSize())) {
                     return endpoint.getReceived(number).getBody();
                 }
             }
