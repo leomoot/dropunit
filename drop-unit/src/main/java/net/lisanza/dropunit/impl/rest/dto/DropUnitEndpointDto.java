@@ -19,6 +19,13 @@ public class DropUnitEndpointDto {
     @JsonProperty("responseDelay")
     private int responseDelay;
 
+    @JsonProperty("request")
+    private String request;
+
+    @JsonProperty("requestPattern")
+    private List<String> requestPattern;
+
+
     public String getUrl() {
         return url;
     }
@@ -55,13 +62,31 @@ public class DropUnitEndpointDto {
         this.responseDelay = responseDelay;
     }
 
+    public String getRequest() {
+        return request;
+    }
+
+    public void setRequest(String request) {
+        this.request = request;
+    }
+
+    public List<String> getRequestPattern() {
+        return requestPattern;
+    }
+
+    public void setRequestPattern(List<String> requestPattern) {
+        this.requestPattern = requestPattern;
+    }
+
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("DropUnitEndpointDto =>\n")
-                .append(" url       = '").append(url).append("'\n")
-                .append(" method    = '").append(method).append("'\n")
-                .append(" resp-Delay= ").append(responseDelay).append("'");
-        return builder.toString();
+        return "DropUnitEndpointDto{" +
+                "url='" + url + '\'' +
+                ", method='" + method + '\'' +
+                ", requestHeaders=" + requestHeaders +
+                ", responseDelay=" + responseDelay +
+                ", request='" + request + '\'' +
+                ", requestPattern=" + requestPattern +
+                '}';
     }
 }

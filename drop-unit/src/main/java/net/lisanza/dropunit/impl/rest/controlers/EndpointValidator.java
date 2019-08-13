@@ -1,7 +1,7 @@
 package net.lisanza.dropunit.impl.rest.controlers;
 
-import net.lisanza.dropunit.impl.rest.services.AbstractDropUnitRequest;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
+import net.lisanza.dropunit.impl.rest.services.DropUnitEndpointRequest;
 import net.lisanza.dropunit.impl.rest.services.data.ReceivedRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class EndpointValidator {
         throw new ValidationException("validate content-type: endpoint (" + endpointContentType + ") and request (" + requestContentType + ") are NOT equal");
     }
 
-    private void validateRequestContent(AbstractDropUnitRequest dropUnitRequest, String content) {
+    private void validateRequestContent(DropUnitEndpointRequest dropUnitRequest, String content) {
         if (dropUnitRequest != null) {
             if (dropUnitRequest.doesRequestMatch(content)) {
                 return;

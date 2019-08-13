@@ -1,7 +1,7 @@
 package net.lisanza.dropunit.impl.config.yml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.lisanza.dropunit.impl.rest.services.DropUnitRequestPatterns;
+import net.lisanza.dropunit.impl.rest.services.DropUnitEndpointRequest;
 
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +27,7 @@ public class EndpointDocument {
     /**
      * Patterns that must be matched in the request.
      */
-    private DropUnitRequestPatterns request;
+    private DropUnitEndpointRequest request;
 
     /**
      * The HTTP response code with which this endpoint will react.
@@ -73,12 +73,12 @@ public class EndpointDocument {
     }
 
     @JsonProperty
-    public DropUnitRequestPatterns getRequest() {
+    public DropUnitEndpointRequest getRequest() {
         return request;
     }
 
     @JsonProperty
-    public void setRequest(DropUnitRequestPatterns request) {
+    public void setRequest(DropUnitEndpointRequest request) {
         this.request = request;
     }
 

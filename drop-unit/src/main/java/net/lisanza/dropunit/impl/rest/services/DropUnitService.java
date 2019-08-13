@@ -10,8 +10,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
-import static net.lisanza.dropunit.impl.rest.services.DigestUtil.digestEndpoint;
-
 public class DropUnitService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DropUnitService.class);
@@ -34,28 +32,25 @@ public class DropUnitService {
     }
 
     public String dropAll() {
-        int defaultCount = defaults.size();
-        int registrationsCount = registrations.size();
-        int notFoundCount = notFound.size();
+        StringBuilder stringBuilder = new StringBuilder();
+        infoLoadedEndpoints(stringBuilder.append("endpoints: "));
         registrations.clear();
         notFound.clear();
         registrations.addAll(defaults.values());
-        return "endpoints: defaults " + defaultCount
-                + " registrations " + registrationsCount
-                + " not found " + notFoundCount
-                + "-> after: defaults " + defaultCount
-                + " registrations " + registrations.size()
-                + " not found " + notFound.size();
+        infoLoadedEndpoints(stringBuilder.append(" -> after: "));
+        return stringBuilder.toString();
     }
 
     public String registerDefault(DropUnitEndpoint endpoint) {
         String dropId = generateDropId(endpoint);
+        endpoint.setId(dropId);
         defaults.put(dropId, endpoint);
         return dropId;
     }
 
     public String register(DropUnitEndpoint endpoint) {
         String dropId = generateDropId(endpoint);
+        endpoint.setId(dropId);
         registrations.add(endpoint);
         return dropId;
     }
@@ -70,12 +65,7 @@ public class DropUnitService {
             endpoint.setUrl("/" + endpoint.getUrl());
         }
 
-        String dropId = digestEndpoint(endpoint.getMethod(),
-                endpoint.getUrl(),
-                (endpoint.getRequest() != null) ? endpoint.getRequest().toString() : "");
-        if ((endpoint.getId() == null) || endpoint.getId().isEmpty()) {
-            endpoint.setId(dropId);
-        }
+        String dropId = Integer.toString(endpoint.hashCode());
         LOGGER.debug("register {} - {}", dropId, endpoint);
         return dropId;
     }
@@ -90,7 +80,7 @@ public class DropUnitService {
         return null;
     }
 
-    public String registerRequest(String dropId, AbstractDropUnitRequest patterns) {
+    public String registerRequest(String dropId, DropUnitEndpointRequest patterns) {
         DropUnitEndpoint endpoint = lookupEndpoint(dropId);
         if (endpoint == null) {
             return "no registration found";
@@ -99,7 +89,7 @@ public class DropUnitService {
         return "OK";
     }
 
-    public String registerResponse(String dropId, DropUnitResponse response) {
+    public String registerResponse(String dropId, DropUnitEndpointResponse response) {
         DropUnitEndpoint endpoint = lookupEndpoint(dropId);
         if (endpoint == null) {
             return "no registration found";
@@ -141,5 +131,14 @@ public class DropUnitService {
         } else {
             notFoundEndpoint.addReceivedRequests(notFoundRequest);
         }
+    }
+
+    // Utils
+
+    public StringBuilder infoLoadedEndpoints(StringBuilder stringBuilder) {
+        stringBuilder.append("defaults ").append(defaults.size())
+                .append(" registrations ").append(registrations.size())
+                .append(" not found ").append(notFound.size());
+        return stringBuilder;
     }
 }

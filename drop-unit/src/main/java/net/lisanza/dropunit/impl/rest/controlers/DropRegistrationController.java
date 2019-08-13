@@ -6,9 +6,8 @@ import net.lisanza.dropunit.impl.rest.dto.DropUnitRegistrationResponseDto;
 import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
-import net.lisanza.dropunit.impl.rest.services.DropUnitRequest;
-import net.lisanza.dropunit.impl.rest.services.DropUnitRequestPatterns;
-import net.lisanza.dropunit.impl.rest.services.DropUnitResponse;
+import net.lisanza.dropunit.impl.rest.services.DropUnitEndpointRequest;
+import net.lisanza.dropunit.impl.rest.services.DropUnitEndpointResponse;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +66,8 @@ public class DropRegistrationController {
                             .withUrl(dto.getUrl())
                             .withHeaders(dto.getRequestHeaders())
                             .withMethod(dto.getMethod())
+                            .withRequest(new DropUnitEndpointRequest()
+                                    .withPatterns(dto.getRequestPattern()))
                             .withDelay(dto.getResponseDelay())));
         } catch (Exception e) {
             LOGGER.warn("Failure in registration of endpoint", e);
@@ -83,9 +84,9 @@ public class DropRegistrationController {
             LOGGER.debug("Called registerRequestPatterns {}", dropId);
             return new DropUnitRegistrationResponseDto()
                     .withId(dropId)
-                    .withResult(dropUnitService.registerRequest(dropId, new DropUnitRequestPatterns()
-                            .withPatterns(requestDto.getPatterns())
-                            .withContentType(requestDto.getRequestContentType())));
+                    .withResult(dropUnitService.registerRequest(dropId, new DropUnitEndpointRequest()
+                            .withContentType(requestDto.getRequestContentType())
+                            .withPatterns(requestDto.getPatterns())));
         } catch (Exception e) {
             LOGGER.warn("Failure generating response registerDropUnitRequestBody", e);
         }
@@ -101,9 +102,9 @@ public class DropRegistrationController {
             LOGGER.debug("Called registerRequestBody {}", dropId);
             return new DropUnitRegistrationResponseDto()
                     .withId(dropId)
-                    .withResult(dropUnitService.registerRequest(dropId, new DropUnitRequest()
-                            .withRequestBody(requestBody)
-                            .withContentType(request.getContentType())));
+                    .withResult(dropUnitService.registerRequest(dropId, new DropUnitEndpointRequest()
+                            .withContentType(request.getContentType())
+                            .withBody(requestBody)));
         } catch (Exception e) {
             LOGGER.warn("Failure generating response registerDropUnitRequestBody", e);
         }
@@ -120,10 +121,10 @@ public class DropRegistrationController {
             LOGGER.debug("Called registerResponseBody {}", dropId);
             return new DropUnitRegistrationResponseDto()
                     .withId(dropId)
-                    .withResult(dropUnitService.registerResponse(dropId, new DropUnitResponse()
+                    .withResult(dropUnitService.registerResponse(dropId, new DropUnitEndpointResponse()
+                            .withContentType(request.getContentType())
                             .withCode(status)
-                            .withBody(responseBody)
-                            .withContentType(request.getContentType())));
+                            .withBody(responseBody)));
         } catch (Exception e) {
             LOGGER.warn("Failure generating response putDropUnitResponseBody", e);
         }
@@ -185,9 +186,9 @@ public class DropRegistrationController {
             if (endpoint != null) {
                 found = true;
                 return new DropUnitRegistrationResponseDto()
-                    .withId(dropId)
-                    .withResult("OK")
-                    .withCount(endpoint.getCount());
+                        .withId(dropId)
+                        .withResult("OK")
+                        .withCount(endpoint.getCount());
             }
         } catch (Exception e) {
             LOGGER.warn("Failure generating response getDropCount", e);
@@ -234,7 +235,7 @@ public class DropRegistrationController {
             if (endpoint != null) {
                 found = true;
                 if ((0 < number)
-                    && (number <= endpoint.getReceivedSize())) {
+                        && (number <= endpoint.getReceivedSize())) {
                     return endpoint.getReceived(number).getBody();
                 }
             }

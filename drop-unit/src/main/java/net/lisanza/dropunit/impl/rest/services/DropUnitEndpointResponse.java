@@ -1,6 +1,8 @@
 package net.lisanza.dropunit.impl.rest.services;
 
-public class DropUnitResponse {
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+public class DropUnitEndpointResponse {
 
     private int code;
 
@@ -34,28 +36,39 @@ public class DropUnitResponse {
         this.body = body;
     }
 
-    //
+    // Builders
 
-    public DropUnitResponse withCode(int code) {
+    public DropUnitEndpointResponse withCode(int code) {
         this.code = code;
         return this;
     }
 
-    public DropUnitResponse withContentType(String contentType) {
+    public DropUnitEndpointResponse withContentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
 
-    public DropUnitResponse withBody(String body) {
+    public DropUnitEndpointResponse withBody(String body) {
         this.body = body;
         return this;
     }
 
     @Override
     public String toString() {
-        return "DropUnitResponse =>\n" +
+        return "DropUnitEndpointResponse =>\n" +
                 " code        = " + code +
                 " contentType ='" + contentType + "'\n" +
                 " body        ='" + body + "'";
+    }
+
+    // hashCode
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(code)
+                .append(contentType)
+                .append(body)
+                .toHashCode();
     }
 }

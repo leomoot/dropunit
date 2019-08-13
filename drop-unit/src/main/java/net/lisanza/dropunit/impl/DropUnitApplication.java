@@ -11,7 +11,7 @@ import net.lisanza.dropunit.impl.rest.controlers.DropRegistrationController;
 import net.lisanza.dropunit.impl.rest.controlers.DropUnitController;
 import net.lisanza.dropunit.impl.rest.services.DropUnitCount;
 import net.lisanza.dropunit.impl.rest.services.DropUnitEndpoint;
-import net.lisanza.dropunit.impl.rest.services.DropUnitResponse;
+import net.lisanza.dropunit.impl.rest.services.DropUnitEndpointResponse;
 import net.lisanza.dropunit.impl.rest.services.DropUnitService;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
     private void configEndpoint(EndpointDocument endpointDocument,
                                 DropUnitService dropUnitService) {
         try {
-            DropUnitResponse response = new DropUnitResponse()
+            DropUnitEndpointResponse response = new DropUnitEndpointResponse()
                     .withCode(endpointDocument.getResponseCode())
                     .withContentType(endpointDocument.getResponseContentType())
                     .withBody("");
@@ -87,6 +87,7 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
             LOGGER.warn("", e);
             return;
         }
-        LOGGER.info("Loaded endpoint: {}", endpointDocument.toString());
+        LOGGER.info("endpoints loaded: {}", endpointDocument.toString());
+        LOGGER.debug("endpoints: {}", dropUnitService.infoLoadedEndpoints(new StringBuilder()));
     }
 }

@@ -2,6 +2,7 @@ package net.lisanza.dropunit.impl.rest.services;
 
 import net.lisanza.dropunit.impl.rest.dto.DropUnitHeaderDto;
 import net.lisanza.dropunit.impl.rest.services.data.ReceivedRequest;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -22,9 +23,9 @@ public class DropUnitEndpoint {
 
     private int count;
 
-    private AbstractDropUnitRequest request;
+    private DropUnitEndpointRequest request;
 
-    private DropUnitResponse response;
+    private DropUnitEndpointResponse response;
 
     private List<ReceivedRequest> receivedList = new ArrayList<>();
 
@@ -82,19 +83,19 @@ public class DropUnitEndpoint {
         return count;
     }
 
-    public AbstractDropUnitRequest getRequest() {
+    public DropUnitEndpointRequest getRequest() {
         return request;
     }
 
-    public void setRequest(AbstractDropUnitRequest request) {
+    public void setRequest(DropUnitEndpointRequest request) {
         this.request = request;
     }
 
-    public DropUnitResponse getResponse() {
+    public DropUnitEndpointResponse getResponse() {
         return response;
     }
 
-    public void setResponse(DropUnitResponse response) {
+    public void setResponse(DropUnitEndpointResponse response) {
         this.response = response;
     }
 
@@ -132,7 +133,7 @@ public class DropUnitEndpoint {
     }
 
     public DropUnitEndpoint withHeaders(List<DropUnitHeaderDto> headers) {
-        for (DropUnitHeaderDto header: headers) {
+        for (DropUnitHeaderDto header : headers) {
             this.headers.put(header.getName(), header.getValue());
         }
         return this;
@@ -143,12 +144,12 @@ public class DropUnitEndpoint {
         return this;
     }
 
-    public DropUnitEndpoint withRequest(AbstractDropUnitRequest request) {
+    public DropUnitEndpoint withRequest(DropUnitEndpointRequest request) {
         this.request = request;
         return this;
     }
 
-    public DropUnitEndpoint withResponse(DropUnitResponse response) {
+    public DropUnitEndpoint withResponse(DropUnitEndpointResponse response) {
         this.response = response;
         return this;
     }
@@ -172,5 +173,21 @@ public class DropUnitEndpoint {
                 " method = '" + method + "'\n" +
                 " delay  = " + delay + "'\n" +
                 " count  = " + count;
+    }
+
+    // hashCode
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(url)
+                .append(method)
+                .append(headers)
+                .append(delay)
+                .append(count)
+                .append(request)
+                .append(response)
+                .toHashCode();
     }
 }
