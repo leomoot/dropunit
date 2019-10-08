@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.List;
 
 public class DropUnitService {
@@ -16,14 +15,14 @@ public class DropUnitService {
 
     private EndpointRegistrations registrations = new EndpointRegistrations();
 
-    private Hashtable<String, DropUnitEndpoint> defaults = new Hashtable<>();
+    private List<DropUnitEndpoint> defaults = new ArrayList<>();
 
     private List<ReceivedRequest> notFound = new ArrayList<>();
 
     // getAll
 
     public Collection<DropUnitEndpoint> getAllDefaults() {
-        return defaults.values();
+        return defaults;
     }
 
     public Collection<DropUnitEndpoint> getAllRegistrations() {
@@ -39,7 +38,7 @@ public class DropUnitService {
         infoLoadedEndpoints(stringBuilder.append("endpoints: "));
         registrations.clear();
         notFound.clear();
-        registrations.addAll(defaults.values());
+        registrations.addAll(defaults);
         infoLoadedEndpoints(stringBuilder.append(" -> after: "));
         return stringBuilder.toString();
     }
@@ -47,7 +46,7 @@ public class DropUnitService {
     public String registerDefault(DropUnitEndpoint endpoint) {
         String dropId = generateDropId(endpoint);
         endpoint.setId(dropId);
-        defaults.put(dropId, endpoint);
+        defaults.add(endpoint);
         return dropId;
     }
 
