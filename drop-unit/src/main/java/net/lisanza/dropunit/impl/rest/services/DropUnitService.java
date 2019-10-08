@@ -1,11 +1,11 @@
 package net.lisanza.dropunit.impl.rest.services;
 
-import net.lisanza.dropunit.impl.rest.services.data.EndpointNotFound;
 import net.lisanza.dropunit.impl.rest.services.data.ReceivedRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.BadRequestException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
@@ -17,7 +17,10 @@ public class DropUnitService {
     private EndpointRegistrations registrations = new EndpointRegistrations();
 
     private Hashtable<String, DropUnitEndpoint> defaults = new Hashtable<>();
-    private Hashtable<String, EndpointNotFound> notFound = new Hashtable<>();
+
+    private List<ReceivedRequest> notFound = new ArrayList<>();
+
+    // getAll
 
     public Collection<DropUnitEndpoint> getAllDefaults() {
         return defaults.values();
@@ -27,8 +30,8 @@ public class DropUnitService {
         return registrations;
     }
 
-    public Collection<EndpointNotFound> getAllNotFound() {
-        return notFound.values();
+    public Collection<ReceivedRequest> getAllNotFound() {
+        return notFound;
     }
 
     public String dropAll() {
@@ -123,14 +126,10 @@ public class DropUnitService {
             LOGGER.warn("'request' is missing!");
             throw new BadRequestException("'request' is missing!");
         }
-        EndpointNotFound notFoundEndpoint = notFound.get(url);
-        if (notFoundEndpoint == null) {
-            notFound.put(url, new EndpointNotFound()
-                    .withUrl(url)
-                    .withReceivedRequests(notFoundRequest));
-        } else {
-            notFoundEndpoint.addReceivedRequests(notFoundRequest);
-        }
+        notFound.add(new ReceivedRequest()
+                .withUrl(url)
+                .withMethod(notFoundRequest.getMethod())
+                .withReceived(notFoundRequest.getBody()));
     }
 
     // Utils

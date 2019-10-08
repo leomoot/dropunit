@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class ReceivedRequest {
 
+    private String url;
+
     private String method;
 
     private Map<String, String> headers = new Hashtable<>();
@@ -15,6 +17,14 @@ public class ReceivedRequest {
     private String body;
 
     // getters and setters
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getMethod() {
         return method;
@@ -49,6 +59,11 @@ public class ReceivedRequest {
     }
 
     // with-builders
+
+    public ReceivedRequest withUrl(String url) {
+        this.url = url;
+        return this;
+    }
 
     public ReceivedRequest withMethod(String method) {
         this.method = method;
