@@ -142,7 +142,6 @@ public class ClientDropUnit extends BaseDropUnitClient {
         this.requestBodyInfo = new DropUnitRequestDto();
         this.requestBodyInfo.setRequestContentType(contentType);
         this.requestBodyInfo.setRequestBody(body);
-        this.dropUnitEndpointDto.setRequest(body);
         return this;
     }
 
@@ -280,7 +279,6 @@ public class ClientDropUnit extends BaseDropUnitClient {
         this.requestPatterns = new DropUnitRequestPatternsDto();
         this.requestPatterns.setRequestContentType(contentType);
         this.requestPatterns.setPatterns(patterns);
-        this.dropUnitEndpointDto.setRequestPattern(patterns);
         return this;
     }
 

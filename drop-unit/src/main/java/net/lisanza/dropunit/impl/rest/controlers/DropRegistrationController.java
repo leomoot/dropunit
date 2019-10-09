@@ -66,8 +66,6 @@ public class DropRegistrationController {
                             .withUrl(dto.getUrl())
                             .withHeaders(dto.getRequestHeaders())
                             .withMethod(dto.getMethod())
-                            .withRequest(new DropUnitEndpointRequest()
-                                    .withPatterns(dto.getRequestPattern()))
                             .withDelay(dto.getResponseDelay())));
         } catch (Exception e) {
             LOGGER.warn("Failure in registration of endpoint", e);
