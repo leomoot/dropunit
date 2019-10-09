@@ -39,7 +39,7 @@ public class DropUnitController {
     @Path("{any: .*}")
     public Response dropUnitGet(@Context HttpServletRequest request) {
         dropUnitCount.incrHttpGet();
-        return dropUnit(request, "GET", "");
+        return executeDropUnit(request, "GET", "");
     }
 
     @POST
@@ -47,7 +47,7 @@ public class DropUnitController {
     public Response dropUnitPost(@Context HttpServletRequest request,
                                  String content) {
         dropUnitCount.incrHttpPost();
-        return dropUnit(request, "POST", content);
+        return executeDropUnit(request, "POST", content);
     }
 
     @PUT
@@ -55,7 +55,7 @@ public class DropUnitController {
     public Response dropUnitPut(@Context HttpServletRequest request,
                                 String content) {
         dropUnitCount.incrHttpPut();
-        return dropUnit(request, "PUT", content);
+        return executeDropUnit(request, "PUT", content);
     }
 
     @DELETE
@@ -63,10 +63,10 @@ public class DropUnitController {
     public Response dropUnitDelete(@Context HttpServletRequest request,
                                    String content) {
         dropUnitCount.incrHttpDelete();
-        return dropUnit(request, "DELETE", content);
+        return executeDropUnit(request, "DELETE", content);
     }
 
-    public Response dropUnit(HttpServletRequest request, String method, String content) {
+    public Response executeDropUnit(HttpServletRequest request, String method, String content) {
         ReceivedRequest receivedRequest = new ReceivedRequest()
                 .withMethod(method)
                 .withReceived(content);
@@ -76,39 +76,47 @@ public class DropUnitController {
             name = headerNames.nextElement();
             receivedRequest.addHeader(name, request.getHeader(name));
         }
-        return  dropUnit(request.getPathInfo(), request.getQueryString(), receivedRequest);
+        return processReceivedRequest(request.getPathInfo(), request.getQueryString(), receivedRequest);
     }
 
-    public Response dropUnit(String pathInfo, String queryString, ReceivedRequest receivedRequest) {
+    public Response processReceivedRequest(String pathInfo, String queryString, ReceivedRequest receivedRequest) {
         if (receivedRequest == null) {
             LOGGER.warn("'received request' is missing!");
             throw new BadRequestException("'received request' is missing!");
         }
-        // request validation
-        StringBuffer url = new StringBuffer(pathInfo);
-        if ((queryString != null) && !queryString.isEmpty()) {
-            url.append('?').append(queryString);
-        }
-        for (DropUnitEndpoint endpoint: dropUnitService.lookupEndpoint(url.toString(), receivedRequest.getMethod())) {
+        String url = constructUrl(pathInfo, queryString);
+        for (DropUnitEndpoint endpoint : dropUnitService.lookupEndpoint(url, receivedRequest.getMethod())) {
             try {
                 LOGGER.debug(endpoint.requestInfoString());
+                // valdate if this is the request endpoint to be used
                 validator.validate(endpoint, receivedRequest);
                 // request received
                 endpoint.addReceived(receivedRequest);
                 // Response build up
-                waitToRespond(endpoint.getDelay());
-                Response.ResponseBuilder responseBuilder = buildResponse(endpoint);
-                addContentType(endpoint, responseBuilder);
-                addContent(endpoint, responseBuilder);
-                return responseBuilder.build();
+                return generateResponse(endpoint);
             } catch (ValidationException e) {
                 LOGGER.info(e.getMessage());
             }
         }
         String msg = String.format("'drop unit '%s' registration is missing!", url);
         LOGGER.warn(msg);
-        dropUnitService.registerNotFound(url.toString(), receivedRequest);
+        dropUnitService.registerNotFound(url, receivedRequest);
         throw new NotFoundException(msg);
+    }
+
+    private String constructUrl(String pathInfo, String queryString) {
+        if ((queryString == null) || queryString.isEmpty()) {
+            return pathInfo;
+        }
+        return pathInfo + '?' + queryString;
+    }
+
+    private Response generateResponse(DropUnitEndpoint endpoint) {
+        waitToRespond(endpoint.getDelay());
+        Response.ResponseBuilder responseBuilder = buildResponse(endpoint);
+        addContentType(endpoint, responseBuilder);
+        addContent(endpoint, responseBuilder);
+        return responseBuilder.build();
     }
 
     private Response.ResponseBuilder buildResponse(DropUnitEndpoint dropUnitEndpoint) {
@@ -136,12 +144,5 @@ public class DropUnitController {
                 // do nothing
             }
         }
-    }
-
-    public DropUnitEndpoint createDropUnitEndpoint(String uri, String method) {
-        DropUnitEndpoint dropUnitEndpoint = new DropUnitEndpoint();
-        dropUnitEndpoint.setUrl(uri);
-        dropUnitEndpoint.setMethod(method);
-        return dropUnitEndpoint;
     }
 }
