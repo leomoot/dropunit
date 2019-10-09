@@ -1,7 +1,7 @@
 package net.lisanza.dropunit.simulator;
 
-import net.lisanza.dropunit.impl.DropUnitApplication;
-import net.lisanza.dropunit.impl.config.yml.DropUnitConfiguration;
+import net.lisanza.dropunit.server.DropUnitApplication;
+import net.lisanza.dropunit.server.config.yml.DropUnitConfiguration;
 
 public class App extends DropUnitApplication<DropUnitConfiguration> {
 

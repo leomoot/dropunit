@@ -13,7 +13,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import java.io.File;
 import java.io.IOException;
 
-import static net.lisanza.dropunit.impl.utils.FileUtils.readFromFile;
+import static net.lisanza.dropunit.server.utils.FileUtils.readFromFile;
 
 public class BaseHttpClient {
 

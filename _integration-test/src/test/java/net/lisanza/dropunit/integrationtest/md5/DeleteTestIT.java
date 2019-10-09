@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
 
-import static net.lisanza.dropunit.impl.utils.FileUtils.readFromFile;
+import static net.lisanza.dropunit.server.utils.FileUtils.readFromFile;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

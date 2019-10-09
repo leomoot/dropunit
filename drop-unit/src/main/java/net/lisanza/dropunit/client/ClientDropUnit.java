@@ -1,10 +1,10 @@
 package net.lisanza.dropunit.client;
 
-import net.lisanza.dropunit.impl.rest.dto.DropUnitEndpointDto;
-import net.lisanza.dropunit.impl.rest.dto.DropUnitHeaderDto;
-import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestDto;
-import net.lisanza.dropunit.impl.rest.dto.DropUnitRequestPatternsDto;
-import net.lisanza.dropunit.impl.rest.dto.DropUnitResponseDto;
+import net.lisanza.dropunit.server.rest.dto.DropUnitEndpointDto;
+import net.lisanza.dropunit.server.rest.dto.DropUnitHeaderDto;
+import net.lisanza.dropunit.server.rest.dto.DropUnitRequestDto;
+import net.lisanza.dropunit.server.rest.dto.DropUnitRequestPatternsDto;
+import net.lisanza.dropunit.server.rest.dto.DropUnitResponseDto;
 
 import javax.naming.CannotProceedException;
 import javax.ws.rs.HttpMethod;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.lisanza.dropunit.impl.utils.FileUtils.readFromFile;
+import static net.lisanza.dropunit.server.utils.FileUtils.readFromFile;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
