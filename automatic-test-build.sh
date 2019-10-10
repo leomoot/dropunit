@@ -4,6 +4,10 @@ docker-compose -f ./_docker/application/docker-compose-it.yml stop
 
 mvn clean package || exit
 
+rm -rf drop-unit-simulator/logs/*
+rm -rf logs/* 
+rm -rf engine-under-test/logs/*
+
 docker-compose -f ./_docker/application/docker-compose-it.yml up -d --build
 
 sleep 3
@@ -12,8 +16,8 @@ do
     sleep 1
 done
 
-mvn test -Dtest=*IT -DfailIfNoTests=false
-mvn test -Dtest=*ITslow -DfailIfNoTests=false
+( mvn test -Dtest=*IT -DfailIfNoTests=false && \
+  mvn test -Dtest=*ITslow -DfailIfNoTests=false ) || exit
 
 docker-compose -f ./_docker/application/docker-compose-it.yml stop
 
