@@ -14,9 +14,7 @@ public class DropUnitService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropUnitService.class);
 
     private EndpointRegistrations registrations = new EndpointRegistrations();
-
-    private List<DropUnitEndpoint> defaults = new ArrayList<>();
-
+    private EndpointRegistrations defaults = new EndpointRegistrations();
     private List<ReceivedRequest> notFound = new ArrayList<>();
 
     // getAll
