@@ -52,8 +52,10 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
 
     protected void initConfig(TypeOfConfiguration config,
                               DropUnitService dropUnitService) {
-        for (EndpointDocument endpointDocument : config.getEndpoints()) {
-            configEndpoint(endpointDocument, dropUnitService);
+        if (config.getEndpoints() != null){
+            for (EndpointDocument endpointDocument : config.getEndpoints()) {
+                configEndpoint(endpointDocument, dropUnitService);
+            }
         }
         dropUnitService.dropAll();
     }

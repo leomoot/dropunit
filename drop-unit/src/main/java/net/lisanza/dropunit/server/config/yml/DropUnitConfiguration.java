@@ -3,12 +3,10 @@ package net.lisanza.dropunit.server.config.yml;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class DropUnitConfiguration extends Configuration {
 
-    @NotNull
     private List<EndpointDocument> endpoints;
 
     @JsonProperty
