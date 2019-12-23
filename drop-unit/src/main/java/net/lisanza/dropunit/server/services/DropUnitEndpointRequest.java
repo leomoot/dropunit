@@ -51,15 +51,6 @@ public class DropUnitEndpointRequest {
         return this;
     }
 
-    public boolean doesRequestMatch(String body) {
-        for (String pattern : patterns) {
-            if (!body.contains(pattern)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder()

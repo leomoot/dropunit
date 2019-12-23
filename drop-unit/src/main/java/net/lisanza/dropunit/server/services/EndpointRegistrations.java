@@ -15,6 +15,10 @@ public class EndpointRegistrations extends ArrayList<DropUnitEndpoint> {
     public List<DropUnitEndpoint> findByUrlAndMethod(String url, String method) {
         List<DropUnitEndpoint> subList = new ArrayList<>();
         for (DropUnitEndpoint endpoint : this) {
+            LOGGER.debug("findByUrlAndMethod: {} <> {} | {} <> {}",
+                    url, endpoint.getUrl(),
+                    method, endpoint.getMethod());
+
             if (url.equals(endpoint.getUrl()) && method.equals(endpoint.getMethod())) {
                 subList.add(endpoint);
             }

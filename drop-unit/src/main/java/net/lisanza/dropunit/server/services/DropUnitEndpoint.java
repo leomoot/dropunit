@@ -123,7 +123,11 @@ public class DropUnitEndpoint {
     }
 
     public DropUnitEndpoint withUrl(String url) {
-        this.url = url;
+        if (url.startsWith("/")) {
+            this.url = url;
+        } else {
+            this.url = "/" + url;
+        }
         return this;
     }
 

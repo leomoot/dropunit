@@ -68,6 +68,8 @@ public class DropUnitController {
 
     public Response executeDropUnit(HttpServletRequest request, String method, String content) {
         ReceivedRequest receivedRequest = new ReceivedRequest()
+                .withPath(request.getPathInfo())
+                .withQueryString(request.getQueryString())
                 .withMethod(method)
                 .withReceived(content);
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -76,39 +78,33 @@ public class DropUnitController {
             name = headerNames.nextElement();
             receivedRequest.addHeader(name, request.getHeader(name));
         }
-        return processReceivedRequest(request.getPathInfo(), request.getQueryString(), receivedRequest);
+        LOGGER.debug("received request: {}", receivedRequest);
+        return processReceivedRequest(receivedRequest);
     }
 
-    public Response processReceivedRequest(String pathInfo, String queryString, ReceivedRequest receivedRequest) {
+    public Response processReceivedRequest(ReceivedRequest receivedRequest) {
         if (receivedRequest == null) {
             LOGGER.warn("'received request' is missing!");
             throw new BadRequestException("'received request' is missing!");
         }
-        String url = constructUrl(pathInfo, queryString);
-        for (DropUnitEndpoint endpoint : dropUnitService.lookupEndpoint(url, receivedRequest.getMethod())) {
+        for (DropUnitEndpoint endpoint : dropUnitService.lookupEndpoint(receivedRequest.getUrl(), receivedRequest.getMethod())) {
             try {
-                LOGGER.debug(endpoint.requestInfoString());
                 // valdate if this is the request endpoint to be used
                 validator.validate(endpoint, receivedRequest);
                 // request received
                 endpoint.addReceived(receivedRequest);
+                LOGGER.debug(endpoint.requestInfoString());
                 // Response build up
                 return generateResponse(endpoint);
             } catch (ValidationException e) {
-                LOGGER.info(e.getMessage());
+                LOGGER.debug("{}\n{}\n{}", e.getMessage(),
+                        endpoint.requestInfoString(),
+                        receivedRequest.getBody());
             }
         }
-        String msg = String.format("'drop unit '%s' registration is missing!", url);
-        LOGGER.warn(msg);
-        dropUnitService.registerNotFound(url, receivedRequest);
-        throw new NotFoundException(msg);
-    }
-
-    private String constructUrl(String pathInfo, String queryString) {
-        if ((queryString == null) || queryString.isEmpty()) {
-            return pathInfo;
-        }
-        return pathInfo + '?' + queryString;
+        LOGGER.warn("missing registration: {}", receivedRequest);
+        dropUnitService.registerNotFound(receivedRequest);
+        throw new NotFoundException("missing registration: " + receivedRequest.getUrl());
     }
 
     private Response generateResponse(DropUnitEndpoint endpoint) {

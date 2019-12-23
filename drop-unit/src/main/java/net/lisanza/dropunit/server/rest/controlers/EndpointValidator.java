@@ -3,15 +3,11 @@ package net.lisanza.dropunit.server.rest.controlers;
 import net.lisanza.dropunit.server.services.DropUnitEndpoint;
 import net.lisanza.dropunit.server.services.DropUnitEndpointRequest;
 import net.lisanza.dropunit.server.services.data.ReceivedRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.ValidationException;
 import java.util.Map;
 
 public class EndpointValidator {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EndpointValidator.class);
 
     protected void validate(DropUnitEndpoint endpoint, ReceivedRequest receivedRequest) {
         // validate
@@ -38,8 +34,7 @@ public class EndpointValidator {
                 && (endpointValue.equals(requestValue))) {
             return;
         }
-        LOGGER.error("validate header {}: endpoint ({}) and request ({}) are NOT equal", name, endpointValue, requestValue);
-        throw new ValidationException("validate header " + name + " : endpoint (" + endpointValue + ") and request (" + requestValue + ") are NOT equal");
+        throw new ValidationException("header: '" + name + "' : '" + endpointValue + "' != request '" + requestValue + "'");
     }
 
     protected void validateRequestContentType(String endpointContentType, String requestContentType) {
@@ -52,17 +47,19 @@ public class EndpointValidator {
                 && (endpointContentType.equals(requestContentType))) {
             return;
         }
-        LOGGER.error("validate content-type: endpoint ({}) and request ({}) are NOT equal", endpointContentType, requestContentType);
-        throw new ValidationException("validate content-type: endpoint (" + endpointContentType + ") and request (" + requestContentType + ") are NOT equal");
+        throw new ValidationException("content-type: '" + endpointContentType + "' != request '" + requestContentType + "'");
     }
 
-    private void validateRequestContent(DropUnitEndpointRequest dropUnitRequest, String content) {
+    private void validateRequestContent(DropUnitEndpointRequest dropUnitRequest, String body) {
         if (dropUnitRequest != null) {
-            if (dropUnitRequest.doesRequestMatch(content)) {
-                return;
+            for (String pattern : dropUnitRequest.getPatterns()) {
+                if (!body.contains(pattern)) {
+                    throw new ValidationException("pattern: '" + pattern + "' not in body\n" + body);
+                }
             }
+            return;
         }
-        throw new ValidationException("validate: content and expected request-body are NOT matching");
+        throw new ValidationException("request-body: not matching'\n" + body);
     }
 
     private boolean isNullOrEmpty(String string) {

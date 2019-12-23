@@ -42,7 +42,6 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
         }
 
         String body = String.format("response: %d %s >> exception \"%s\"", status.getStatusCode(), status.getReasonPhrase(), exception.getMessage());
-        LOGGER.error(body, exception);
         return Response.status(status).entity(body).build();
     }
 }

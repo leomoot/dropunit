@@ -12,6 +12,7 @@ import java.util.List;
 public class DropUnitService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DropUnitService.class);
+    private static final DropId DROP_ID = new DropId();
 
     private EndpointRegistrations registrations = new EndpointRegistrations();
     private EndpointRegistrations defaults = new EndpointRegistrations();
@@ -42,31 +43,18 @@ public class DropUnitService {
     }
 
     public String registerDefault(DropUnitEndpoint endpoint) {
-        String dropId = generateDropId(endpoint);
+        String dropId = DROP_ID.generate();
         endpoint.setId(dropId);
+        LOGGER.debug("register {} - {}", dropId, endpoint);
         defaults.add(endpoint);
         return dropId;
     }
 
     public String register(DropUnitEndpoint endpoint) {
-        String dropId = generateDropId(endpoint);
+        String dropId = DROP_ID.generate();
         endpoint.setId(dropId);
-        registrations.add(endpoint);
-        return dropId;
-    }
-
-    public String generateDropId(DropUnitEndpoint endpoint) {
-        if (endpoint == null) {
-            String msg = "'drop unit' is missing!";
-            LOGGER.error(msg);
-            throw new BadRequestException(msg);
-        }
-        if (!endpoint.getUrl().startsWith("/")) {
-            endpoint.setUrl("/" + endpoint.getUrl());
-        }
-
-        String dropId = Integer.toString(endpoint.hashCode());
         LOGGER.debug("register {} - {}", dropId, endpoint);
+        registrations.add(endpoint);
         return dropId;
     }
 
@@ -114,19 +102,12 @@ public class DropUnitService {
         return registrations.findById(dropId);
     }
 
-    public void registerNotFound(String url, ReceivedRequest notFoundRequest) {
-        if (url == null) {
-            LOGGER.warn("'url' is missing!");
-            throw new BadRequestException("'url' is missing!");
-        }
+    public void registerNotFound(ReceivedRequest notFoundRequest) {
         if (notFoundRequest == null) {
             LOGGER.warn("'request' is missing!");
             throw new BadRequestException("'request' is missing!");
         }
-        notFound.add(new ReceivedRequest()
-                .withUrl(url)
-                .withMethod(notFoundRequest.getMethod())
-                .withReceived(notFoundRequest.getBody()));
+        notFound.add(notFoundRequest);
     }
 
     // Utils
@@ -136,5 +117,13 @@ public class DropUnitService {
                 .append(" registrations ").append(registrations.size())
                 .append(" not found ").append(notFound.size());
         return stringBuilder;
+    }
+
+    private static class DropId {
+        private int id = hashCode();
+
+        public String generate() {
+            return Integer.toString(id++);
+        }
     }
 }

@@ -167,4 +167,59 @@ public class PostTestIT extends BaseRequest {
         dropUnit.assertCountRecievedRequests(0);
         dropUnit.assertNotFound(1);
     }
+
+    @Test
+    public void shouldTestMultipleWithSamePath() throws Exception {
+        String data1 = "<bag>droppy</bag>";
+        String data2 = "<bag>candy</bag>";
+        String requestBody1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<request>" + data1 + "</request>";
+        String responseBody1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<response>" + data1 + "</response>";
+        String requestBody2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<request>" + data2 + "</request>";
+        String responseBody2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<response>" + data2 + "</response>";
+
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit1 = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
+                .withPost("test-post/with/path")
+                .withRequestPattern(MediaType.APPLICATION_XML, data1)
+                .withResponseOk(MediaType.APPLICATION_XML, responseBody1)
+                .drop();
+
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit2 = new ClientDropUnit(DROP_UNIT_HOST)
+                .withPost("test-post/with/path")
+                .withRequestPattern(MediaType.APPLICATION_XML, data2)
+                .withResponseOk(MediaType.APPLICATION_XML, responseBody2)
+                .drop();
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response1 = httpClient.invokeHttpPost(dropUnit1.getUrl(),
+                MediaType.APPLICATION_XML, requestBody1);
+
+        // assert message from engine-under-test
+        assertEquals(200, response1.getStatusLine().getStatusCode());
+        String body1 = EntityUtils.toString(response1.getEntity(), "UTF-8");
+        assertNotNull(body1);
+        assertThat(body1, containsString(responseBody1));
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response2 = httpClient.invokeHttpPost(dropUnit2.getUrl(),
+                MediaType.APPLICATION_XML, requestBody2);
+
+        // assert message from engine-under-test
+        assertEquals(200, response2.getStatusLine().getStatusCode());
+        String body2 = EntityUtils.toString(response2.getEntity(), "UTF-8");
+        assertNotNull(body2);
+        assertThat(body2, containsString(responseBody2));
+
+        dropUnit1.assertCountRecievedRequests(1);
+        dropUnit1.assertNotFound(0);
+
+        dropUnit2.assertCountRecievedRequests(1);
+        dropUnit2.assertNotFound(0);
+    }
+
 }

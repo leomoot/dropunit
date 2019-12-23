@@ -8,7 +8,9 @@ import java.util.Map;
 
 public class ReceivedRequest {
 
-    private String url;
+    private String path;
+
+    private String queryString;
 
     private String method;
 
@@ -18,28 +20,20 @@ public class ReceivedRequest {
 
     // getters and setters
 
-    public String getUrl() {
-        return url;
+    public String getQueryString() {
+        return queryString;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
     }
 
     public String getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
     public Map<String, String> getHeaders() {
         return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
     }
 
     public void addHeader(String name, String value) {
@@ -50,18 +44,19 @@ public class ReceivedRequest {
         return body;
     }
 
-    public void setBody(String body) {
-        this.body = body;
-    }
-
     public String getContentType() {
         return headers.get("Content-Type");
     }
 
     // with-builders
 
-    public ReceivedRequest withUrl(String url) {
-        this.url = url;
+    public ReceivedRequest withPath(String path) {
+        this.path = path;
+        return this;
+    }
+
+    public ReceivedRequest withQueryString(String queryString) {
+        this.queryString = queryString;
         return this;
     }
 
@@ -71,7 +66,7 @@ public class ReceivedRequest {
     }
 
     public ReceivedRequest withHeaders(List<DropUnitHeaderDto> headers) {
-        for (DropUnitHeaderDto header: headers) {
+        for (DropUnitHeaderDto header : headers) {
             this.headers.put(header.getName(), header.getValue());
         }
         return this;
@@ -82,10 +77,31 @@ public class ReceivedRequest {
         return this;
     }
 
-    //
+    // complex getters
+
+    public String getUrl() {
+        StringBuffer url = new StringBuffer();
+        if (!path.startsWith("/")) {
+            url.append('/');
+        }
+        url.append(path);
+        if ((queryString != null) && !queryString.isEmpty()) {
+            url.append('?').append(queryString);
+        }
+        return url.toString();
+    }
+
+    // toString
 
     @Override
     public String toString() {
-        return "DropUnitEndpoint => method = '" + method;
+        return new StringBuilder()
+                .append("ReceivedRequest { ")
+                .append("path='").append(path).append('\'')
+                .append(", queryString='").append(queryString).append('\'')
+                .append(", method='").append(method).append('\'')
+                .append(", headers=").append(headers)
+                .append(", body=").append(body)
+                .append('}').toString();
     }
 }

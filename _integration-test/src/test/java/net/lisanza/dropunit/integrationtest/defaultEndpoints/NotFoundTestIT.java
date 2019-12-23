@@ -29,7 +29,7 @@ public class NotFoundTestIT extends BaseRequest {
         assertNotNull(body);
         assertThat(body, containsString("response: 404 Not Found >> exception "));
         assertThat(body, containsString("different-url-test/path/not-found-1"));
-        assertThat(body, containsString("registration is missing!"));
+        assertThat(body, containsString("missing registration"));
 
         dropUnit.assertNotFound(1);
 
@@ -55,9 +55,7 @@ public class NotFoundTestIT extends BaseRequest {
         assertEquals(404, response.getStatusLine().getStatusCode());
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
         assertNotNull(body);
-        assertThat(body, containsString("response: 404 Not Found >> exception "));
-        assertThat(body, containsString("different-method-test/path"));
-        assertThat(body, containsString("registration is missing!"));
+        assertThat(body, containsString("missing registration: /different-method-test/path"));
 
         dropUnit.assertNotFound(1);
 
