@@ -31,7 +31,7 @@ public class PostTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post/with/path")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
@@ -56,7 +56,7 @@ public class PostTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post/with/path?and=variables")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
@@ -80,7 +80,7 @@ public class PostTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post-exception")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseBadRequest(MediaType.APPLICATION_XML, "")
                 .drop();
 
@@ -102,7 +102,7 @@ public class PostTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .withResponseDelay(20000)
                 .drop();
@@ -133,7 +133,7 @@ public class PostTestIT extends BaseRequest {
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPost("test-post/with/path")
                 .withHeader("Connection", "keep-alive")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
@@ -159,7 +159,7 @@ public class PostTestIT extends BaseRequest {
                 .withPost("test-post/with/path")
                 .withHeader("Authorization", "<api-key>")
                 .withHeader("Connection", "keep-alive")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 

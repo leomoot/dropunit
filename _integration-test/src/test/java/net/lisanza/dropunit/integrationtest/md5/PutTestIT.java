@@ -31,7 +31,7 @@ public class PutTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put/with/path")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
@@ -55,7 +55,7 @@ public class PutTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
@@ -79,7 +79,7 @@ public class PutTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put-exception")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseBadRequest(MediaType.APPLICATION_XML, "")
                 .drop();
 
@@ -100,7 +100,7 @@ public class PutTestIT extends BaseRequest {
         // setup dropunit endpoint
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .withResponseDelay(20000)
                 .drop();
@@ -131,7 +131,7 @@ public class PutTestIT extends BaseRequest {
         ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
                 .withPut("test-put/with/path")
                 .withHeader("Connection", "keep-alive")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 
@@ -157,7 +157,7 @@ public class PutTestIT extends BaseRequest {
                 .withPut("test-put/with/headers/path")
                 .withHeader("Authorization", "<api-key>")
                 .withHeader("Connection", "keep-alive")
-                .withRequestBodyFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
+                .withRequestPatternsFromFile(MediaType.APPLICATION_XML, REQUEST_FILE)
                 .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
                 .drop();
 

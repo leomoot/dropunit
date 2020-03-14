@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.lisanza.dropunit.server.utils.FileUtils.readFromFile;
+import static net.lisanza.dropunit.server.utils.FileUtils.readListFromXml;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -159,6 +160,56 @@ public class ClientDropUnit extends BaseDropUnitClient {
     }
 
     /**
+     *
+     * @param contentType
+     * @param pattern
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     */
+    public ClientDropUnit withRequestPattern(String contentType, String pattern)
+            throws CannotProceedException {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(pattern);
+        return withRequestPatterns(contentType, list);
+    }
+
+    /**
+     *
+     * @param contentType
+     * @param patterns
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     */
+    public ClientDropUnit withRequestPatterns(String contentType, List<String> patterns)
+            throws CannotProceedException {
+        if (this.dropUnitEndpointDto == null) {
+            throw new CannotProceedException("withEndpoint is not called before");
+        }
+        this.requestPatterns = new DropUnitRequestPatternsDto();
+        this.requestPatterns.setRequestContentType(contentType);
+        this.requestPatterns.setPatterns(patterns);
+        return this;
+    }
+
+    /**
+     *
+     * @param contentType
+     * @param filename
+     * @return The client-drop-unit.
+     * @throws CannotProceedException when the endpoint is not defined.
+     */
+    public ClientDropUnit withRequestPatternsFromFile(String contentType, String filename)
+            throws CannotProceedException, IOException {
+        if (this.dropUnitEndpointDto == null) {
+            throw new CannotProceedException("withEndpoint is not called before");
+        }
+        this.requestPatterns = new DropUnitRequestPatternsDto();
+        this.requestPatterns.setRequestContentType(contentType);
+        this.requestPatterns.setPatterns(readListFromXml(filename));
+        return this;
+    }
+
+    /**
      * When HTTP request is invoked the simulator must respond with this response-code, content-type and HTTP-body.
      * @param status The status to respond with
      * @param contentType The content-type
@@ -248,38 +299,6 @@ public class ClientDropUnit extends BaseDropUnitClient {
     public ClientDropUnit withResponseBadGatewayFromFile(String contentType, String filename)
             throws Exception {
         return withResponseBadGateway(contentType, readFromFile(filename));
-    }
-
-    /**
-     *
-     * @param contentType
-     * @param pattern
-     * @return The client-drop-unit.
-     * @throws CannotProceedException when the endpoint is not defined.
-     */
-    public ClientDropUnit withRequestPattern(String contentType, String pattern)
-            throws CannotProceedException {
-        ArrayList<String> list = new ArrayList<>();
-        list.add(pattern);
-        return withRequestPatterns(contentType, list);
-    }
-
-    /**
-     *
-     * @param contentType
-     * @param patterns
-     * @return The client-drop-unit.
-     * @throws CannotProceedException when the endpoint is not defined.
-     */
-    public ClientDropUnit withRequestPatterns(String contentType, List<String> patterns)
-            throws CannotProceedException {
-        if (this.dropUnitEndpointDto == null) {
-            throw new CannotProceedException("withEndpoint is not called before");
-        }
-        this.requestPatterns = new DropUnitRequestPatternsDto();
-        this.requestPatterns.setRequestContentType(contentType);
-        this.requestPatterns.setPatterns(patterns);
-        return this;
     }
 
     /**
