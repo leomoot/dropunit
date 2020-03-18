@@ -16,6 +16,12 @@ public class DropUnitEndpointDto {
     @JsonProperty("requestHeaders")
     private List<DropUnitHeaderDto> requestHeaders = new ArrayList();
 
+    @JsonProperty("responseCode")
+    private int responseCode;
+
+    @JsonProperty("responseHeaders")
+    private List<DropUnitHeaderDto> responseHeaders = new ArrayList();
+
     @JsonProperty("responseDelay")
     private int responseDelay;
 
@@ -47,6 +53,26 @@ public class DropUnitEndpointDto {
         this.requestHeaders.add(requestHeader);
     }
 
+    public int getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public List<DropUnitHeaderDto> getResponseHeaders() {
+        return responseHeaders;
+    }
+
+    public void setResponseHeaders(List<DropUnitHeaderDto> responseHeaders) {
+        this.responseHeaders = responseHeaders;
+    }
+
+    public void addResponseHeader(DropUnitHeaderDto ResponseHeader) {
+        this.responseHeaders.add(ResponseHeader);
+    }
+
     public int getResponseDelay() {
         return responseDelay;
     }
@@ -61,6 +87,7 @@ public class DropUnitEndpointDto {
                 "url='" + url + '\'' +
                 ", method='" + method + '\'' +
                 ", requestHeaders=" + requestHeaders +
+                ", responseHeaders=" + responseHeaders +
                 ", responseDelay=" + responseDelay +
                 '}';
     }

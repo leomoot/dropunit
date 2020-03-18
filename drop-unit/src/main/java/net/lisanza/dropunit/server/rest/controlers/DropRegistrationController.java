@@ -34,7 +34,7 @@ import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_COU
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY;
-import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS;
+import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_GETALLDROPS;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_GETALLNOTFOUNDS;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_RECIEVED_DROPID_NUMBER;
@@ -66,6 +66,9 @@ public class DropRegistrationController {
                             .withUrl(dto.getUrl())
                             .withHeaders(dto.getRequestHeaders())
                             .withMethod(dto.getMethod())
+                            .withResponse(new DropUnitEndpointResponse()
+                                    .withCode(dto.getResponseCode())
+                                    .withHeaders(dto.getResponseHeaders()))
                             .withDelay(dto.getResponseDelay())));
         } catch (Exception e) {
             LOGGER.warn("Failure in registration of endpoint", e);
@@ -110,10 +113,9 @@ public class DropRegistrationController {
     }
 
     @PUT
-    @Path(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS)
+    @Path(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY)
     public DropUnitRegistrationResponseDto registerResponseBody(@Context HttpServletRequest request,
                                                                 @PathParam("dropId") String dropId,
-                                                                @PathParam("status") int status,
                                                                 String responseBody) {
         try {
             LOGGER.debug("Called registerResponseBody {}", dropId);
@@ -121,7 +123,6 @@ public class DropRegistrationController {
                     .withId(dropId)
                     .withResult(dropUnitService.registerResponse(dropId, new DropUnitEndpointResponse()
                             .withContentType(request.getContentType())
-                            .withCode(status)
                             .withBody(responseBody)));
         } catch (Exception e) {
             LOGGER.warn("Failure generating response putDropUnitResponseBody", e);

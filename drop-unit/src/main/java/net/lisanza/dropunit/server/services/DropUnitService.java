@@ -82,7 +82,11 @@ public class DropUnitService {
         if (endpoint == null) {
             return "no registration found";
         }
-        endpoint.setResponse(response);
+        if (endpoint.getResponse() == null) {
+            return "no regisered response found";
+        }
+        endpoint.getResponse().setContentType(response.getContentType());
+        endpoint.getResponse().setBody(response.getBody());
         return "OK";
     }
 

@@ -75,3 +75,10 @@ endpoints:
     responseCode: 200
     responseContentType: "application/xml"
     responseBodyFileName: "src/main/resources/endpoints/response-body-one.xml"
+  - path: "/default/path/redirect"
+    method: "POST"
+    responseCode: 302
+    responseHeaders:
+      Location: "https://this.domain.local/returned"
+    responseContentType: "application/json"
+    responseBodyFileName: ""

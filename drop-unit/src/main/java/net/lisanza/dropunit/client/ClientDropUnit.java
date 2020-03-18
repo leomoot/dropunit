@@ -222,12 +222,28 @@ public class ClientDropUnit extends BaseDropUnitClient {
         if (this.dropUnitEndpointDto == null) {
             throw new CannotProceedException("withEndpoint is not called before");
         }
+        this.dropUnitEndpointDto.setResponseCode(status.getStatusCode());
         this.responseDto = new DropUnitResponseDto();
-        this.responseDto.setResponseCode(status.getStatusCode());
         this.responseDto.setResponseContentType(contentType);
         this.responseDto.setResponseBody(body);
         return this;
     }
+
+    /**
+     * When HTTP request is matched respond also with HTTP header.
+     * @param name The header key
+     * @param value The header value
+     * @return The client-drop-unit.
+     */
+    public ClientDropUnit withResponseHeader(String name, String value)
+            throws CannotProceedException {
+        if (this.dropUnitEndpointDto == null) {
+            throw new CannotProceedException("withEndpoint is not called before");
+        }
+        this.dropUnitEndpointDto.addResponseHeader(new DropUnitHeaderDto(name, value));
+        return this;
+    }
+
 
     /**
      *

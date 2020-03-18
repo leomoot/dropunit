@@ -177,6 +177,7 @@ public class DropUnitEndpoint {
                 " method = '" + method + "'\n" +
                 " delay  = " + delay + "'\n" +
                 " count  = " + count;
+
     }
 
     // hashCode

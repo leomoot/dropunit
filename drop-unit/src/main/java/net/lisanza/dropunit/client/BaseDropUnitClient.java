@@ -21,7 +21,7 @@ import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_COU
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_REQUESTBODY;
-import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS;
+import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY;
 import static net.lisanza.dropunit.server.rest.constants.RequestMappings.URI_RECIEVED_DROPID_NUMBER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -93,9 +93,8 @@ public class BaseDropUnitClient extends BaseHttpClient {
     public void executeResponseDelivery(String id, DropUnitResponseDto responseDto) {
         try {
             if (responseDto != null) {
-                HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY_STATUS
-                                .replace("{dropId}", id)
-                                .replace("{status}", responseDto.getResponseCode() + ""),
+                HttpResponse response = invokeHttpPut(URI_DELIVERY_ENDPOINT_DROPID_RESPONSEBODY
+                                .replace("{dropId}", id),
                         responseDto.getResponseContentType(),
                         responseDto.getResponseBody());
                 assertOkStatus(RESPONSE_DELIVERY, response.getStatusLine());
@@ -105,7 +104,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
                 EntityUtils.consume(entity);
             }
         } catch (IOException e) {
-            fail("IO fasilure");
+            fail("IO failure: " + e.getMessage());
         }
     }
 
@@ -122,7 +121,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
             EntityUtils.consume(entity);
             return countValue.asInt();
         } catch (IOException e) {
-            fail("IO fasilure");
+            fail("IO failure: " + e.getMessage());
         }
         return -1; // will never happen
     }
@@ -138,7 +137,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
             EntityUtils.consume(entity);
             return responsebody;
         } catch (IOException e) {
-            fail("IO fasilure");
+            fail("IO failure: " + e.getMessage());
         }
         return null; // will never happen
     }
@@ -155,7 +154,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
             EntityUtils.consume(entity);
             return countValue.asInt();
         } catch (IOException e) {
-            fail("IO fasilure");
+            fail("IO failure: " + e.getMessage());
         }
         return -1; // will never happen
     }
@@ -170,7 +169,7 @@ public class BaseDropUnitClient extends BaseHttpClient {
             assertResult(DROP_DELETION, obj);
             EntityUtils.consume(entity);
         } catch (IOException e) {
-            fail("IO fasilure");
+            fail("IO failure: " + e.getMessage());
         }
     }
 

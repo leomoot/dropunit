@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import net.lisanza.dropunit.server.services.DropUnitEndpointRequest;
 
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 public class EndpointDocument {
 
@@ -32,8 +33,12 @@ public class EndpointDocument {
     /**
      * The HTTP response code with which this endpoint will react.
      */
-    @NotNull
     private int responseCode;
+
+    /**
+     * The headers with which this endpoint will react in the response.
+     */
+    private Map<String, String> responseHeaders;
 
     /**
      * The content-type with which this endpoint will react in the response.
@@ -98,6 +103,16 @@ public class EndpointDocument {
     }
 
     @JsonProperty
+    public Map<String, String> getResponseHeaders() {
+        return responseHeaders;
+    }
+
+    @JsonProperty
+    public void setResponseHeaders(Map<String, String> responseHeaders) {
+        this.responseHeaders = responseHeaders;
+    }
+
+    @JsonProperty
     public String getResponseContentType() {
         return responseContentType;
     }
@@ -130,8 +145,24 @@ public class EndpointDocument {
                 ", method='" + method + '\'' +
                 ", delay='" + delay + '\'' +
                 ", responseCode=" + responseCode +
+                ", responseHeaders=" + toStringHeaders() +
                 ", responseContentType='" + responseContentType + '\'' +
                 ", responseBodyFileName='" + responseBodyFileName + '\'' +
                 '}';
+    }
+
+    private String toStringHeaders() {
+        if (responseHeaders != null) {
+            StringBuffer hdrs = new StringBuffer();
+            for (String hdrKey : responseHeaders.keySet()) {
+                hdrs.append('\'')
+                        .append(hdrKey).append(": ")
+                        .append(responseHeaders.get(hdrKey))
+                        .append('\'').append(',');
+            }
+            return hdrs.toString();
+        } else {
+            return "'',";
+        }
     }
 }

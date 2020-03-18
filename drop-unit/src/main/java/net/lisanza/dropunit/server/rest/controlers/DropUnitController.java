@@ -89,7 +89,7 @@ public class DropUnitController {
         }
         for (DropUnitEndpoint endpoint : dropUnitService.lookupEndpoint(receivedRequest.getUrl(), receivedRequest.getMethod())) {
             try {
-                // valdate if this is the request endpoint to be used
+                // validate if this is the request endpoint to be used
                 validator.validate(endpoint, receivedRequest);
                 // request received
                 endpoint.addReceived(receivedRequest);
@@ -110,6 +110,7 @@ public class DropUnitController {
     private Response generateResponse(DropUnitEndpoint endpoint) {
         waitToRespond(endpoint.getDelay());
         Response.ResponseBuilder responseBuilder = buildResponse(endpoint);
+        addHeaders(endpoint, responseBuilder);
         addContentType(endpoint, responseBuilder);
         addContent(endpoint, responseBuilder);
         return responseBuilder.build();
@@ -120,8 +121,17 @@ public class DropUnitController {
         return Response.status(Response.Status.fromStatusCode(dropUnitEndpoint.getResponse().getCode()));
     }
 
+    private void addHeaders(DropUnitEndpoint dropUnitEndpoint, Response.ResponseBuilder responseBuilder) {
+        if ((dropUnitEndpoint.getResponse().getHeaders() != null)
+                && (0 < dropUnitEndpoint.getResponse().getHeaders().size())) {
+            for (String hdrKey : dropUnitEndpoint.getResponse().getHeaders().keySet()) {
+                responseBuilder.header(hdrKey, dropUnitEndpoint.getResponse().getHeaders().get(hdrKey));
+            }
+        }
+    }
+
     private void addContentType(DropUnitEndpoint dropUnitEndpoint, Response.ResponseBuilder responseBuilder) {
-        if (dropUnitEndpoint.getResponse().getContentType() == null) {
+        if (dropUnitEndpoint.getResponse().getContentType() != null) {
             responseBuilder.header("Content-type", dropUnitEndpoint.getResponse().getContentType());
         }
     }
@@ -129,6 +139,8 @@ public class DropUnitController {
     private void addContent(DropUnitEndpoint dropUnitEndpoint, Response.ResponseBuilder responseBuilder) {
         if (dropUnitEndpoint.getResponse().getBody() != null) {
             responseBuilder.entity(dropUnitEndpoint.getResponse().getBody());
+        } else {
+            responseBuilder.entity("");
         }
     }
 

@@ -65,6 +65,7 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
         try {
             DropUnitEndpointResponse response = new DropUnitEndpointResponse()
                     .withCode(endpointDocument.getResponseCode())
+                    .withHeaders(endpointDocument.getResponseHeaders())
                     .withContentType(endpointDocument.getResponseContentType())
                     .withBody("");
             if ((endpointDocument.getResponseBodyFileName() != null) && !endpointDocument.getResponseBodyFileName().isEmpty()) {

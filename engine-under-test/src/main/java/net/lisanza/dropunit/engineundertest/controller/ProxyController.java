@@ -1,5 +1,6 @@
 package net.lisanza.dropunit.engineundertest.controller;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -20,15 +21,18 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Enumeration;
 
-@Produces(MediaType.APPLICATION_XML)
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.HttpHeaders.COOKIE;
+import static javax.ws.rs.core.HttpHeaders.LOCATION;
+import static javax.ws.rs.core.HttpHeaders.SET_COOKIE;
+
 @Path("/")
 public class ProxyController {
 
@@ -44,7 +48,7 @@ public class ProxyController {
     @Path("{any: .*}")
     public Response proxyGet(@Context HttpServletRequest request) {
         LOGGER.info("GET: {}", request.getRequestURI());
-        return proxy(request, new HttpGet());
+        return buildProxyRequest(request, new HttpGet());
     }
 
     @POST
@@ -52,7 +56,7 @@ public class ProxyController {
     public Response proxyPost(@Context HttpServletRequest request,
                               String content) {
         LOGGER.info("POST: {}", request.getRequestURI());
-        return proxy(request, new HttpPost(), content);
+        return buildProxyRequest(request, new HttpPost(), content);
     }
 
     @PUT
@@ -60,7 +64,7 @@ public class ProxyController {
     public Response proxyPut(@Context HttpServletRequest request,
                              String content) {
         LOGGER.info("PUT: {}", request.getRequestURI());
-        return proxy(request, new HttpPut(), content);
+        return buildProxyRequest(request, new HttpPut(), content);
     }
 
     @DELETE
@@ -68,28 +72,28 @@ public class ProxyController {
     public Response proxyDelete(@Context HttpServletRequest request,
                                 String content) {
         LOGGER.info("DELETE: {}", request.getRequestURI());
-        return proxy(request, new HttpDelete());
+        return buildProxyRequest(request, new HttpDelete());
     }
 
-    private Response proxy(HttpServletRequest request,
-                          HttpEntityEnclosingRequestBase method,
-                          String content) {
+    private Response buildProxyRequest(HttpServletRequest request,
+                                       HttpEntityEnclosingRequestBase method,
+                                       String content) {
         StringEntity entity = new StringEntity(content, "UTF-8");
         method.setEntity(entity);
-        return proxy(request, method);
+        return buildProxyRequest(request, method);
     }
 
-    private Response proxy(HttpServletRequest request,
-                          HttpRequestBase method) {
+    private Response buildProxyRequest(HttpServletRequest request,
+                                       HttpRequestBase method) {
         LOGGER.info("proxy uri       : '{}'", request.toString());
 
         try {
             method.setURI(new URI(proxyUrl + constructUrl(request)));
             LOGGER.info("proxy method     : '{}'", method.toString());
-            if (request.getHeader("Content-type") != null) {
-                LOGGER.info("proxy contenttype: '{}'", request.getHeader("Content-type"));
-                method.setHeader("Content-type", request.getHeader("Content-type"));
-            }
+            buildProxyRequestHeaders(request, method, CONTENT_TYPE);
+            buildProxyRequestHeaders(request, method, LOCATION);
+            buildProxyRequestHeaders(request, method, COOKIE);
+            buildProxyRequestHeaders(request, method, SET_COOKIE);
             HttpClient client = HttpClientBuilder.create().build();
 
             return buildProxyResponse(client.execute(method));
@@ -99,6 +103,18 @@ public class ProxyController {
         } catch (IOException e) {
             LOGGER.info(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private void buildProxyRequestHeaders(HttpServletRequest request,
+                                          HttpRequestBase method,
+                                          String name) {
+        Enumeration<String> hdrs = request.getHeaders(name);
+        String value;
+        while (hdrs.hasMoreElements()) {
+            value = hdrs.nextElement();
+            LOGGER.info("proxy " + name + ": '{}'", value);
+            method.setHeader(name, value);
         }
     }
 
@@ -112,12 +128,42 @@ public class ProxyController {
 
     private Response buildProxyResponse(HttpResponse response) throws IOException {
         String body = EntityUtils.toString(response.getEntity(), "UTF-8");
-        LOGGER.info("build response: {}", response.getStatusLine());
-        LOGGER.info("build response: {}", body);
+        printResponse(response, body);
 
-        return Response.status(Response.Status.fromStatusCode(response.getStatusLine().getStatusCode()))
-                .entity(body)
-                .build();
+        Response.ResponseBuilder responseBuilder = Response
+                .status(Response.Status.fromStatusCode(response.getStatusLine().getStatusCode()));
+        buildHeaders(response, responseBuilder);
+        return responseBuilder.entity(body).build();
+    }
+
+    private void buildHeaders(HttpResponse response,
+                              Response.ResponseBuilder responseBuilder) {
+        buildHeaders(response, responseBuilder, CONTENT_TYPE);
+        buildHeaders(response, responseBuilder, LOCATION);
+        buildHeaders(response, responseBuilder, COOKIE);
+        buildHeaders(response, responseBuilder, SET_COOKIE);
+    }
+
+    private void buildHeaders(HttpResponse response,
+                              Response.ResponseBuilder responseBuilder,
+                              String hdrName) {
+        Header[] hdrs = response.getHeaders(hdrName);
+        if (0 < hdrs.length) {
+            LOGGER.info(hdrName);
+            for (Header hdr : hdrs) {
+                LOGGER.info(hdr.getName() + ": " + hdr.getValue());
+                responseBuilder.header(hdr.getName(), hdr.getValue());
+                LOGGER.info(hdr.getName() + ": " + hdr.getValue());
+            }
+        }
+    }
+
+    private void printResponse(HttpResponse response, String body) throws IOException {
+        LOGGER.info("build response: {}", response.getStatusLine());
+        for (Header hdr : response.getAllHeaders()) {
+            LOGGER.info(hdr.getName() + ": " + hdr.getValue());
+        }
+        LOGGER.info("build response: {}", body);
     }
 }
 
