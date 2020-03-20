@@ -9,6 +9,7 @@ import net.lisanza.dropunit.server.mappers.ExceptionHandler;
 import net.lisanza.dropunit.server.mappers.ValidationHandler;
 import net.lisanza.dropunit.server.rest.controlers.DropRegistrationController;
 import net.lisanza.dropunit.server.rest.controlers.DropUnitController;
+import net.lisanza.dropunit.server.rest.dto.DropUnitHeaderDto;
 import net.lisanza.dropunit.server.services.DropUnitCount;
 import net.lisanza.dropunit.server.services.DropUnitEndpoint;
 import net.lisanza.dropunit.server.services.DropUnitEndpointResponse;
@@ -18,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static net.lisanza.dropunit.server.utils.FileUtils.readFromFile;
 
@@ -75,6 +79,7 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
             dropUnitService.registerDefault(new DropUnitEndpoint()
                     .withUrl(endpointDocument.getPath())
                     .withMethod(endpointDocument.getMethod())
+                    .withHeaders(toListOfHeaderDto(endpointDocument.getHeaders()))
                     .withDelay(endpointDocument.getDelay())
                     .withRequest(endpointDocument.getRequest())
                     .withResponse(response));
@@ -92,5 +97,15 @@ public class DropUnitApplication<TypeOfConfiguration extends DropUnitConfigurati
         }
         LOGGER.info("endpoints loaded: {}", endpointDocument.toString());
         LOGGER.debug("endpoints: {}", dropUnitService.infoLoadedEndpoints(new StringBuilder()));
+    }
+
+    private List<DropUnitHeaderDto> toListOfHeaderDto(Map<String, String> hdrs) {
+        List<DropUnitHeaderDto> result = new ArrayList<>();
+        if (hdrs != null) {
+            for (String hdrKey : hdrs.keySet()) {
+                result.add(new DropUnitHeaderDto(hdrKey, hdrs.get(hdrKey)));
+            }
+        }
+        return result;
     }
 }

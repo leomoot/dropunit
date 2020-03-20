@@ -82,3 +82,13 @@ endpoints:
       Location: "https://this.domain.local/returned"
     responseContentType: "application/json"
     responseBodyFileName: ""
+  - path: "/default/path/and/headers"
+    method: "GET"
+    headers:
+      User-Agent: "DROP-UNIT"
+      Authorization: "xx-xx-xx"
+    responseCode: 302
+    responseHeaders:
+      Location: "https://this.domain.local/returned"
+    responseContentType: "application/json"
+    responseBodyFileName: ""

@@ -2,7 +2,9 @@ package net.lisanza.dropunit.integrationtest.defaultEndpoints;
 
 import net.lisanza.dropunit.client.ClientDropUnit;
 import net.lisanza.dropunit.integrationtest.BaseRequest;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
@@ -107,6 +109,28 @@ public class FilesGetTestIT extends BaseRequest {
 
         // assert message from engine-under-test
         assertEquals(404, response.getStatusLine().getStatusCode());
+
+        dropUnit.assertNotFound(0);
+    }
+
+    @Test
+    public void shouldTestWithHeaders() throws Exception {
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
+                .withGet("/default/path/and/headers");
+        Header[] headers = new Header[]{
+                new BasicHeader("User-Agent", "DROP-UNIT"),
+                new BasicHeader("Authorization","xx-xx-xx")
+        };
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpGet("/default/path/and/headers", headers);
+
+        // assert message from engine-under-test
+        assertEquals(302, response.getStatusLine().getStatusCode());
+        String body = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertNotNull(body);
+        assertThat(body, containsString(""));
 
         dropUnit.assertNotFound(0);
     }

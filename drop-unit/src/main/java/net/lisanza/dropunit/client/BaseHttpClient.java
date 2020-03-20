@@ -1,5 +1,6 @@
 package net.lisanza.dropunit.client;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -112,17 +113,35 @@ public class BaseHttpClient {
 
     public HttpResponse invokeHttpGet(String endpoint)
             throws IOException {
-        return invokeHttpGet(endpoint, null);
+        return invokeHttpGet(endpoint, null, null);
+    }
+
+    public HttpResponse invokeHttpGet(String endpoint,
+                                      Header[] headers)
+            throws IOException {
+        return invokeHttpGet(endpoint, headers, null);
     }
 
     public HttpResponse invokeHttpGet(String endpoint,
                                       RequestConfig requestConfig) throws IOException {
+        return invokeHttpGet(endpoint, null, requestConfig);
+    }
+
+    public HttpResponse invokeHttpGet(String endpoint,
+                                      Header[] headers,
+                                      RequestConfig requestConfig) throws IOException {
         HttpClient client = getHttpClient(requestConfig);
         HttpGet request = new HttpGet(baseUrl + endpoint);
+        if ((headers != null) && (0 < headers.length)) {
+            request.setHeaders(headers);
+        }
         return client.execute(request);
     }
 
     protected HttpClient getHttpClient(RequestConfig requestConfig) {
-        return HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+        return HttpClientBuilder.create()
+                .setDefaultRequestConfig(requestConfig)
+                .disableRedirectHandling()
+                .build();
     }
 }

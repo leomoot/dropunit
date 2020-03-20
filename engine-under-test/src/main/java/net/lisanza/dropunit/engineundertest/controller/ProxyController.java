@@ -28,20 +28,26 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.COOKIE;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 import static javax.ws.rs.core.HttpHeaders.SET_COOKIE;
+import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
 
 @Path("/")
 public class ProxyController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyController.class);
+    private HttpClient client;
 
     private String proxyUrl;
 
     public ProxyController(final String proxyUrl) {
         this.proxyUrl = proxyUrl;
+        client = HttpClientBuilder.create()
+                .disableRedirectHandling()
+                .build();
     }
 
     @GET
@@ -90,11 +96,12 @@ public class ProxyController {
         try {
             method.setURI(new URI(proxyUrl + constructUrl(request)));
             LOGGER.info("proxy method     : '{}'", method.toString());
+            buildProxyRequestHeaders(request, method, AUTHORIZATION);
+            buildProxyRequestHeaders(request, method, USER_AGENT);
             buildProxyRequestHeaders(request, method, CONTENT_TYPE);
             buildProxyRequestHeaders(request, method, LOCATION);
             buildProxyRequestHeaders(request, method, COOKIE);
             buildProxyRequestHeaders(request, method, SET_COOKIE);
-            HttpClient client = HttpClientBuilder.create().build();
 
             return buildProxyResponse(client.execute(method));
         } catch (URISyntaxException e) {
@@ -138,6 +145,7 @@ public class ProxyController {
 
     private void buildHeaders(HttpResponse response,
                               Response.ResponseBuilder responseBuilder) {
+        buildHeaders(response, responseBuilder, AUTHORIZATION);
         buildHeaders(response, responseBuilder, CONTENT_TYPE);
         buildHeaders(response, responseBuilder, LOCATION);
         buildHeaders(response, responseBuilder, COOKIE);

@@ -21,6 +21,11 @@ public class EndpointDocument {
     private String method;
 
     /**
+     * The headers on which this endpoint will react.
+     */
+    private Map<String, String> headers;
+
+    /**
      * The delay in lillis beofre the response is returned.
      */
     private int delay;
@@ -68,6 +73,21 @@ public class EndpointDocument {
     }
 
     @JsonProperty
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    @JsonProperty
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    @JsonProperty
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    @JsonProperty
     public int getDelay() {
         return delay;
     }
@@ -86,12 +106,6 @@ public class EndpointDocument {
     public void setRequest(DropUnitEndpointRequest request) {
         this.request = request;
     }
-
-    @JsonProperty
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
     @JsonProperty
     public int getResponseCode() {
         return responseCode;
@@ -143,24 +157,25 @@ public class EndpointDocument {
     public String toString() {
         return "{ path='" + path + '\'' +
                 ", method='" + method + '\'' +
+                ", headers=" + toStringHeaders(headers) +
                 ", delay='" + delay + '\'' +
                 ", responseCode=" + responseCode +
-                ", responseHeaders=" + toStringHeaders() +
+                ", responseHeaders=" + toStringHeaders(responseHeaders) +
                 ", responseContentType='" + responseContentType + '\'' +
                 ", responseBodyFileName='" + responseBodyFileName + '\'' +
                 '}';
     }
 
-    private String toStringHeaders() {
-        if (responseHeaders != null) {
-            StringBuffer hdrs = new StringBuffer();
-            for (String hdrKey : responseHeaders.keySet()) {
-                hdrs.append('\'')
+    private String toStringHeaders(Map<String, String> hdrs) {
+        if (hdrs != null) {
+            StringBuffer hdrsBuffer = new StringBuffer();
+            for (String hdrKey : hdrs.keySet()) {
+                hdrsBuffer.append('\'')
                         .append(hdrKey).append(": ")
-                        .append(responseHeaders.get(hdrKey))
+                        .append(hdrs.get(hdrKey))
                         .append('\'').append(',');
             }
-            return hdrs.toString();
+            return hdrsBuffer.toString();
         } else {
             return "'',";
         }
