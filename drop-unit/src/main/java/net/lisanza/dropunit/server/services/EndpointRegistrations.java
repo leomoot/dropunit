@@ -19,7 +19,8 @@ public class EndpointRegistrations extends ArrayList<DropUnitEndpoint> {
                     url, endpoint.getUrl(),
                     method, endpoint.getMethod());
 
-            if (url.equals(endpoint.getUrl()) && method.equals(endpoint.getMethod())) {
+            if (matchesUrl(url, endpoint.getUrl())
+                    && matchesMethod(method, endpoint.getMethod())) {
                 subList.add(endpoint);
             }
         }
@@ -49,4 +50,14 @@ public class EndpointRegistrations extends ArrayList<DropUnitEndpoint> {
         return null;
     }
 
+    private boolean matchesUrl(String requestUrl, String endpointUrl) {
+        if (endpointUrl.endsWith("?")) {
+            return requestUrl.startsWith(endpointUrl);
+        }
+        return requestUrl.equals(endpointUrl);
+    }
+
+    private boolean matchesMethod(String method, String endpointMethod) {
+        return method.equals(endpointMethod);
+    }
 }

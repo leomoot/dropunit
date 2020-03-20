@@ -88,6 +88,29 @@ public class GetTestIT extends BaseRequest {
     }
 
     @Test
+    public void shouldTestWithIgnoreQueryString() throws Exception {
+
+        // setup dropunit endpoint
+        ClientDropUnit dropUnit = new ClientDropUnit(DROP_UNIT_HOST).cleanup()
+                .withGet("test-get/with/path?")
+                .withResponseOkFromFile(MediaType.APPLICATION_XML, RESPONSE_FILE)
+                .drop();
+
+        // invoke message on engine-under-test to use dropunit endpoint
+        HttpResponse response = httpClient.invokeHttpGet(dropUnit.getUrl() + "and=variables");
+
+        // assert message from engine-under-test
+        assertEquals(200, response.getStatusLine().getStatusCode());
+        String body = EntityUtils.toString(response.getEntity(), "UTF-8");
+        assertNotNull(body);
+        assertThat(body, containsString(readFromFile(RESPONSE_FILE)));
+
+        dropUnit.assertCountRecievedRequests(1);
+        dropUnit.assertReceived(1);
+        dropUnit.assertNotFound(0);
+    }
+
+    @Test
     public void shouldTestWithException() throws Exception {
 
         // setup dropunit endpoint
