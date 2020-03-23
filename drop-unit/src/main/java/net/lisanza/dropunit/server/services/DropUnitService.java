@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class DropUnitService {
@@ -99,7 +100,9 @@ public class DropUnitService {
             LOGGER.warn("'method' is missing!");
             throw new BadRequestException("'method' is missing!");
         }
-        return registrations.findByUrlAndMethod(url, method);
+        List<DropUnitEndpoint> foundUrls = registrations.findByUrlAndMethod(url, method);
+        Collections.sort(foundUrls);
+        return foundUrls;
     }
 
     public DropUnitEndpoint lookupEndpoint(String dropId) {

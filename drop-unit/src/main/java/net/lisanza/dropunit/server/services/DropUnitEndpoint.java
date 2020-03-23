@@ -9,7 +9,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class DropUnitEndpoint {
+public class DropUnitEndpoint implements Comparable<DropUnitEndpoint> {
 
     private String id;
 
@@ -194,5 +194,12 @@ public class DropUnitEndpoint {
                 .append(request)
                 .append(response)
                 .toHashCode();
+    }
+
+    // comparator
+
+    @Override
+    public int compareTo(DropUnitEndpoint o) {
+        return o.getUrl().length() - this.getUrl().length();
     }
 }
