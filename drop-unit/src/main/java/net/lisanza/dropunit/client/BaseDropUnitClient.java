@@ -8,7 +8,6 @@ import net.lisanza.dropunit.server.rest.dto.DropUnitRequestPatternsDto;
 import net.lisanza.dropunit.server.rest.dto.DropUnitResponseDto;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.util.EntityUtils;
 
